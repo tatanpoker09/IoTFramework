@@ -1,0 +1,101 @@
+public class MainActivity {
+
+	CameraImplementation mCamera;
+	AlarmImplementation mAlarm;
+	EdgeImplementation mServer;
+	
+	public void onCreate() {
+		Network = Framework.getNetwork();
+
+		mCamera = Network.getCamera();
+		mAlarm = Network.getAlarm();
+		mServer = Network.getServer();
+
+		Framework.initialize(mCamera, mAlarm, mServer);
+	}
+}
+
+---
+
+@EdgeNetwork()
+public class Network extends EdgeNetwork {
+
+	public abstract CameraImplementation getCamera();
+	public abstract AlarmImplementation getAlarm();
+	public abstract ServerImplementation getServer();	
+}
+
+---
+
+@AutoConnect(true)
+@MobileEntity(id = 1, implementation = CameraImplementation.class)
+public interface CameraEntity {
+	
+}
+
+public class CameraImplementation implements CameraEntity {
+
+	private EdgeEntity mServer;
+
+	void onStart() {
+		mServer = Framework.getNetwork().getServer();
+
+		while(true) {
+			if (movementDetected()) {
+				Bitmap picture = takePicture();
+				mServer.processPicture(picture)
+			}
+		}
+	}
+
+	Bitmap takePicture() {
+		// ...
+	}
+}
+
+---
+
+@AutoConnect(true)
+@MobileEntity(id = 2, class = AlarmImplementation.class) 
+public interface AlarmEntity {
+	
+	@NetworkMessage(retry = 3, backoff = Backoff.Exponential)
+	void activateAlarm();
+	
+	@NetworkMessage(retry = 3, backoff = Backoff.Exponential)
+	void deactivateAlarm();
+}
+
+public class AlarmImplementation implements AlarmEntity {
+
+	public void activateAlarm() {
+		// ...
+	}
+
+	public void deactivateAlarm() {
+		// ...
+	}
+}
+
+---
+
+@AutoConnect(true)
+@EdgeEntity(id = 3, class = ServerImplementation.class)
+public interface ServerEntity {
+	
+	@NetworkMessage(retry = 3, backoff = Backoff.Exponential)
+	void processPicture(Bitmap bitmap);
+}
+
+public class ServerImplementation implements ServerEntity {
+	
+	private AlarmEntity mAlarm;
+
+	void processPicture(Bitmap bitmap) {
+		mAlarm = Framework.getNetwork().getAlarm();
+
+		if (FaceRecognition.recognize(bitmap) == null) {
+			mAlarm.activateAlarm();
+		}
+	}
+}
