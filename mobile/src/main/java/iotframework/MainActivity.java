@@ -1,4 +1,4 @@
-package tatanpoker.com.iotframework;
+package iotframework;
 
 import android.app.Activity;
 import android.os.Bundle;

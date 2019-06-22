@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">IoTFramework</string>
+    <string name="cameraPrintDefault">Camera Triggered</string>
 </resources>
