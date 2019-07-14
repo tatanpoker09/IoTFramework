@@ -1,0 +1,73 @@
+package tatanpoker.com.frameworklib.framework.network;
+
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Objects;
+
+import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
+import tatanpoker.com.frameworklib.framework.Framework;
+import tatanpoker.com.frameworklib.framework.NetworkComponent;
+import tatanpoker.com.frameworklib.framework.network.packets.IPacket;
+import tatanpoker.com.frameworklib.framework.network.packets.RecognizeDevicePacket;
+
+import static tatanpoker.com.frameworklib.components.Server.SERVERPORT;
+import static tatanpoker.com.frameworklib.framework.network.Tree.SERVER_IP;
+
+public class ConnectionThread extends Thread {
+    private Socket socket;
+    private ObjectInputStream objectInputStream;
+
+    public ConnectionThread(Socket socket) {
+        this.socket = socket;
+    }
+
+    @Override
+    public synchronized void run() {
+        try {
+            Framework.getLogger().info("Device ready to recieve packets.");
+            objectInputStream = new ObjectInputStream(socket.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        while (!Thread.currentThread().isInterrupted()) {
+            try {
+                IPacket packet = (IPacket) objectInputStream.readObject();
+                packet.recieve(socket, null);
+            } catch (IOException e) {
+                Framework.getLogger().severe("Extra packet sent(?");
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            try {
+                Thread.sleep(100); //Saves CPU usage
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            NetworkComponent component = Framework.getNetwork().getComponent(this);
+            if(component!=null) {
+                Framework.getLogger().info(String.format("Disconnecting component with id %d", component.getId()));
+                component.setClientThread(null);
+                component.setConnected(false);
+            }
+        } catch (InvalidIDException e) {
+            Framework.getLogger().severe("Error disconnecting unknown component?");
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized void sendPacket(IPacket packet) throws IOException {
+        if(!socket.isClosed()){
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(packet);
+        }
+    }
+}

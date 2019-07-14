@@ -1,4 +1,4 @@
-package tatanpoker.com.frameworklib.components;
+package tatanpoker.com.frameworklib.events.alarm;
 
 import tatanpoker.com.frameworklib.events.Event;
 

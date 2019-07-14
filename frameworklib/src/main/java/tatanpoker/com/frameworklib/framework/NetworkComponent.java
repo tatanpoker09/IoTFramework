@@ -1,11 +1,17 @@
 package tatanpoker.com.frameworklib.framework;
 
 import tatanpoker.com.frameworklib.components.Server;
+import tatanpoker.com.frameworklib.events.EventTrigger;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
+import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 
-public abstract class NetworkComponent implements Component {
+public abstract class NetworkComponent implements Component, EventTrigger {
+
     private int id;
     private int layout;
+    private ConnectionThread clientThread;
+    private boolean connected;
+
 
     public NetworkComponent(int id, int layout) throws InvalidIDException {
         if(id==0 && !(this instanceof Server)){
@@ -13,17 +19,6 @@ public abstract class NetworkComponent implements Component {
         }
         this.id = id;
         this.layout = layout;
-    }
-
-    @Override
-    public Component getComponent() {
-        if(isLocal()){ //Working locally.
-            return this;
-        } else {
-            //Returns a NetworkStub (which in turn is just this but on a different layer.
-            NetworkStub stub = (NetworkStub) this;
-            return stub;
-        }
     }
 
     @Override
@@ -46,5 +41,17 @@ public abstract class NetworkComponent implements Component {
             return Framework.getNetwork().getId() == this.id;
         }
         return false;
+    }
+
+    public void setConnected(boolean connected) {
+        this.connected = connected;
+    }
+
+    public ConnectionThread getClientThread() {
+        return clientThread;
+    }
+
+    public void setClientThread(ConnectionThread clientThread) {
+        this.clientThread = clientThread;
     }
 }

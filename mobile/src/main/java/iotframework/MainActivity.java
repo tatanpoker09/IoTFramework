@@ -3,13 +3,18 @@ package iotframework;
 import android.app.Activity;
 import android.os.Bundle;
 
-import tatanpoker.com.frameworklib.components.Alarm;
-import tatanpoker.com.frameworklib.components.AlarmTriggerEvent;
+import iotframework.components.alarm.Alarm;
+import iotframework.components.alarm.AlarmStub;
+import iotframework.components.camera.Camera;
+import iotframework.components.camera.CameraStub;
 import tatanpoker.com.frameworklib.components.Server;
-import tatanpoker.com.frameworklib.components.camera.Camera;
+import tatanpoker.com.frameworklib.events.alarm.AlarmTriggerEvent;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
-import tatanpoker.com.frameworklib.network.Tree;
+import tatanpoker.com.frameworklib.framework.network.Tree;
+
+import static tatanpoker.com.frameworklib.framework.Framework.ALARM_ID;
+import static tatanpoker.com.frameworklib.framework.Framework.CAMERA_ID;
 
 /**
  * Skeleton of an Android Things activity.
@@ -30,38 +35,43 @@ import tatanpoker.com.frameworklib.network.Tree;
  *
  * @see <a href="https://github.com/androidthings/contrib-drivers#readme">https://github.com/androidthings/contrib-drivers#readme</a>
  */
+/*
+CUSTOM ANNOTATION PROCESSOR.
+ */
 public class MainActivity extends Activity {
-    public static final int CAMERA_ID = 1;
-    public static final int ALARM_ID = 2;
-
     private Camera camera;
     private Server server;
     private Alarm alarm;
+
+    private int local_id = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Instantiate and give a different frontend to each.
-        try {
-            camera = new Camera(CAMERA_ID, R.layout.activity_main);
-            server = new Server();//Server doesn't have a frontend. It also isn't a component really, but it fits.
-            alarm = new Alarm(ALARM_ID, R.layout.activity_main);
-        } catch (InvalidIDException e) {
-            e.printStackTrace();
-        }
-
-
         super.onCreate(savedInstanceState);
-        Framework.registerComponents(camera, server, alarm);
-        try {
-            Framework.startNetwork(CAMERA_ID, this, server);
-        } catch (InvalidIDException e) {
-            e.printStackTrace();
-        }
+        Framework.registerComponent(CameraStub.class, R.layout.activity_main);
+        Framework.registerComponent(AlarmStub.class, R.layout.activity_main);
+
+        Framework.startNetwork(local_id);
+
         Tree network = (Tree)Framework.getNetwork();
 
-        network.registerEvents(new AlarmEvents(this));
-        network.registerEvents(new CameraEvents(this));
-        setContentView(network.getLocal().getLayout());
+        network.registerEvents(new ServerEvents());
+
+        Framework.networkEnable();
+
+        if(local_id != 0) {// 0 = SERVER_ID.
+            setContentView(network.getLocal().getLayout());
+        }
         network.callEvent(new AlarmTriggerEvent("This is a test"));
+        try {
+            alarm = (Alarm) network.getComponent(ALARM_ID);
+            camera = (Camera) network.getComponent(CAMERA_ID);
+        } catch (InvalidIDException e) {
+            e.printStackTrace();
+        }
+
+        alarm.testAlarm();
+        camera.cameraTest();
     }
 
     public Alarm getAlarm() {

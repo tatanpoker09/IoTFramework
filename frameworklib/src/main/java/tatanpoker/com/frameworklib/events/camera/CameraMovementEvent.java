@@ -1,21 +1,18 @@
-package tatanpoker.com.frameworklib.components.camera;
+package tatanpoker.com.frameworklib.events.camera;
 
 import tatanpoker.com.frameworklib.components.Vector3;
 import tatanpoker.com.frameworklib.events.Event;
 
 public class CameraMovementEvent extends Event {
     private Vector3 movement;
-    public CameraMovementEvent() {
+    public CameraMovementEvent(Vector3 movement) {
         super("camera_movement");
+        this.movement = movement;
     }
 
     @Override
     public int hashCode() {
         return super.hashCode();
-    }
-
-    public void setMovement(Vector3 movement) {
-        this.movement = movement;
     }
 
     public Vector3 getMovement() {
