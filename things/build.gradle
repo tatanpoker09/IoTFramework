@@ -26,4 +26,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     api 'com.google.android.things:androidthings:+'
     implementation project(':frameworklib')
+    api 'com.google.android.gms:play-services-nearby:17.0.0'
 }
