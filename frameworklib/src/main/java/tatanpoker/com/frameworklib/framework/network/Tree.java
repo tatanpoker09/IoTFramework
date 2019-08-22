@@ -254,8 +254,6 @@ public class Tree implements ITree{
         }
         this.clientThread.start();
     }
-
-
 }
 class EventTriggerInfo{
     private List<Method> invokes;

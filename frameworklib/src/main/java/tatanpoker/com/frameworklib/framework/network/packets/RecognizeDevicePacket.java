@@ -31,7 +31,7 @@ public class RecognizeDevicePacket implements IPacket {
 
             component.setClientThread(clientThread);
             component.setConnected(true);
-            Framework.getNetwork().getServer().devices += 1; //Test this. Might provoke deadlock as we can't access devices.
+            Framework.getNetwork().getServer().devices += 1;
             if(Framework.getNetwork().getServer().devices >= Framework.getComponents().size()){
                 Framework.getNetwork().getServer().getSemaphore().release();
             }

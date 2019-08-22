@@ -54,4 +54,8 @@ public abstract class NetworkComponent implements Component, EventTrigger {
     public void setClientThread(ConnectionThread clientThread) {
         this.clientThread = clientThread;
     }
+
+    public void onServerReady(){
+
+    }
 }

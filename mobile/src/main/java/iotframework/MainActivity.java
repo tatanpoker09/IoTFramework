@@ -69,9 +69,6 @@ public class MainActivity extends Activity {
         } catch (InvalidIDException e) {
             e.printStackTrace();
         }
-
-        alarm.testAlarm();
-        camera.cameraTest();
     }
 
     public Alarm getAlarm() {

@@ -37,7 +37,7 @@ public class ConnectionThread extends Thread {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 IPacket packet = (IPacket) objectInputStream.readObject();
-                packet.recieve(socket, null);
+                packet.recieve(socket, this);
             } catch (IOException e) {
                 Framework.getLogger().severe("Extra packet sent(?");
                 e.printStackTrace();
@@ -64,10 +64,33 @@ public class ConnectionThread extends Thread {
         }
     }
 
-    public synchronized void sendPacket(IPacket packet) throws IOException {
-        if(!socket.isClosed()){
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject(packet);
+    public void sendPacket(IPacket recognizePacket) {
+        PacketSender packetSender = new PacketSender(recognizePacket);
+        Thread packetThread = new Thread(packetSender);
+        packetThread.start();
+    }
+
+    class PacketSender implements Runnable {
+        private IPacket packet;
+
+        public PacketSender(IPacket packet){
+            this.packet = packet;
+        }
+
+        public synchronized void sendPacket(IPacket packet) throws IOException {
+            if (!socket.isClosed()) {
+                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                oos.writeObject(packet);
+            }
+        }
+
+        @Override
+        public void run(){
+            try {
+                sendPacket(packet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

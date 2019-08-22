@@ -30,4 +30,6 @@ public interface ITree {
     Semaphore getSemaphore();
 
     List<NetworkComponent> getComponents();
+
+    NetworkComponent getLocal();
 }
