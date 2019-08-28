@@ -15,7 +15,7 @@ public class ServerReadyPacket implements IPacket {
 
     @Override
     public void recieve(Socket socket, ConnectionThread clientThread) {
-        Framework.getLogger().info("Server is ready response! We can start now.");
+        Framework.getLogger().info("SocketServer is ready response! We can start now.");
         Framework.getNetwork().getLocal().onServerReady();
         Framework.getNetwork().getSemaphore().release();
     }

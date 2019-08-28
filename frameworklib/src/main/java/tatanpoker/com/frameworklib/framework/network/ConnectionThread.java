@@ -4,19 +4,12 @@ package tatanpoker.com.frameworklib.framework.network;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Objects;
 
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.network.packets.IPacket;
-import tatanpoker.com.frameworklib.framework.network.packets.RecognizeDevicePacket;
-
-import static tatanpoker.com.frameworklib.components.Server.SERVERPORT;
-import static tatanpoker.com.frameworklib.framework.network.Tree.SERVER_IP;
 
 public class ConnectionThread extends Thread {
     private Socket socket;

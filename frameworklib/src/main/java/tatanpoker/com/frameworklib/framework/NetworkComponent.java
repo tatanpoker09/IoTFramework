@@ -1,6 +1,6 @@
 package tatanpoker.com.frameworklib.framework;
 
-import tatanpoker.com.frameworklib.components.Server;
+import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
 import tatanpoker.com.frameworklib.events.EventTrigger;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
@@ -14,8 +14,8 @@ public abstract class NetworkComponent implements Component, EventTrigger {
 
 
     public NetworkComponent(int id, int layout) throws InvalidIDException {
-        if(id==0 && !(this instanceof Server)){
-            throw new InvalidIDException("ID 0 is reserved for the Server!");
+        if(id==0 && !(this instanceof SocketServer)){
+            throw new InvalidIDException("ID 0 is reserved for the SocketServer!");
         }
         this.id = id;
         this.layout = layout;

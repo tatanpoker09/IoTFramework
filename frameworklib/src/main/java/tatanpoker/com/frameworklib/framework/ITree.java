@@ -1,14 +1,14 @@
-package tatanpoker.com.frameworklib.framework.network;
+package tatanpoker.com.frameworklib.framework;
 
 import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-import tatanpoker.com.frameworklib.components.Server;
+import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
 import tatanpoker.com.frameworklib.events.Event;
 import tatanpoker.com.frameworklib.events.EventTrigger;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
-import tatanpoker.com.frameworklib.framework.NetworkComponent;
+import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 
 public interface ITree {
     void onEnable();
@@ -19,7 +19,7 @@ public interface ITree {
 
     void callEvent(Event event);
 
-    Server getServer();
+    SocketServer getSocketServer();
 
     Socket getServerConnection();
     NetworkComponent getComponent(int id) throws InvalidIDException;

@@ -1,4 +1,4 @@
-package tatanpoker.com.frameworklib.framework.network;
+package tatanpoker.com.frameworklib.framework;
 
 import android.util.Pair;
 import android.util.SparseArray;
@@ -8,38 +8,36 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Semaphore;
 
 import tatanpoker.com.frameworklib.components.Device;
-import tatanpoker.com.frameworklib.components.Server;
+import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
 import tatanpoker.com.frameworklib.events.Event;
 import tatanpoker.com.frameworklib.events.EventInfo;
 import tatanpoker.com.frameworklib.events.EventTrigger;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
-import tatanpoker.com.frameworklib.framework.Component;
-import tatanpoker.com.frameworklib.framework.Framework;
-import tatanpoker.com.frameworklib.framework.NetworkComponent;
+import tatanpoker.com.frameworklib.framework.network.client.ClientConnection;
+import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.packets.IPacket;
 import tatanpoker.com.frameworklib.framework.network.packets.RecognizeDevicePacket;
 
-import static tatanpoker.com.frameworklib.components.Server.SERVERPORT;
+import static tatanpoker.com.frameworklib.framework.network.server.SocketServer.SERVERPORT;
 
 /**
  * This is the network.
  */
 public class Tree implements ITree{
     /*
-    0 = server
+    0 = socketServer
     1 = camera
     2 = alert.
      */
     private int id;
     private static Tree instance;
-    private Server server;
+    private SocketServer socketServer;
     private NetworkComponent local;
     private SparseArray<EventTriggerInfo> events; //key = hashcode for the event object.
     public static final String SERVER_IP = "192.168.1.134";
@@ -47,19 +45,20 @@ public class Tree implements ITree{
     private Socket socket;
     private ConnectionThread clientThread;
     private List<NetworkComponent> components;
+    private ClientConnection client;
 
     private Semaphore semaphore;
 
 
     public Tree(int id) throws InvalidIDException {
-        this(id, new Server());
+        this(id, new SocketServer());
     }
 
-    public Tree(int id, Server server){
+    public Tree(int id, SocketServer socketServer){
         this.id = id;
-        this.server = server;
+        this.socketServer = socketServer;
         components = new ArrayList<>();
-        components.add(server);
+        components.add(socketServer);
     }
 
 
@@ -102,7 +101,7 @@ public class Tree implements ITree{
     }
 
     /**
-     * Called whenever the server has been enabled.
+     * Called whenever the socketServer has been enabled.
      */
     @Override
     public void onEnable(){
@@ -112,7 +111,7 @@ public class Tree implements ITree{
             component.onEnable();
         }
         System.out.println("Finished tree onenable");
-        if(id != 0) { //If we're not the server. We connect to the server.
+        if(id != 0) { //If we're not the socketServer. We connect to the socketServer.
             connect();
         }
     }
@@ -223,8 +222,8 @@ public class Tree implements ITree{
         return components;
     }
 
-    public Server getServer() {
-        return server;
+    public SocketServer getSocketServer() {
+        return socketServer;
     }
 
     public Socket getServerConnection() {
@@ -232,27 +231,16 @@ public class Tree implements ITree{
     }
 
     /**
-     * Connects to the server.
+     * Connects to the socketServer.
      */
     private void connect(){
         semaphore = new Semaphore(0);
-
+        client.connect();
         try {
-            InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
-            Framework.getLogger().info(String.format("Attempting to connect to %s:%s", SERVER_IP, SERVERPORT));
-            socket = new Socket(serverAddr, SERVERPORT);
-            Framework.getLogger().info("Successfully connected to server on ip: " + SERVER_IP + ":" + SERVERPORT);
-            Framework.getLogger().info("Sending Recognize Packet with id: " + getId());
-            IPacket recognizePacket = new RecognizeDevicePacket(Framework.getNetwork().getId(), Objects.requireNonNull(Framework.getNetwork().getComponent(Framework.getNetwork().getId())).getClass().getName());
-            this.clientThread = new ConnectionThread(socket);
-
-            this.clientThread.sendPacket(recognizePacket);
-
-            semaphore.acquire(); //This releases when the server returns a response after all devices connected.
-        } catch (InterruptedException | IOException | InvalidIDException e) {
+            semaphore.acquire(); //This releases when the socketServer returns a response after all devices connected.
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        this.clientThread.start();
     }
 }
 class EventTriggerInfo{

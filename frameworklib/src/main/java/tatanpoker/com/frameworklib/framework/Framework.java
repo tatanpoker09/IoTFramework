@@ -7,10 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
-import tatanpoker.com.frameworklib.components.Server;
+import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
-import tatanpoker.com.frameworklib.framework.network.ITree;
-import tatanpoker.com.frameworklib.framework.network.Tree;
 
 /**
  * Represents the framework, which deals with automation and encapsulation, code generation, etc.
@@ -18,6 +16,7 @@ import tatanpoker.com.frameworklib.framework.network.Tree;
 public class Framework {
     public static final int CAMERA_ID = 1;
     public static final int ALARM_ID = 2;
+    private static final String SERVICE_ID = "tatanpoker09.com.frameworklib";
     private static ITree network; //This represents the IoT network. Singleton
     private static List<Pair<Class, Integer>> devices;
     public static ITree getNetwork() {
@@ -26,15 +25,15 @@ public class Framework {
     private static Logger logger;
     public static void startNetwork(int id) {
         if(network == null){ //Singleton.
-            Server server = null;
+            SocketServer socketServer = null;
             try {
-                server = new Server();
+                socketServer = new SocketServer();
             } catch (InvalidIDException e) {
-                getLogger().severe("Error creating server");
+                getLogger().severe("Error creating socketServer");
                 e.printStackTrace();
                 return;
             }
-            network = new Tree(id, server);
+            network = new Tree(id, socketServer);
         }
     }
 
@@ -71,5 +70,9 @@ public class Framework {
             devices = new ArrayList<>();
         }
         devices.add(new Pair<>(stubClass, layout));
+    }
+
+    public static String getServiceID() {
+        return SERVICE_ID;
     }
 }
