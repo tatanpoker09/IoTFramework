@@ -1,4 +1,4 @@
-package iotframework.components.camera;
+package iotframework.camera;
 
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 

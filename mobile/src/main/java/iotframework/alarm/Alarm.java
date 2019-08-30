@@ -1,4 +1,4 @@
-package iotframework.components.alarm;
+package iotframework.alarm;
 
 
 import tatanpoker.com.frameworklib.components.Device;
@@ -33,9 +33,5 @@ public class Alarm extends NetworkComponent {
         //TextView tv = (TextView)mainActivity.findViewById(R.id.textView);
         //tv.setText(R.string.cameraPrintDefault);
         System.out.println("We got this! "+eventInfo.getText());
-    }
-
-    public void onServerReady(){
-
     }
 }

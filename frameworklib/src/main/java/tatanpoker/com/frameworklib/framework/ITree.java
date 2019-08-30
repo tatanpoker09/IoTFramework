@@ -4,6 +4,8 @@ import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
+import tatanpoker.com.frameworklib.framework.network.client.ClientConnection;
+import tatanpoker.com.frameworklib.framework.network.server.Server;
 import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
 import tatanpoker.com.frameworklib.events.Event;
 import tatanpoker.com.frameworklib.events.EventTrigger;
@@ -18,18 +20,16 @@ public interface ITree {
     void registerEvents(EventTrigger eventObserver);
 
     void callEvent(Event event);
-
-    SocketServer getSocketServer();
-
-    Socket getServerConnection();
     NetworkComponent getComponent(int id) throws InvalidIDException;
     NetworkComponent getComponent(ConnectionThread thread) throws InvalidIDException;
-
-    ConnectionThread getClientConnectionThread();
 
     Semaphore getSemaphore();
 
     List<NetworkComponent> getComponents();
 
     NetworkComponent getLocal();
+
+    Server getServer();
+
+    ClientConnection getClient();
 }

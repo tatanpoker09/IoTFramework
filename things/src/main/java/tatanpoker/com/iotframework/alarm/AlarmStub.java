@@ -1,7 +1,10 @@
 package tatanpoker.com.iotframework.alarm;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import tatanpoker.com.frameworklib.events.alarm.AlarmTriggerEvent;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.network.packets.CallMethodPacket;
@@ -21,12 +24,18 @@ public class AlarmStub extends Alarm {
 
     @Override
     public void testAlarm(){
-        try {
-            CallMethodPacket methodPacket = new CallMethodPacket(Framework.getNetwork().getId(), getId(),"testAlarm");
-            Framework.getNetwork().getClientConnectionThread().sendPacket(methodPacket);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        CallMethodPacket methodPacket = new CallMethodPacket(Framework.getNetwork().getId(), getId(),"testAlarm");
+        Framework.getNetwork().getClient().sendPacket(methodPacket);
+        System.out.println("Alarm is working through network");
+    }
+
+
+    @Override
+    public void printOnScreen(AlarmTriggerEvent event){
+        List<Object> params = new ArrayList<>();
+        params.add(event);
+        CallMethodPacket methodPacket = new CallMethodPacket(Framework.getNetwork().getId(), getId(),"printOnScreen",params);
+        Framework.getNetwork().getClient().sendPacket(methodPacket);
         System.out.println("Alarm is working through network");
     }
 

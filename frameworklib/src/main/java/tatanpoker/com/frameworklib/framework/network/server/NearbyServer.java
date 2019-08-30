@@ -1,5 +1,7 @@
 package tatanpoker.com.frameworklib.framework.network.server;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.nearby.Nearby;
@@ -14,8 +16,11 @@ import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.network.packets.IPacket;
 
 public class NearbyServer extends Server{
-    public NearbyServer() throws InvalidIDException {
+    private Context context;
+
+    public NearbyServer(Context context) throws InvalidIDException {
         super(0, -10000);
+        this.context = context;
     }
 
     @Override
@@ -29,11 +34,12 @@ public class NearbyServer extends Server{
     }
 
     private void startAdvertising() {
+
         AdvertisingOptions advertisingOptions =
                 new AdvertisingOptions.Builder().setStrategy(Strategy.P2P_STAR).build();
         Nearby.getConnectionsClient(context)
                 .startAdvertising(
-                        getUserNickname(), Framework.getServiceID(), connectionCallback, advertisingOptions)
+                        "UserNickName", Framework.getServiceID(), connectionCallback, advertisingOptions)
                 .addOnSuccessListener(
                         (Void unused) -> {
                             // We're advertising!

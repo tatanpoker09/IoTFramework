@@ -31,11 +31,11 @@ public class RecognizeDevicePacket implements IPacket {
 
             component.setClientThread(clientThread);
             component.setConnected(true);
-            Framework.getNetwork().getSocketServer().devices += 1;
-            if(Framework.getNetwork().getSocketServer().devices >= Framework.getComponents().size()){
-                Framework.getNetwork().getSocketServer().getSemaphore().release();
+            Framework.getNetwork().getServer().devices += 1;
+            if(Framework.getNetwork().getServer().devices >= Framework.getComponents().size()){
+                Framework.getNetwork().getServer().getSemaphore().release();
             }
-            Framework.getLogger().info(String.format("Device %s connected! (%d/%d)", component.getId(), Framework.getNetwork().getSocketServer().devices,Framework.getComponents().size()));
+            Framework.getLogger().info(String.format("Device %s connected! (%d/%d)", component.getId(), Framework.getNetwork().getServer().devices,Framework.getComponents().size()));
         } catch (InvalidIDException e) {
             e.printStackTrace();
         }

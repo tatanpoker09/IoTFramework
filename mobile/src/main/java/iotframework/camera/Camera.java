@@ -1,11 +1,10 @@
-package iotframework.components.camera;
+package iotframework.camera;
 
-import iotframework.components.alarm.Alarm;
+import iotframework.alarm.Alarm;
 import tatanpoker.com.frameworklib.components.Device;
 import tatanpoker.com.frameworklib.components.Vector3;
 import tatanpoker.com.frameworklib.events.EventInfo;
 import tatanpoker.com.frameworklib.events.EventPriority;
-import tatanpoker.com.frameworklib.events.EventTrigger;
 import tatanpoker.com.frameworklib.events.alarm.AlarmTriggerEvent;
 import tatanpoker.com.frameworklib.events.camera.CameraMovementEvent;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;

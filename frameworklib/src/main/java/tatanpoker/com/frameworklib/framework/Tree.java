@@ -14,6 +14,8 @@ import java.util.Objects;
 import java.util.concurrent.Semaphore;
 
 import tatanpoker.com.frameworklib.components.Device;
+import tatanpoker.com.frameworklib.framework.network.client.SocketClient;
+import tatanpoker.com.frameworklib.framework.network.server.Server;
 import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
 import tatanpoker.com.frameworklib.events.Event;
 import tatanpoker.com.frameworklib.events.EventInfo;
@@ -37,28 +39,26 @@ public class Tree implements ITree{
      */
     private int id;
     private static Tree instance;
-    private SocketServer socketServer;
     private NetworkComponent local;
     private SparseArray<EventTriggerInfo> events; //key = hashcode for the event object.
-    public static final String SERVER_IP = "192.168.1.134";
+    public static final String SERVER_IP = "192.168.1.108";
 
-    private Socket socket;
-    private ConnectionThread clientThread;
     private List<NetworkComponent> components;
     private ClientConnection client;
 
     private Semaphore semaphore;
+    private Server server;
 
 
     public Tree(int id) throws InvalidIDException {
         this(id, new SocketServer());
     }
 
-    public Tree(int id, SocketServer socketServer){
+    public Tree(int id, Server server){
         this.id = id;
-        this.socketServer = socketServer;
         components = new ArrayList<>();
-        components.add(socketServer);
+        this.server = server;
+        components.add(server);
     }
 
 
@@ -112,6 +112,7 @@ public class Tree implements ITree{
         }
         System.out.println("Finished tree onenable");
         if(id != 0) { //If we're not the socketServer. We connect to the socketServer.
+            client = new SocketClient(); //CHANGE THIS IF YOU WANT A NEARBY CONNECTION.
             connect();
         }
     }
@@ -139,6 +140,16 @@ public class Tree implements ITree{
             }
         }
         return local;
+    }
+
+    @Override
+    public Server getServer() {
+        return server;
+    }
+
+    @Override
+    public ClientConnection getClient() {
+        return client;
     }
 
 
@@ -199,11 +210,6 @@ public class Tree implements ITree{
     }
 
     @Override
-    public ConnectionThread getClientConnectionThread() {
-        return clientThread;
-    }
-
-    @Override
     public Semaphore getSemaphore() {
         return semaphore;
     }
@@ -222,16 +228,9 @@ public class Tree implements ITree{
         return components;
     }
 
-    public SocketServer getSocketServer() {
-        return socketServer;
-    }
-
-    public Socket getServerConnection() {
-        return socket;
-    }
 
     /**
-     * Connects to the socketServer.
+     * Connects to the server.
      */
     private void connect(){
         semaphore = new Semaphore(0);

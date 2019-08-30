@@ -14,8 +14,11 @@ import tatanpoker.com.frameworklib.events.server.DeviceConnectedEvent;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
+import tatanpoker.com.frameworklib.framework.Tree;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.packets.IPacket;
+
+import static tatanpoker.com.frameworklib.framework.Tree.SERVER_IP;
 
 
 /*
@@ -24,6 +27,7 @@ Based on https://examples.javacodegeeks.com/android/core/socket-core/android-soc
 @Device(id=0)
 public class SocketServer extends Server {
     private ServerThread serverThread = null;
+    private static final boolean USE_USER_GIVEN_IP = true;
 
 
     public SocketServer() throws InvalidIDException {
@@ -84,7 +88,12 @@ public class SocketServer extends Server {
         private Socket socket;
         public synchronized void run() {
             try {
-                InetAddress addr = InetAddress.getByName(getLocalIpAddress());
+                InetAddress addr;
+                if(USE_USER_GIVEN_IP){
+                    addr = InetAddress.getByName(SERVER_IP);
+                } else {
+                    addr = InetAddress.getByName(getLocalIpAddress());
+                }
                 Framework.getLogger().info(String.format("Starting server on ip: %s:%s", addr,SERVERPORT));
                 serverSocket = new ServerSocket(SERVERPORT,0,addr);
             } catch (Exception e) {

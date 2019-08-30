@@ -74,7 +74,7 @@ public class CallMethodPacket implements IPacket {
             try {
                 NetworkComponent component = Framework.getNetwork().getComponent(id_to);
                 component.getClientThread().sendPacket(this); //Resend to component.
-            } catch (InvalidIDException | IOException e) {
+            } catch (InvalidIDException e) {
                 e.printStackTrace();
             }
         }
