@@ -13,7 +13,7 @@ import tatanpoker.com.frameworklib.framework.network.packets.CallMethodPacket;
  */
 public class AlarmStub extends Alarm {
     public AlarmStub(int id, int layout) throws InvalidIDException {
-        super(id, layout);
+        super(id, layout,null);
     }
 
     @Override
@@ -27,6 +27,7 @@ public class AlarmStub extends Alarm {
         Framework.getNetwork().getClient().sendPacket(methodPacket);
         System.out.println("Alarm is working through network");
     }
+
 
     @Override
     public void printOnScreen(AlarmTriggerEvent event){

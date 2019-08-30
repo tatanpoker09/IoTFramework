@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,7 @@ public class CallMethodPacket implements IPacket {
 
     @Override
     public void recieve(Socket socket, ConnectionThread clientThread) {
+        Framework.getLogger().info("Recieved CallMethodPacket!");
         //Depends if we're the "id_to", or not.
         if(Framework.getNetwork().getId() == id_to){
             //We've arrived!
@@ -61,16 +63,18 @@ public class CallMethodPacket implements IPacket {
                 //THEN I NEED TO GET THE PARAMETERS (THROW NON SERIALIZABLE IF FAILED).
                 */
 
-                List<Class<?>> types = new ArrayList<>();
-                for(Object object : parameters){
-                    types.add(object.getClass());
+                Framework.getLogger().info("CallMethodPacket arrived, "+component.getClass().getName()+","+id_to+","+method);
+                Class[] types = new Class[parameters.size()];
+                for (int i = 0; i < parameters.size(); i++) {
+                    Object object = parameters.get(i);
+                    types[i] = object.getClass();
                 }
-                Class<?> typeArray[] = (Class<?>[]) types.toArray();
-                component.getClass().getMethod(method, typeArray).invoke(component,parameters);
+                component.getClass().getMethod(method, types).invoke(component,parameters.toArray());
             } catch (InvalidIDException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 e.printStackTrace();
             }
         } else {
+            Framework.getLogger().info("Redirecting CallMethodPacket!");
             try {
                 NetworkComponent component = Framework.getNetwork().getComponent(id_to);
                 component.getClientThread().sendPacket(this); //Resend to component.

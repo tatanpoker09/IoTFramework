@@ -1,5 +1,9 @@
 package tatanpoker.com.iotframework.camera;
 
+import android.app.Activity;
+import android.content.Context;
+import android.widget.TextView;
+
 import tatanpoker.com.frameworklib.components.Device;
 import tatanpoker.com.frameworklib.components.Vector3;
 import tatanpoker.com.frameworklib.events.EventInfo;
@@ -9,14 +13,17 @@ import tatanpoker.com.frameworklib.events.camera.CameraMovementEvent;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
+import tatanpoker.com.iotframework.R;
 import tatanpoker.com.iotframework.alarm.Alarm;
 
 import static tatanpoker.com.frameworklib.framework.Framework.ALARM_ID;
 
 @Device(id=Framework.CAMERA_ID)
 public class Camera extends NetworkComponent {
-    public Camera(int id, int layout) throws InvalidIDException {
-        super(id, layout);
+    private int triggerCount;
+    public Camera(int id, int layout, Context context) throws InvalidIDException {
+        super(id, layout, context);
+        triggerCount = 0;
     }
 
     public void cameraTest(){
@@ -35,5 +42,17 @@ public class Camera extends NetworkComponent {
         } catch (InvalidIDException e) {
             e.printStackTrace();
         }
+    }
+
+    public void increaseNumber(final Integer amount) {
+        ((Activity)context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                TextView textView = ((Activity) context).findViewById(R.id.cameraTriggerCount);
+                String initialCameraTextValue = context.getResources().getString(R.string.cameraPrintDefault);
+                triggerCount +=amount;
+                textView.setText(initialCameraTextValue+" "+triggerCount);
+            }
+        });
     }
 }

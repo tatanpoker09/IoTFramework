@@ -1,6 +1,8 @@
 package iotframework.alarm;
 
 
+import android.content.Context;
+
 import tatanpoker.com.frameworklib.components.Device;
 import tatanpoker.com.frameworklib.components.Vector3;
 import tatanpoker.com.frameworklib.events.EventInfo;
@@ -14,8 +16,8 @@ import static tatanpoker.com.frameworklib.framework.Framework.ALARM_ID;
 
 @Device(id=ALARM_ID)
 public class Alarm extends NetworkComponent {
-    public Alarm(int id, int layout) throws InvalidIDException {
-        super(id, layout);
+    public Alarm(int id, int layout, Context context) throws InvalidIDException {
+        super(id, layout, context);
     }
 
     public void trigger(Vector3 movement) {

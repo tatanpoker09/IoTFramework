@@ -17,7 +17,7 @@ public abstract class Server extends NetworkComponent {
     public static final int SERVERPORT = 6666;
 
     public Server(int id, int layout) throws InvalidIDException {
-        super(id, layout);
+        super(id, layout, null);
     }
 
 
@@ -29,7 +29,7 @@ public abstract class Server extends NetworkComponent {
             semaphore = new Semaphore(0);
 
             Framework.getLogger().info(String.format("Starting Semaphore to wait for devices to connect... (0/%s)", componentCount));
-            devices = 0; /* TODO ASK BENEDETTO HOW TO IMPROVE THIS */
+            devices = 0; /* TODO ASK BENEDETTO HOW TO IMPROVE THIS, CAUSE CURRENTLY SEMAPHORE IS NOT USED CORRECTLY. */
             try {
                 semaphore.acquire();
             } catch (InterruptedException e) {

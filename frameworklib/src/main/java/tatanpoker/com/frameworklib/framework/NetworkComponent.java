@@ -1,5 +1,7 @@
 package tatanpoker.com.frameworklib.framework;
 
+import android.content.Context;
+
 import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
 import tatanpoker.com.frameworklib.events.EventTrigger;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
@@ -11,14 +13,16 @@ public abstract class NetworkComponent implements Component, EventTrigger {
     private int layout;
     private ConnectionThread clientThread;
     private boolean connected;
+    protected Context context;
 
 
-    public NetworkComponent(int id, int layout) throws InvalidIDException {
+    public NetworkComponent(int id, int layout, Context context) throws InvalidIDException {
         if(id==0 && !(this instanceof SocketServer)){
             throw new InvalidIDException("ID 0 is reserved for the SocketServer!");
         }
         this.id = id;
         this.layout = layout;
+        this.context = context;
     }
 
     @Override

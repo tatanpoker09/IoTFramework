@@ -2,6 +2,7 @@ package iotframework;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 
 import iotframework.alarm.Alarm;
 import iotframework.alarm.AlarmStub;
@@ -47,10 +48,10 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         //Instantiate and give a different frontend to each.
         super.onCreate(savedInstanceState);
-        Framework.registerComponent(CameraStub.class, R.layout.activity_main);
-        Framework.registerComponent(AlarmStub.class, R.layout.activity_main);
+        Framework.registerComponent(CameraStub.class, R.layout.camera_layout);
+        Framework.registerComponent(AlarmStub.class, R.layout.alarm_layout);
 
-        Framework.startNetwork(local_id);
+        Framework.startNetwork(this, local_id);
 
         Tree network = (Tree)Framework.getNetwork();
 
@@ -60,6 +61,8 @@ public class MainActivity extends Activity {
 
         if(local_id != 0) {// 0 = SERVER_ID.
             setContentView(network.getLocal().getLayout());
+        } else {
+            setContentView(R.layout.server_layout);
         }
         network.callEvent(new AlarmTriggerEvent("This is a test"));
         try {
@@ -68,6 +71,10 @@ public class MainActivity extends Activity {
         } catch (InvalidIDException e) {
             e.printStackTrace();
         }
+    }
+
+    public void increaseNumber(View view){
+        camera.increaseNumber(1);
     }
 
     public Alarm getAlarm() {

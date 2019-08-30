@@ -1,5 +1,6 @@
 package tatanpoker.com.frameworklib.framework;
 
+import android.content.Context;
 import android.util.Pair;
 import android.util.SparseArray;
 
@@ -49,12 +50,14 @@ public class Tree implements ITree{
     private Semaphore semaphore;
     private Server server;
 
+    private Context context;
 
-    public Tree(int id) throws InvalidIDException {
-        this(id, new SocketServer());
+
+    public Tree(Context context, int id) throws InvalidIDException {
+        this(context, id, new SocketServer());
     }
-
-    public Tree(int id, Server server){
+    public Tree(Context context, int id, Server server) {
+        this.context = context;
         this.id = id;
         components = new ArrayList<>();
         this.server = server;
@@ -168,7 +171,7 @@ public class Tree implements ITree{
                 if(annotation.id()==this.getId()) {
                     //We create a device
                     try {
-                        component = (NetworkComponent) classe.getSuperclass().getDeclaredConstructor(int.class, int.class).newInstance(annotation.id(), layout);
+                        component = (NetworkComponent) classe.getSuperclass().getDeclaredConstructor(int.class, int.class, Context.class).newInstance(annotation.id(), layout, context);
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                         e.printStackTrace();
                     }

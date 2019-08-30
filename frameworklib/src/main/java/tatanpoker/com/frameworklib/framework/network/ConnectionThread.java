@@ -14,6 +14,7 @@ import tatanpoker.com.frameworklib.framework.network.packets.IPacket;
 public class ConnectionThread extends Thread {
     private Socket socket;
     private ObjectInputStream objectInputStream;
+    private ObjectOutputStream objectOutputStream;
 
     public ConnectionThread(Socket socket) {
         this.socket = socket;
@@ -34,6 +35,7 @@ public class ConnectionThread extends Thread {
             } catch (IOException e) {
                 Framework.getLogger().severe("Extra packet sent(?");
                 e.printStackTrace();
+                break;
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -58,7 +60,7 @@ public class ConnectionThread extends Thread {
     }
 
     public void sendPacket(IPacket recognizePacket) {
-        PacketSender packetSender = new PacketSender(recognizePacket);
+        PacketSender packetSender = new PacketSender(recognizePacket, objectOutputStream);
         Thread packetThread = new Thread(packetSender);
         packetThread.start();
     }
@@ -66,14 +68,17 @@ public class ConnectionThread extends Thread {
     class PacketSender implements Runnable {
         private IPacket packet;
 
-        public PacketSender(IPacket packet){
+        public PacketSender(IPacket packet, ObjectOutputStream oos){
             this.packet = packet;
         }
 
         public synchronized void sendPacket(IPacket packet) throws IOException {
             if (!socket.isClosed()) {
-                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                oos.writeObject(packet);
+                if(objectOutputStream == null){
+                    objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                }
+                Framework.getLogger().info("Sending packet: "+packet.getClass().getName()+" through socket.");
+                objectOutputStream.writeObject(packet);
             }
         }
 

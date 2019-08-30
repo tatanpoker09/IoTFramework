@@ -1,6 +1,5 @@
 package tatanpoker.com.iotframework.alarm;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +13,7 @@ import tatanpoker.com.frameworklib.framework.network.packets.CallMethodPacket;
  */
 public class AlarmStub extends Alarm {
     public AlarmStub(int id, int layout) throws InvalidIDException {
-        super(id, layout);
+        super(id, layout,null);
     }
 
     @Override

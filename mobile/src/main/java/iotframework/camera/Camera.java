@@ -1,5 +1,10 @@
 package iotframework.camera;
 
+import android.app.Activity;
+import android.content.Context;
+import android.widget.TextView;
+
+import iotframework.R;
 import iotframework.alarm.Alarm;
 import tatanpoker.com.frameworklib.components.Device;
 import tatanpoker.com.frameworklib.components.Vector3;
@@ -15,8 +20,8 @@ import static tatanpoker.com.frameworklib.framework.Framework.ALARM_ID;
 
 @Device(id=Framework.CAMERA_ID)
 public class Camera extends NetworkComponent {
-    public Camera(int id, int layout) throws InvalidIDException {
-        super(id, layout);
+    public Camera(int id, int layout, Context context) throws InvalidIDException {
+        super(id, layout, context);
     }
 
     public void cameraTest(){
@@ -35,5 +40,14 @@ public class Camera extends NetworkComponent {
         } catch (InvalidIDException e) {
             e.printStackTrace();
         }
+    }
+
+    public void increaseNumber(Integer amount) {
+        TextView textView = ((Activity) context).findViewById(R.id.cameraTriggerCount);
+        String initialCameraTextValue = context.getResources().getString(R.string.cameraPrintDefault);
+        String sCount = textView.getText().toString().replace(initialCameraTextValue, "");
+        Framework.getLogger().info(sCount);
+        int count = Integer.parseInt(sCount) + amount;
+        textView.setText(initialCameraTextValue+" "+count);
     }
 }

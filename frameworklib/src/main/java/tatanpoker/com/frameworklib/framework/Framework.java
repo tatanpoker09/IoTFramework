@@ -1,5 +1,6 @@
 package tatanpoker.com.frameworklib.framework;
 
+import android.content.Context;
 import android.util.Pair;
 
 import java.util.ArrayList;
@@ -23,7 +24,8 @@ public class Framework {
         return network;
     }
     private static Logger logger;
-    public static void startNetwork(int id) {
+
+    public static void startNetwork(Context context, int id) {
         if(network == null){ //Singleton.
             SocketServer socketServer = null;
             try {
@@ -33,11 +35,14 @@ public class Framework {
                 e.printStackTrace();
                 return;
             }
-            network = new Tree(id, socketServer);
+            network = new Tree(context, id, socketServer);
         }
     }
 
     public static void networkEnable(){
+        /*
+        TODO THERE'S A BUG HERE. WHEN REGISTERING EVENTS COMPONENTS WILL NOT EXIST YET.
+         */
         for(NetworkComponent component : network.getComponents()){
             network.registerEvents(component);
         }
