@@ -104,7 +104,6 @@ public class SocketServer extends Server {
                 try {
                     socket = serverSocket.accept();
                     Framework.getNetwork().callEvent(new DeviceConnectedEvent(socket.getInetAddress()));
-                    Framework.getLogger().info("Component connected with ip "+socket.getInetAddress());
 
                     ConnectionThread commThread = new ConnectionThread(socket);
                     new Thread(commThread).start();

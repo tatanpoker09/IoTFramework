@@ -1,15 +1,26 @@
 package tatanpoker.com.frameworklib.events.server;
 
+import com.google.android.gms.nearby.connection.ConnectionInfo;
+
 import java.net.InetAddress;
 
+import tatanpoker.com.frameworklib.components.Device;
 import tatanpoker.com.frameworklib.events.Event;
+import tatanpoker.com.frameworklib.framework.Framework;
 
 public class DeviceConnectedEvent extends Event {
     private InetAddress address;
+    private String endPointName;
 
     public DeviceConnectedEvent(InetAddress address) {
         super("device_connected");
         this.address = address;
+        Framework.getLogger().info("Component connected with ip "+address.toString());
+    }
+    public DeviceConnectedEvent(ConnectionInfo connectionInfo){
+        super("device_connected");
+        this.endPointName = connectionInfo.getEndpointName();
+        Framework.getLogger().info("Component connected with name "+connectionInfo.getEndpointName());
     }
 
     @Override
@@ -19,5 +30,9 @@ public class DeviceConnectedEvent extends Event {
 
     public InetAddress getAddress() {
         return address;
+    }
+
+    public String getEndPointName() {
+        return endPointName;
     }
 }

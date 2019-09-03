@@ -62,4 +62,9 @@ public abstract class NetworkComponent implements Component, EventTrigger {
     public void onServerReady(){
 
     }
+
+    @Override
+    public String toString() {
+        return getClass().getName();
+    }
 }
