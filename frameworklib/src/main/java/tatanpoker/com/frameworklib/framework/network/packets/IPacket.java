@@ -15,4 +15,5 @@ public interface IPacket extends Serializable{
      * @param socket
      */
     void recieve(Socket socket, ConnectionThread clientThread);
+    void recieve(String endpointId);
 }

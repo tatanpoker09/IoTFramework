@@ -6,33 +6,40 @@ import android.content.DialogInterface;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
 import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback;
 import com.google.android.gms.nearby.connection.ConnectionResolution;
-import com.google.android.gms.nearby.connection.Payload;
-import com.google.android.gms.nearby.connection.PayloadCallback;
-import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
 
 import tatanpoker.com.frameworklib.events.server.DeviceConnectedEvent;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
+import tatanpoker.com.frameworklib.framework.NetworkComponent;
+import tatanpoker.com.frameworklib.framework.network.NearbyConnection;
 import tatanpoker.com.frameworklib.framework.network.packets.IPacket;
 
 public class NearbyServer extends Server{
     private static final String NICKNAME = "IOT-FRAMEWORK";
     private Context context;
+    private NearbyConnection nearbyConnection;
+    private String endpointId;
 
     public NearbyServer(Context context) throws InvalidIDException {
         super(0, -10000);
         this.context = context;
+        this.nearbyConnection = new NearbyConnection(context);
     }
 
     @Override
     void sendPacket(IPacket serverReadyPacket) {
-
+        for(NetworkComponent component : Framework.getNetwork().getComponents()){
+            if(!(component instanceof SocketServer)) {
+                nearbyConnection.sendPacket(serverReadyPacket, component.getClass().getName());
+            }
+        }
     }
 
     @Override
@@ -58,7 +65,6 @@ public class NearbyServer extends Server{
     ConnectionLifecycleCallback connectionCallback = new ConnectionLifecycleCallback() {
         @Override
         public void onConnectionInitiated(@NonNull String endpointId, @NonNull ConnectionInfo connectionInfo) {
-            Framework.getNetwork().callEvent(new DeviceConnectedEvent(connectionInfo));
             new AlertDialog.Builder(context)
                     .setTitle("Accept connection to " + connectionInfo.getEndpointName())
                     .setMessage("Confirm the code matches on both devices: " + connectionInfo.getAuthenticationToken())
@@ -67,7 +73,7 @@ public class NearbyServer extends Server{
                             (DialogInterface dialog, int which) ->
                                     // The user confirmed, so we can accept the connection.
                                     Nearby.getConnectionsClient(context)
-                                            .acceptConnection(endpointId, payloadCallback))
+                                            .acceptConnection(endpointId, nearbyConnection))
                     .setNegativeButton(
                             android.R.string.cancel,
                             (DialogInterface dialog, int which) ->
@@ -78,25 +84,20 @@ public class NearbyServer extends Server{
         }
 
         @Override
-        public void onConnectionResult(@NonNull String s, @NonNull ConnectionResolution connectionResolution) {
+        public void onConnectionResult(@NonNull String endpointId, @NonNull ConnectionResolution connectionResolution) {
+            if(connectionResolution.getStatus()== Status.RESULT_SUCCESS){
+                Framework.getNetwork().callEvent(new DeviceConnectedEvent(endpointId));
 
+                if(Framework.getNetwork().getServer().devices >= Framework.getComponents().size()){
+                    Framework.getNetwork().getServer().getSemaphore().release();
+                }
+                Framework.getLogger().info(String.format("Device %s connected! (%d/%d)", endpointId, Framework.getNetwork().getServer().devices,Framework.getComponents().size()));
+
+            }
         }
 
         @Override
         public void onDisconnected(@NonNull String s) {
-
-        }
-    };
-
-
-    PayloadCallback payloadCallback = new PayloadCallback() {
-        @Override
-        public void onPayloadReceived(@NonNull String s, @NonNull Payload payload) {
-
-        }
-
-        @Override
-        public void onPayloadTransferUpdate(@NonNull String s, @NonNull PayloadTransferUpdate payloadTransferUpdate) {
 
         }
     };

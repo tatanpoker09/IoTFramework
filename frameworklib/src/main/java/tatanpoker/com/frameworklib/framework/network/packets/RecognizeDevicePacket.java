@@ -41,6 +41,11 @@ public class RecognizeDevicePacket implements IPacket {
         }
     }
 
+    @Override
+    public void recieve(String endpointId) {
+        //This is only necessary when done through Sockets.
+    }
+
 
     public int getId() {
         return id;

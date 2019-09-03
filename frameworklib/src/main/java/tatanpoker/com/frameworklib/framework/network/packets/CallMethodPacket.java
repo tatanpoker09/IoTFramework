@@ -52,6 +52,15 @@ public class CallMethodPacket implements IPacket {
 
     @Override
     public void recieve(Socket socket, ConnectionThread clientThread) {
+        recieve();
+    }
+
+    @Override
+    public void recieve(String endpointId) {
+        recieve();
+    }
+
+    private void recieve(){
         Framework.getLogger().info("Recieved CallMethodPacket!");
         //Depends if we're the "id_to", or not.
         if(Framework.getNetwork().getId() == id_to){

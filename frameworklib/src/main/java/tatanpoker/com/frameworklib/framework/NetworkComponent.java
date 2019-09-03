@@ -2,6 +2,7 @@ package tatanpoker.com.frameworklib.framework;
 
 import android.content.Context;
 
+import tatanpoker.com.frameworklib.framework.network.NearbyConnection;
 import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
 import tatanpoker.com.frameworklib.events.EventTrigger;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
@@ -12,6 +13,7 @@ public abstract class NetworkComponent implements Component, EventTrigger {
     private int id;
     private int layout;
     private ConnectionThread clientThread;
+
     private boolean connected;
     protected Context context;
 

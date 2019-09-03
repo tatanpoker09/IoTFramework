@@ -19,4 +19,15 @@ public class ServerReadyPacket implements IPacket {
         Framework.getNetwork().getLocal().onServerReady();
         Framework.getNetwork().getSemaphore().release();
     }
+
+    @Override
+    public void recieve(String endpointId) {
+        recieve();
+    }
+
+    private void recieve(){
+        Framework.getLogger().info("NearbyServer is ready response! We can start now.");
+        Framework.getNetwork().getLocal().onServerReady();
+        Framework.getNetwork().getSemaphore().release();
+    }
 }

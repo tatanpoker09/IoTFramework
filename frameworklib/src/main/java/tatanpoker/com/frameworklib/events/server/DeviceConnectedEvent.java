@@ -17,10 +17,10 @@ public class DeviceConnectedEvent extends Event {
         this.address = address;
         Framework.getLogger().info("Component connected with ip "+address.toString());
     }
-    public DeviceConnectedEvent(ConnectionInfo connectionInfo){
+    public DeviceConnectedEvent(String endpointId){
         super("device_connected");
-        this.endPointName = connectionInfo.getEndpointName();
-        Framework.getLogger().info("Component connected with name "+connectionInfo.getEndpointName());
+        this.endPointName = endpointId;
+        Framework.getLogger().info("Component connected with name "+endpointId);
     }
 
     @Override
