@@ -23,8 +23,6 @@ public interface ITree {
     NetworkComponent getComponent(int id) throws InvalidIDException;
     NetworkComponent getComponent(ConnectionThread thread) throws InvalidIDException;
 
-    Semaphore getSemaphore();
-
     List<NetworkComponent> getComponents();
 
     NetworkComponent getLocal();

@@ -23,16 +23,13 @@ public class Framework {
     private static ITree network; //This represents the IoT network. Singleton
     private static List<Pair<Class, Integer>> devices;
 
-    public static ITree getNetwork() {
-        return network;
-    }
     private static Logger logger;
 
     public static final boolean NEARBY = true;
 
     public static void startNetwork(Context context, int id) {
         if(network == null){ //Singleton.
-            Server server = null;
+            Server server;
             try {
                 if(NEARBY) {
                     server = new NearbyServer(context);
@@ -56,7 +53,7 @@ public class Framework {
             network.registerEvents(component);
         }
         network.onEnable();
-        System.out.println("Finished onenable");
+        Framework.getLogger().info("Finished onenable");
     }
 
 
@@ -68,6 +65,9 @@ public class Framework {
         return logger;
     }
 
+    /*
+    TODO FIX THE PAIR THING.
+     */
     public static void registerComponents(Pair<Class,Integer>... components) {
         if (devices == null) {
             devices = new ArrayList<>();
@@ -88,5 +88,9 @@ public class Framework {
 
     public static String getServiceID() {
         return SERVICE_ID;
+    }
+
+    public static ITree getNetwork() {
+        return network;
     }
 }

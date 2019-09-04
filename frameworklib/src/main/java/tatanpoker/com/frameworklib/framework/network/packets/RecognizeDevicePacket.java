@@ -25,16 +25,13 @@ public class RecognizeDevicePacket implements IPacket {
 
     @Override
     public void recieve(Socket socket, ConnectionThread clientThread) {
-        NetworkComponent component = null;
+        NetworkComponent component;
         try {
             component = Framework.getNetwork().getComponent(id);
 
             component.setClientThread(clientThread);
             component.setConnected(true);
             Framework.getNetwork().getServer().devices += 1;
-            if(Framework.getNetwork().getServer().devices >= Framework.getComponents().size()){
-                Framework.getNetwork().getServer().getSemaphore().release();
-            }
             Framework.getLogger().info(String.format("Device %s connected! (%d/%d)", component.getId(), Framework.getNetwork().getServer().devices,Framework.getComponents().size()));
         } catch (InvalidIDException e) {
             e.printStackTrace();

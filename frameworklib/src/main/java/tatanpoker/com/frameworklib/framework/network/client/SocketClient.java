@@ -5,8 +5,10 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Objects;
 
+import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
+import tatanpoker.com.frameworklib.framework.TreeStatus;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.packets.IPacket;
 import tatanpoker.com.frameworklib.framework.network.packets.RecognizeDevicePacket;
@@ -25,14 +27,18 @@ public class SocketClient extends ClientConnection{
 
     @Override
     public void sendPacket(IPacket packet) {
-        this.clientThread.sendPacket(packet);
+        try {
+            this.clientThread.sendPacket(packet);
+        } catch (DeviceOfflineException e) {
+            e.printStackTrace();
+        }
     }
 }
 
 class ConnectionRunnable implements Runnable{
     private SocketClient socketClient;
 
-    public ConnectionRunnable(SocketClient socketClient){
+    ConnectionRunnable(SocketClient socketClient){
         this.socketClient = socketClient;
     }
 
@@ -44,9 +50,11 @@ class ConnectionRunnable implements Runnable{
             socketClient.socket = new Socket(serverAddr, SERVERPORT);
             Framework.getLogger().info("Successfully connected to socketServer on ip: " + SERVER_IP + ":" + SERVERPORT);
             Framework.getLogger().info("Sending Recognize Packet with id: " + Framework.getNetwork().getId());
+            Framework.getNetwork().getLocal().setStatus(TreeStatus.ONLINE);
+
             IPacket recognizePacket = new RecognizeDevicePacket(Framework.getNetwork().getId(), Objects.requireNonNull(Framework.getNetwork().getComponent(Framework.getNetwork().getId())).getClass().getName());
             socketClient.clientThread = new ConnectionThread(socketClient.socket);
-            socketClient.clientThread.sendPacket(recognizePacket);
+            socketClient.sendPacket(recognizePacket);
         } catch (IOException | InvalidIDException e) {
             e.printStackTrace();
         }

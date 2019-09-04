@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
@@ -59,16 +60,20 @@ public class ConnectionThread extends Thread {
         }
     }
 
-    public void sendPacket(IPacket recognizePacket) {
-        PacketSender packetSender = new PacketSender(recognizePacket, objectOutputStream);
-        Thread packetThread = new Thread(packetSender);
-        packetThread.start();
+    public void sendPacket(IPacket recognizePacket) throws DeviceOfflineException {
+        if (socket.isConnected()) {
+            PacketSender packetSender = new PacketSender(recognizePacket, objectOutputStream);
+            Thread packetThread = new Thread(packetSender);
+            packetThread.start();
+        } else {
+            throw new DeviceOfflineException(socket.getInetAddress().toString());
+        }
     }
 
     class PacketSender implements Runnable {
         private IPacket packet;
 
-        public PacketSender(IPacket packet, ObjectOutputStream oos){
+        PacketSender(IPacket packet, ObjectOutputStream oos){
             this.packet = packet;
         }
 

@@ -17,7 +17,6 @@ public class ServerReadyPacket implements IPacket {
     public void recieve(Socket socket, ConnectionThread clientThread) {
         Framework.getLogger().info("SocketServer is ready response! We can start now.");
         Framework.getNetwork().getLocal().onServerReady();
-        Framework.getNetwork().getSemaphore().release();
     }
 
     @Override
@@ -28,6 +27,5 @@ public class ServerReadyPacket implements IPacket {
     private void recieve(){
         Framework.getLogger().info("NearbyServer is ready response! We can start now.");
         Framework.getNetwork().getLocal().onServerReady();
-        Framework.getNetwork().getSemaphore().release();
     }
 }

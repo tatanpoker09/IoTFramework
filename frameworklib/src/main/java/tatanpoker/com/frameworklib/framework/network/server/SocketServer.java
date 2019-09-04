@@ -11,6 +11,7 @@ import java.util.Enumeration;
 
 import tatanpoker.com.frameworklib.components.Device;
 import tatanpoker.com.frameworklib.events.server.DeviceConnectedEvent;
+import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
@@ -26,6 +27,7 @@ Based on https://examples.javacodegeeks.com/android/core/socket-core/android-soc
  */
 @Device(id=0)
 public class SocketServer extends Server {
+    private ServerSocket serverSocket;
     private ServerThread serverThread = null;
     private static final boolean USE_USER_GIVEN_IP = true;
 
@@ -42,7 +44,11 @@ public class SocketServer extends Server {
     public void sendPacket(IPacket packet) {
         for(NetworkComponent component : Framework.getNetwork().getComponents()){
             if(!(component instanceof SocketServer)) {
-                component.getClientThread().sendPacket(packet);
+                try {
+                    component.getClientThread().sendPacket(packet);
+                } catch (DeviceOfflineException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

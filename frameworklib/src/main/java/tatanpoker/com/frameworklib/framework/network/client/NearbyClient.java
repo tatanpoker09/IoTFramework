@@ -18,6 +18,7 @@ import com.google.android.gms.nearby.connection.Strategy;
 
 import tatanpoker.com.frameworklib.events.server.DeviceConnectedEvent;
 import tatanpoker.com.frameworklib.framework.Framework;
+import tatanpoker.com.frameworklib.framework.TreeStatus;
 import tatanpoker.com.frameworklib.framework.network.NearbyConnection;
 import tatanpoker.com.frameworklib.framework.network.packets.IPacket;
 
@@ -40,13 +41,14 @@ public class NearbyClient extends ClientConnection {
                 .addOnSuccessListener(
                         (Void unused) -> {
                             // We're discovering!
+
                         })
                 .addOnFailureListener(
                         (Exception e) -> {
                             // We're unable to start discovering.
                         });
     }
-    EndpointDiscoveryCallback endpointDiscoveryCallback = new EndpointDiscoveryCallback() {
+    private EndpointDiscoveryCallback endpointDiscoveryCallback = new EndpointDiscoveryCallback() {
         @Override
         public void onEndpointFound(@NonNull String s, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
             // An endpoint was found. We request a connection to it.
@@ -79,7 +81,7 @@ public class NearbyClient extends ClientConnection {
         nearbyConnection.sendPacket(packet, endpointId);
     }
 
-    ConnectionLifecycleCallback connectionCallback = new ConnectionLifecycleCallback() {
+    private ConnectionLifecycleCallback connectionCallback = new ConnectionLifecycleCallback() {
         @Override
         public void onConnectionInitiated(@NonNull String endpointId, @NonNull ConnectionInfo connectionInfo) {
 
@@ -106,6 +108,7 @@ public class NearbyClient extends ClientConnection {
             if(connectionResolution.getStatus()== Status.RESULT_SUCCESS){
                 Framework.getNetwork().callEvent(new DeviceConnectedEvent(endpointId));
                 serverId = endpointId;
+                Framework.getNetwork().getLocal().setStatus(TreeStatus.ONLINE);
             }
         }
 

@@ -4,32 +4,24 @@ import android.content.Context;
 import android.util.Pair;
 import android.util.SparseArray;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.InetAddress;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.Semaphore;
 
 import tatanpoker.com.frameworklib.components.Device;
-import tatanpoker.com.frameworklib.framework.network.client.NearbyClient;
-import tatanpoker.com.frameworklib.framework.network.client.SocketClient;
-import tatanpoker.com.frameworklib.framework.network.server.Server;
-import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
 import tatanpoker.com.frameworklib.events.Event;
 import tatanpoker.com.frameworklib.events.EventInfo;
 import tatanpoker.com.frameworklib.events.EventTrigger;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
-import tatanpoker.com.frameworklib.framework.network.client.ClientConnection;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
-import tatanpoker.com.frameworklib.framework.network.packets.IPacket;
-import tatanpoker.com.frameworklib.framework.network.packets.RecognizeDevicePacket;
+import tatanpoker.com.frameworklib.framework.network.client.ClientConnection;
+import tatanpoker.com.frameworklib.framework.network.client.NearbyClient;
+import tatanpoker.com.frameworklib.framework.network.client.SocketClient;
+import tatanpoker.com.frameworklib.framework.network.server.Server;
 
 import static tatanpoker.com.frameworklib.framework.Framework.NEARBY;
-import static tatanpoker.com.frameworklib.framework.network.server.SocketServer.SERVERPORT;
 
 /**
  * This is the network.
@@ -41,6 +33,9 @@ public class Tree implements ITree{
     2 = alert.
      */
     private int id;
+    /*
+    FIX THIS MEMORY LEAK.
+     */
     private static Tree instance;
     private NetworkComponent local;
     private SparseArray<EventTriggerInfo> events; //key = hashcode for the event object.
@@ -50,13 +45,12 @@ public class Tree implements ITree{
     private List<NetworkComponent> components;
     private ClientConnection client;
 
-    private Semaphore semaphore;
     private Server server;
 
     private Context context;
 
 
-    public Tree(Context context, int id, Server server) {
+    Tree(Context context, int id, Server server) {
         this.context = context;
         this.id = id;
         components = new ArrayList<>();
@@ -110,10 +104,12 @@ public class Tree implements ITree{
     public void onEnable(){
         instance = this;
         registerComponents(Framework.getComponents());
+        getLocal().setStatus(TreeStatus.ENABLING);
+
         for(Component component : components){
             component.onEnable();
         }
-        System.out.println("Finished tree onenable");
+        Framework.getLogger().info("Finished tree onenable");
         if(id != 0) { //If we're not the socketServer. We connect to the socketServer.
             Framework.getLogger().info("Connecting to server...");
             if(NEARBY){
@@ -123,7 +119,6 @@ public class Tree implements ITree{
             }
             connect();
         }
-        System.out.println("We're here");
     }
 
     @Override
@@ -163,8 +158,7 @@ public class Tree implements ITree{
 
 
     private void registerComponents(List<Pair<Class, Integer>> devices){
-        /*TODO*/
-        Framework.getLogger().info("REGISTERING COMPONENTS");
+        Framework.getLogger().info("Registering Components");
         if(components == null)
             components = new ArrayList<>();
 
@@ -174,6 +168,7 @@ public class Tree implements ITree{
             if(classe.getSuperclass().isAnnotationPresent(Device.class)) {
                 Device annotation = (Device) classe.getSuperclass().getAnnotation(Device.class);
                 NetworkComponent component = null;
+                //Check if we're local.
                 if(annotation.id()==this.getId()) {
                     //We create a device
                     try {
@@ -218,11 +213,6 @@ public class Tree implements ITree{
         throw new InvalidIDException("Couldn't find a component by that id.");
     }
 
-    @Override
-    public Semaphore getSemaphore() {
-        return semaphore;
-    }
-
     private NetworkComponent getComponentById(int id){
         for(NetworkComponent component : components){
             if(component.getId() == id){
@@ -242,29 +232,24 @@ public class Tree implements ITree{
      * Connects to the server.
      */
     private void connect(){
-        semaphore = new Semaphore(0);
+        getLocal().setStatus(TreeStatus.CONNECTING);
         client.connect();
-        try {
-            semaphore.acquire(); //This releases when the socketServer returns a response after all devices connected.
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }
 class EventTriggerInfo{
     private List<Method> invokes;
     private EventTrigger _class;
 
-    public EventTriggerInfo(EventTrigger _class){
+    EventTriggerInfo(EventTrigger _class){
         this._class = _class;
         this.invokes = new ArrayList<>();
     }
 
-    public void addInvoke(Method method){
+    void addInvoke(Method method){
         invokes.add(method);
     }
 
-    public void call(Event event) throws InvocationTargetException, IllegalAccessException {
+    void call(Event event) throws InvocationTargetException, IllegalAccessException {
         for(Method method : invokes){
             method.invoke(_class, event);
         }

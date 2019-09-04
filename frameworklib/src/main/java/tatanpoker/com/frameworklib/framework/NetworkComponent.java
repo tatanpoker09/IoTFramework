@@ -18,6 +18,8 @@ public abstract class NetworkComponent implements Component, EventTrigger {
     private boolean connected;
     protected Context context;
 
+    private TreeStatus treeStatus = TreeStatus.STARTING;
+
 
     public NetworkComponent(int id, int layout, Context context) throws InvalidIDException {
         if(id==0 && !(this instanceof Server)){
@@ -69,5 +71,9 @@ public abstract class NetworkComponent implements Component, EventTrigger {
     @Override
     public String toString() {
         return getClass().getName();
+    }
+
+    public void setStatus(TreeStatus treeStatus) {
+        this.treeStatus = treeStatus;
     }
 }

@@ -12,15 +12,15 @@ import com.google.android.gms.nearby.connection.AdvertisingOptions;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
 import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback;
 import com.google.android.gms.nearby.connection.ConnectionResolution;
-import com.google.android.gms.nearby.connection.ConnectionsClient;
 import com.google.android.gms.nearby.connection.Strategy;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import tatanpoker.com.frameworklib.events.server.DeviceConnectedEvent;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
+import tatanpoker.com.frameworklib.framework.TreeStatus;
 import tatanpoker.com.frameworklib.framework.network.NearbyConnection;
 import tatanpoker.com.frameworklib.framework.network.packets.IPacket;
 
@@ -56,16 +56,23 @@ public class NearbyServer extends Server{
         Nearby.getConnectionsClient(context)
                 .startAdvertising(NICKNAME, Framework.getServiceID(), mConnectionLifecycleCallback, advertisingOptions)
                 .addOnSuccessListener(
-                        aVoid -> Framework.getLogger().info("Nearby Server is Advertising"))
+                        unusedResult -> {
+                            Framework.getLogger().info("Now advertising endpoint " + endpointId);
+                            onAdvertisingStarted();
+                        })
                 .addOnFailureListener(
                         e -> {
                             // We were unable to start advertising.
                             Framework.getLogger().severe("Failure to advertise on Nearby Server");
                         });
-        System.out.println("But not here");
     }
 
-    ConnectionLifecycleCallback mConnectionLifecycleCallback = new ConnectionLifecycleCallback() {
+    private void onAdvertisingStarted() {
+        Framework.getLogger().info("Nearby Server is Advertising");
+        Framework.getNetwork().getLocal().setStatus(TreeStatus.CONNECTING);
+    }
+
+    private ConnectionLifecycleCallback mConnectionLifecycleCallback = new ConnectionLifecycleCallback() {
         @Override
         public void onConnectionInitiated(@NonNull String endpointId, @NonNull ConnectionInfo connectionInfo) {
             new AlertDialog.Builder(context)
@@ -90,12 +97,7 @@ public class NearbyServer extends Server{
         public void onConnectionResult(@NonNull String endpointId, @NonNull ConnectionResolution connectionResolution) {
             if(connectionResolution.getStatus()== Status.RESULT_SUCCESS){
                 Framework.getNetwork().callEvent(new DeviceConnectedEvent(endpointId));
-
-                if(Framework.getNetwork().getServer().devices >= Framework.getComponents().size()){
-                    Framework.getNetwork().getServer().getSemaphore().release();
-                }
                 Framework.getLogger().info(String.format("Device %s connected! (%d/%d)", endpointId, Framework.getNetwork().getServer().devices,Framework.getComponents().size()));
-
             }
         }
 
