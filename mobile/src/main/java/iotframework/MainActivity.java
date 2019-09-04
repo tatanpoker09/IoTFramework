@@ -43,7 +43,7 @@ public class MainActivity extends Activity {
     private SocketServer socketServer;
     private Alarm alarm;
 
-    private int local_id = 2;
+    private int local_id = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Instantiate and give a different frontend to each.

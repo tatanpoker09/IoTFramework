@@ -3,6 +3,7 @@ package tatanpoker.com.frameworklib.framework;
 import android.content.Context;
 
 import tatanpoker.com.frameworklib.framework.network.NearbyConnection;
+import tatanpoker.com.frameworklib.framework.network.server.Server;
 import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
 import tatanpoker.com.frameworklib.events.EventTrigger;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
@@ -19,7 +20,7 @@ public abstract class NetworkComponent implements Component, EventTrigger {
 
 
     public NetworkComponent(int id, int layout, Context context) throws InvalidIDException {
-        if(id==0 && !(this instanceof SocketServer)){
+        if(id==0 && !(this instanceof Server)){
             throw new InvalidIDException("ID 0 is reserved for the SocketServer!");
         }
         this.id = id;

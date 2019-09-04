@@ -4,13 +4,11 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 
-import java.lang.reflect.InvocationTargetException;
-
 import tatanpoker.com.frameworklib.events.alarm.AlarmTriggerEvent;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.Tree;
-import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
+import tatanpoker.com.frameworklib.framework.network.server.Server;
 import tatanpoker.com.iotframework.alarm.Alarm;
 import tatanpoker.com.iotframework.alarm.AlarmStub;
 import tatanpoker.com.iotframework.camera.Camera;
@@ -43,10 +41,10 @@ CUSTOM ANNOTATION PROCESSOR.
  */
 public class MainActivity extends Activity {
     private Camera camera;
-    private SocketServer socketServer;
+    private Server server;
     private Alarm alarm;
 
-    private int local_id = 1;
+    private int local_id = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Instantiate and give a different frontend to each.

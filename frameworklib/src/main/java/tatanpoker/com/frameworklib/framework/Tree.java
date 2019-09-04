@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.concurrent.Semaphore;
 
 import tatanpoker.com.frameworklib.components.Device;
+import tatanpoker.com.frameworklib.framework.network.client.NearbyClient;
 import tatanpoker.com.frameworklib.framework.network.client.SocketClient;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
 import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
@@ -27,6 +28,7 @@ import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.packets.IPacket;
 import tatanpoker.com.frameworklib.framework.network.packets.RecognizeDevicePacket;
 
+import static tatanpoker.com.frameworklib.framework.Framework.NEARBY;
 import static tatanpoker.com.frameworklib.framework.network.server.SocketServer.SERVERPORT;
 
 /**
@@ -42,7 +44,8 @@ public class Tree implements ITree{
     private static Tree instance;
     private NetworkComponent local;
     private SparseArray<EventTriggerInfo> events; //key = hashcode for the event object.
-    public static final String SERVER_IP = "192.168.1.108";
+
+    public static final String SERVER_IP = "192.168.1.28";
 
     private List<NetworkComponent> components;
     private ClientConnection client;
@@ -53,9 +56,6 @@ public class Tree implements ITree{
     private Context context;
 
 
-    public Tree(Context context, int id) throws InvalidIDException {
-        this(context, id, new SocketServer());
-    }
     public Tree(Context context, int id, Server server) {
         this.context = context;
         this.id = id;
@@ -115,9 +115,15 @@ public class Tree implements ITree{
         }
         System.out.println("Finished tree onenable");
         if(id != 0) { //If we're not the socketServer. We connect to the socketServer.
-            client = new SocketClient(); //CHANGE THIS IF YOU WANT A NEARBY CONNECTION.
+            Framework.getLogger().info("Connecting to server...");
+            if(NEARBY){
+                client = new NearbyClient(context);
+            } else {
+                client = new SocketClient();
+            }
             connect();
         }
+        System.out.println("We're here");
     }
 
     @Override

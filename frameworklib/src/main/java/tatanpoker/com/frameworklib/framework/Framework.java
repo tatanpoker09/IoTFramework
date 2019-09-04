@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
+import tatanpoker.com.frameworklib.framework.network.server.NearbyServer;
+import tatanpoker.com.frameworklib.framework.network.server.Server;
 import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 
@@ -17,25 +19,32 @@ import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 public class Framework {
     public static final int CAMERA_ID = 1;
     public static final int ALARM_ID = 2;
-    private static final String SERVICE_ID = "tatanpoker09.com.frameworklib";
+    private static final String SERVICE_ID = "tatanpoker09.com.FrameworkIoT";
     private static ITree network; //This represents the IoT network. Singleton
     private static List<Pair<Class, Integer>> devices;
+
     public static ITree getNetwork() {
         return network;
     }
     private static Logger logger;
 
+    public static final boolean NEARBY = true;
+
     public static void startNetwork(Context context, int id) {
         if(network == null){ //Singleton.
-            SocketServer socketServer = null;
+            Server server = null;
             try {
-                socketServer = new SocketServer();
+                if(NEARBY) {
+                    server = new NearbyServer(context);
+                } else {
+                    server = new SocketServer();
+                }
             } catch (InvalidIDException e) {
                 getLogger().severe("Error creating socketServer");
                 e.printStackTrace();
                 return;
             }
-            network = new Tree(context, id, socketServer);
+            network = new Tree(context, id, server);
         }
     }
 

@@ -24,19 +24,20 @@ public abstract class Server extends NetworkComponent {
     @Override
     public void onEnable(){
         if(isLocal()) {
+            System.out.println("Wow we made it here");
             startServer();
             int componentCount = Framework.getComponents().size();
             semaphore = new Semaphore(0);
 
             Framework.getLogger().info(String.format("Starting Semaphore to wait for devices to connect... (0/%s)", componentCount));
             devices = 0; /* TODO ASK BENEDETTO HOW TO IMPROVE THIS, CAUSE CURRENTLY SEMAPHORE IS NOT USED CORRECTLY. */
-            try {
+            /*try {
                 semaphore.acquire();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             ServerReadyPacket serverReadyPacket = new ServerReadyPacket();
-            sendPacket(serverReadyPacket);
+            sendPacket(serverReadyPacket);*/
         }
     }
 
