@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
@@ -87,7 +88,7 @@ public class CallMethodPacket implements IPacket {
             try {
                 NetworkComponent component = Framework.getNetwork().getComponent(id_to);
                 component.getClientThread().sendPacket(this); //Resend to component.
-            } catch (InvalidIDException e) {
+            } catch (InvalidIDException | DeviceOfflineException e) {
                 e.printStackTrace();
             }
         }

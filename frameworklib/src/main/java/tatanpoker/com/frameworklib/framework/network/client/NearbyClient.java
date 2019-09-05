@@ -34,6 +34,7 @@ public class NearbyClient extends ClientConnection {
     }
 
     private void startDiscovery() {
+        Framework.getLogger().info("Starting client discovery");
         DiscoveryOptions discoveryOptions =
                 new DiscoveryOptions.Builder().setStrategy(Strategy.P2P_STAR).build();
         Nearby.getConnectionsClient(context)
@@ -41,27 +42,32 @@ public class NearbyClient extends ClientConnection {
                 .addOnSuccessListener(
                         (Void unused) -> {
                             // We're discovering!
-
+                            Framework.getLogger().info("Now discovering on endpoint " + endpointId);
                         })
                 .addOnFailureListener(
                         (Exception e) -> {
                             // We're unable to start discovering.
+                            Framework.getLogger().info("Discovery failed on " + endpointId);
+                            e.printStackTrace();
                         });
     }
     private EndpointDiscoveryCallback endpointDiscoveryCallback = new EndpointDiscoveryCallback() {
         @Override
-        public void onEndpointFound(@NonNull String s, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
+        public void onEndpointFound(@NonNull String id, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
             // An endpoint was found. We request a connection to it.
+            Framework.getLogger().info("We've found an endpoint: "+discoveredEndpointInfo.getEndpointName()+","+discoveredEndpointInfo.getServiceId());
             Nearby.getConnectionsClient(context)
                     .requestConnection(endpointId, Framework.getServiceID(), connectionCallback)
                     .addOnSuccessListener(
                             (Void unused) -> {
                                 // We successfully requested a connection. Now both sides
                                 // must accept before the connection is established.
+                                Framework.getLogger().info("Successfully requested a connection: "+discoveredEndpointInfo.getEndpointName());
                             })
                     .addOnFailureListener(
                             (Exception e) -> {
                                 // Nearby Connections failed to request the connection.
+                                Framework.getLogger().info("Failed to request a connection: "+discoveredEndpointInfo.getEndpointName());
                             });
         }
 
@@ -105,7 +111,7 @@ public class NearbyClient extends ClientConnection {
 
         @Override
         public void onConnectionResult(@NonNull String endpointId, @NonNull ConnectionResolution connectionResolution) {
-            if(connectionResolution.getStatus()== Status.RESULT_SUCCESS){
+            if(connectionResolution.getStatus()==Status.RESULT_SUCCESS){
                 Framework.getNetwork().callEvent(new DeviceConnectedEvent(endpointId));
                 serverId = endpointId;
                 Framework.getNetwork().getLocal().setStatus(TreeStatus.ONLINE);

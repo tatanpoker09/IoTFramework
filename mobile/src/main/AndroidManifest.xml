@@ -24,13 +24,15 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.HOME"/>
+                <category android:name="android.intent.category.DEFAULT"/>
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <meta-data
-            android:name="com.google.android.nearby.messages.API_KEY"
+            android:name="com.google.android.nearby.connection.API_KEY"
             android:value="AIzaSyA2ArUyRGOOpXvYwddzzbwa7OUInOj8lRU"
             />
     </application>

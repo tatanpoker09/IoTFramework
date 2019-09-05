@@ -28,7 +28,7 @@ public class NearbyServer extends Server{
     private static final String NICKNAME = "IOTFRAMEWORK";
     private Context context;
     private NearbyConnection nearbyConnection;
-    private String endpointId;
+    private static final String endpointId = "Server";
 
     public NearbyServer(Context context) throws InvalidIDException {
         super(0, -10000);

@@ -44,7 +44,7 @@ public class MainActivity extends Activity {
     private Server server;
     private Alarm alarm;
 
-    private int local_id = 0;
+    private int local_id = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Instantiate and give a different frontend to each.
@@ -66,12 +66,14 @@ public class MainActivity extends Activity {
             setContentView(R.layout.server_layout);
         }
         network.callEvent(new AlarmTriggerEvent("This is a test"));
+
         try {
             alarm = (Alarm) network.getComponent(ALARM_ID);
             camera = (Camera) network.getComponent(CAMERA_ID);
         } catch (InvalidIDException e) {
             e.printStackTrace();
         }
+        Framework.getLogger().info("Finished activity setup.");
     }
 
     public void increaseNumber(View view){

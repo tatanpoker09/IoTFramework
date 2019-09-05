@@ -8,7 +8,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 import tatanpoker.com.frameworklib.components.Device;
 import tatanpoker.com.frameworklib.events.Event;
