@@ -25,7 +25,7 @@ import static tatanpoker.com.frameworklib.framework.Framework.NEARBY;
 /**
  * This is the network.
  */
-public class Tree implements ITree{
+public class Tree {
     /*
     0 = socketServer
     1 = camera
@@ -58,7 +58,6 @@ public class Tree implements ITree{
     }
 
 
-    @Override
     public void registerEvents(EventTrigger eventObserver) {
         if(events == null)
             events = new SparseArray<>();
@@ -80,7 +79,6 @@ public class Tree implements ITree{
         }
     }
 
-    @Override
     public void callEvent(Event event) {
         EventTriggerInfo methods = events.get(event.getClass().hashCode());
         if(methods != null) {
@@ -99,7 +97,6 @@ public class Tree implements ITree{
     /**
      * Called whenever the socketServer has been enabled.
      */
-    @Override
     public void onEnable(){
         instance = this;
         registerComponents(Framework.getComponents());
@@ -120,12 +117,10 @@ public class Tree implements ITree{
         }
     }
 
-    @Override
     public void onDisable() {
         instance = null;
     }
 
-    @Override
     public int getId() {
         return id;
     }
@@ -145,12 +140,10 @@ public class Tree implements ITree{
         return local;
     }
 
-    @Override
     public Server getServer() {
         return server;
     }
 
-    @Override
     public ClientConnection getClient() {
         return client;
     }
@@ -200,7 +193,6 @@ public class Tree implements ITree{
         throw new InvalidIDException("Couldn't find a component by that id.");
     }
 
-    @Override
     public NetworkComponent getComponent(ConnectionThread thread) throws InvalidIDException {
         for(NetworkComponent component : components){
             if(component.getClientThread()!=null) {
@@ -230,7 +222,7 @@ public class Tree implements ITree{
     /**
      * Connects to the server.
      */
-    private void connect(){
+    public void connect() {
         getLocal().setStatus(TreeStatus.CONNECTING);
         client.connect();
     }

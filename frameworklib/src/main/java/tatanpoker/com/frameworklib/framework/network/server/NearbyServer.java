@@ -13,8 +13,6 @@ import com.google.android.gms.nearby.connection.ConnectionInfo;
 import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback;
 import com.google.android.gms.nearby.connection.ConnectionResolution;
 import com.google.android.gms.nearby.connection.Strategy;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 import tatanpoker.com.frameworklib.events.server.DeviceConnectedEvent;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
@@ -22,7 +20,7 @@ import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.TreeStatus;
 import tatanpoker.com.frameworklib.framework.network.NearbyConnection;
-import tatanpoker.com.frameworklib.framework.network.packets.IPacket;
+import tatanpoker.com.frameworklib.framework.network.packets.Packet;
 
 public class NearbyServer extends Server{
     private static final String NICKNAME = "IOTFRAMEWORK";
@@ -37,7 +35,7 @@ public class NearbyServer extends Server{
     }
 
     @Override
-    void sendPacket(IPacket serverReadyPacket) {
+    void sendPacket(Packet serverReadyPacket) {
         for(NetworkComponent component : Framework.getNetwork().getComponents()){
             if(!(component instanceof SocketServer)) {
                 nearbyConnection.sendPacket(serverReadyPacket, component.getClass().getName());

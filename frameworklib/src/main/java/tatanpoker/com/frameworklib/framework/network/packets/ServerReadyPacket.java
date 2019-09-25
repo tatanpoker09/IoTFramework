@@ -7,24 +7,23 @@ import java.net.Socket;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 
-public class ServerReadyPacket implements IPacket {
+public class ServerReadyPacket extends Packet {
     @Override
     public JSONObject toJson() {
         return null;
     }
 
     @Override
-    public void recieve(Socket socket, ConnectionThread clientThread) {
-        Framework.getLogger().info("SocketServer is ready response! We can start now.");
-        Framework.getNetwork().getLocal().onServerReady();
+    public void process(Socket socket, ConnectionThread clientThread) {
+        process();
     }
 
     @Override
-    public void recieve(String endpointId) {
-        recieve();
+    public void process(String endpointId) {
+        process();
     }
 
-    private void recieve(){
+    private void process() {
         Framework.getLogger().info("NearbyServer is ready response! We can start now.");
         Framework.getNetwork().getLocal().onServerReady();
     }

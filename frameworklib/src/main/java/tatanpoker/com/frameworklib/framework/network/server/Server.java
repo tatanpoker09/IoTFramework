@@ -4,7 +4,7 @@ import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.TreeStatus;
-import tatanpoker.com.frameworklib.framework.network.packets.IPacket;
+import tatanpoker.com.frameworklib.framework.network.packets.Packet;
 import tatanpoker.com.frameworklib.framework.network.packets.ServerReadyPacket;
 
 public abstract class Server extends NetworkComponent {
@@ -31,7 +31,7 @@ public abstract class Server extends NetworkComponent {
         }
     }
 
-    abstract void sendPacket(IPacket serverReadyPacket);
+    abstract void sendPacket(Packet serverReadyPacket);
 
     protected abstract void startServer();
 }

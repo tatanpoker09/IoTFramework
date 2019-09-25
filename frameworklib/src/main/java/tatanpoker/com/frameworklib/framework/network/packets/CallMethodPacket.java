@@ -5,9 +5,7 @@ import android.annotation.SuppressLint;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +16,7 @@ import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 
-public class CallMethodPacket implements IPacket {
+public class CallMethodPacket extends Packet {
     private int id_from;
     private int id_to;
     private String method;
@@ -52,16 +50,16 @@ public class CallMethodPacket implements IPacket {
     }
 
     @Override
-    public void recieve(Socket socket, ConnectionThread clientThread) {
-        recieve();
+    public void process(Socket socket, ConnectionThread clientThread) {
+        process();
     }
 
     @Override
-    public void recieve(String endpointId) {
-        recieve();
+    public void process(String endpointId) {
+        process();
     }
 
-    private void recieve(){
+    private void process() {
         Framework.getLogger().info("Recieved CallMethodPacket!");
         //Depends if we're the "id_to", or not.
         if(Framework.getNetwork().getId() == id_to){

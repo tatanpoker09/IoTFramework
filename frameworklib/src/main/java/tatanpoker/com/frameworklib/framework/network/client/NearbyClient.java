@@ -20,7 +20,7 @@ import tatanpoker.com.frameworklib.events.server.DeviceConnectedEvent;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.TreeStatus;
 import tatanpoker.com.frameworklib.framework.network.NearbyConnection;
-import tatanpoker.com.frameworklib.framework.network.packets.IPacket;
+import tatanpoker.com.frameworklib.framework.network.packets.Packet;
 
 public class NearbyClient extends ClientConnection {
     private Context context;
@@ -83,7 +83,7 @@ public class NearbyClient extends ClientConnection {
     }
 
     @Override
-    public void sendPacket(IPacket packet) {
+    public void sendPacket(Packet packet) {
         nearbyConnection.sendPacket(packet, endpointId);
     }
 

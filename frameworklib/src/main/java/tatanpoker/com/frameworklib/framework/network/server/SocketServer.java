@@ -15,9 +15,8 @@ import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
-import tatanpoker.com.frameworklib.framework.Tree;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
-import tatanpoker.com.frameworklib.framework.network.packets.IPacket;
+import tatanpoker.com.frameworklib.framework.network.packets.Packet;
 
 import static tatanpoker.com.frameworklib.framework.Tree.SERVER_IP;
 
@@ -41,7 +40,7 @@ public class SocketServer extends Server {
      * Sends a packet to all connected devices.
      * @param packet
      */
-    public void sendPacket(IPacket packet) {
+    public void sendPacket(Packet packet) {
         for(NetworkComponent component : Framework.getNetwork().getComponents()){
             if(!(component instanceof SocketServer)) {
                 try {
@@ -74,9 +73,9 @@ public class SocketServer extends Server {
                 InetAddress inetAddress = (InetAddress) enumIpAddr.nextElement();
                 if(!inetAddress.isLoopbackAddress()){
                     if (inetAddress instanceof Inet4Address) {
-                        resultIpv4 = inetAddress.getHostAddress().toString();
+                        resultIpv4 = inetAddress.getHostAddress();
                     } else if (inetAddress instanceof Inet6Address) {
-                        resultIpv6 = inetAddress.getHostAddress().toString();
+                        resultIpv6 = inetAddress.getHostAddress();
                     }
                 }
             }

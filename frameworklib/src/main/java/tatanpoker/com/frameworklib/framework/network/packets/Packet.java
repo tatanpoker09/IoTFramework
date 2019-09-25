@@ -1,0 +1,53 @@
+package tatanpoker.com.frameworklib.framework.network.packets;
+
+import org.json.JSONObject;
+
+import java.io.Serializable;
+import java.net.Socket;
+import java.util.List;
+import java.util.UUID;
+
+import tatanpoker.com.frameworklib.framework.Framework;
+import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
+
+public abstract class Packet implements Serializable {
+    private UUID uuid = UUID.randomUUID(); //Everytime a packet is created, it is assigned a random uuid.
+
+    abstract JSONObject toJson();
+
+    /**
+     * Called whenever a packet is recieved from a socket.
+     * Only processes packets once.
+     *
+     * @param socket
+     */
+    public void recieve(Socket socket, ConnectionThread clientThread) {
+        if (isNotProcessed()) {
+            process(socket, clientThread);
+            PacketEntity packetEntity = new PacketEntity(uuid.toString(), getClass().getName(), false);
+            Framework.getDatabase().packetDao().insert(packetEntity);
+        }
+    }
+
+    public void recieve(String endpointId) {
+        if (isNotProcessed()) {
+            process(endpointId);
+            PacketEntity packetEntity = new PacketEntity(uuid.toString(), getClass().getName(), false);
+            Framework.getDatabase().packetDao().insert(packetEntity);
+        }
+    }
+
+    abstract void process(String endpointId);
+
+    abstract void process(Socket socket, ConnectionThread clientThread);
+
+    /**
+     * Checks if a packet has been processed already.
+     *
+     * @return true if the packet was processed
+     */
+    private boolean isNotProcessed() {
+        final List<PacketEntity> packets = Framework.getDatabase().packetDao().getByUUID(uuid.toString());
+        return packets.size() == 0; //This means the packet was not found, therefore it was not processed.
+    }
+}

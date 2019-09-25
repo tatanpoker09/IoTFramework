@@ -16,7 +16,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import tatanpoker.com.frameworklib.framework.Framework;
-import tatanpoker.com.frameworklib.framework.network.packets.IPacket;
+import tatanpoker.com.frameworklib.framework.network.packets.Packet;
 
 public class NearbyConnection extends PayloadCallback {
     private Context context;
@@ -28,14 +28,14 @@ public class NearbyConnection extends PayloadCallback {
     @Override
     public void onPayloadReceived(@NonNull String endpointId, @NonNull Payload payload) {
         try {
-            IPacket packet = (IPacket) deserialize(payload.asBytes());
+            Packet packet = (Packet) deserialize(payload.asBytes());
             packet.recieve(endpointId);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    public void sendPacket(IPacket packet, String endpointId){
+    public void sendPacket(Packet packet, String endpointId) {
         Framework.getLogger().info("Sending packet: "+packet.getClass().getName()+" through Nearby.");
         try {
             Nearby.getConnectionsClient(context).sendPayload(endpointId, Payload.fromBytes(serialize(packet)));

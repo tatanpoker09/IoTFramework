@@ -54,7 +54,7 @@ public class MainActivity extends Activity {
 
         Framework.startNetwork(this, local_id);
 
-        Tree network = (Tree)Framework.getNetwork();
+        Tree network = Framework.getNetwork();
 
         network.registerEvents(new ServerEvents());
 

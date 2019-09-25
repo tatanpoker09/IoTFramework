@@ -13,6 +13,7 @@ import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.Tree;
 import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
+
 import static tatanpoker.com.frameworklib.framework.Framework.ALARM_ID;
 import static tatanpoker.com.frameworklib.framework.Framework.CAMERA_ID;
 
@@ -53,7 +54,7 @@ public class MainActivity extends Activity {
 
         Framework.startNetwork(this, local_id);
 
-        Tree network = (Tree)Framework.getNetwork();
+        Tree network = Framework.getNetwork();
 
         network.registerEvents(new ServerEvents());
 

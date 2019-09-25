@@ -2,12 +2,10 @@ package tatanpoker.com.frameworklib.framework;
 
 import android.content.Context;
 
-import tatanpoker.com.frameworklib.framework.network.NearbyConnection;
-import tatanpoker.com.frameworklib.framework.network.server.Server;
-import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
 import tatanpoker.com.frameworklib.events.EventTrigger;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
+import tatanpoker.com.frameworklib.framework.network.server.Server;
 
 public abstract class NetworkComponent implements Component, EventTrigger {
 
@@ -15,7 +13,6 @@ public abstract class NetworkComponent implements Component, EventTrigger {
     private int layout;
     private ConnectionThread clientThread;
 
-    private boolean connected;
     protected Context context;
 
     private TreeStatus treeStatus = TreeStatus.STARTING;
@@ -52,9 +49,6 @@ public abstract class NetworkComponent implements Component, EventTrigger {
         return false;
     }
 
-    public void setConnected(boolean connected) {
-        this.connected = connected;
-    }
 
     public ConnectionThread getClientThread() {
         return clientThread;

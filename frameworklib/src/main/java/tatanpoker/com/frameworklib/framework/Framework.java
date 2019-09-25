@@ -3,15 +3,18 @@ package tatanpoker.com.frameworklib.framework;
 import android.content.Context;
 import android.util.Pair;
 
+import androidx.room.Room;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
+import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
+import tatanpoker.com.frameworklib.framework.network.packets.PacketDatabase;
 import tatanpoker.com.frameworklib.framework.network.server.NearbyServer;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
 import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
-import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 
 /**
  * Represents the framework, which deals with automation and encapsulation, code generation, etc.
@@ -20,7 +23,8 @@ public class Framework {
     public static final int CAMERA_ID = 1;
     public static final int ALARM_ID = 2;
     private static final String SERVICE_ID = "tatanpoker09.com.FrameworkIoT";
-    private static ITree network; //This represents the IoT network. Singleton
+    private static Tree network; //This represents the IoT network. Singleton
+    private static PacketDatabase db;
     private static List<Pair<Class, Integer>> devices;
 
     private static Logger logger;
@@ -29,6 +33,7 @@ public class Framework {
 
     public static void startNetwork(Context context, int id) {
         if(network == null){ //Singleton.
+            initalizeDatabase(context);
             Server server;
             try {
                 if(NEARBY) {
@@ -43,6 +48,11 @@ public class Framework {
             }
             network = new Tree(context, id, server);
         }
+    }
+
+    private static void initalizeDatabase(Context context) {
+        db = Room.databaseBuilder(context,
+                PacketDatabase.class, "PacketPersistance").build();
     }
 
     public static void networkEnable(){
@@ -90,7 +100,11 @@ public class Framework {
         return SERVICE_ID;
     }
 
-    public static ITree getNetwork() {
+    public static Tree getNetwork() {
         return network;
+    }
+
+    public static PacketDatabase getDatabase() {
+        return db;
     }
 }

@@ -10,7 +10,8 @@ import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
-import tatanpoker.com.frameworklib.framework.network.packets.IPacket;
+import tatanpoker.com.frameworklib.framework.TreeStatus;
+import tatanpoker.com.frameworklib.framework.network.packets.Packet;
 
 public class ConnectionThread extends Thread {
     private Socket socket;
@@ -31,7 +32,7 @@ public class ConnectionThread extends Thread {
         }
         while (!Thread.currentThread().isInterrupted()) {
             try {
-                IPacket packet = (IPacket) objectInputStream.readObject();
+                Packet packet = (Packet) objectInputStream.readObject();
                 packet.recieve(socket, this);
             } catch (IOException e) {
                 Framework.getLogger().severe("Extra packet sent(?");
@@ -52,7 +53,8 @@ public class ConnectionThread extends Thread {
             if(component!=null) {
                 Framework.getLogger().info(String.format("Disconnecting component with id %d", component.getId()));
                 component.setClientThread(null);
-                component.setConnected(false);
+                component.setStatus(TreeStatus.OFFLINE);
+                Framework.getNetwork().connect();
             }
         } catch (InvalidIDException e) {
             Framework.getLogger().severe("Error disconnecting unknown component?");
@@ -60,7 +62,7 @@ public class ConnectionThread extends Thread {
         }
     }
 
-    public void sendPacket(IPacket recognizePacket) throws DeviceOfflineException {
+    public void sendPacket(Packet recognizePacket) throws DeviceOfflineException {
         if (socket.isConnected()) {
             PacketSender packetSender = new PacketSender(recognizePacket, objectOutputStream);
             Thread packetThread = new Thread(packetSender);
@@ -71,13 +73,13 @@ public class ConnectionThread extends Thread {
     }
 
     class PacketSender implements Runnable {
-        private IPacket packet;
+        private Packet packet;
 
-        PacketSender(IPacket packet, ObjectOutputStream oos){
+        PacketSender(Packet packet, ObjectOutputStream oos) {
             this.packet = packet;
         }
 
-        public synchronized void sendPacket(IPacket packet) throws IOException {
+        public synchronized void sendPacket(Packet packet) throws IOException {
             if (!socket.isClosed()) {
                 if(objectOutputStream == null){
                     objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
