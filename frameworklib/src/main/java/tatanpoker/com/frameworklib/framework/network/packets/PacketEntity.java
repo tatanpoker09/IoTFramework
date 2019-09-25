@@ -1,10 +1,9 @@
 package tatanpoker.com.frameworklib.framework.network.packets;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
-import java.util.UUID;
 
 @Entity(tableName = "packets")
 public class PacketEntity {
@@ -12,6 +11,7 @@ public class PacketEntity {
     Packet ID
      */
     @PrimaryKey
+    @NonNull
     public String pid;
 
     @ColumnInfo(name = "packetName")
@@ -24,9 +24,5 @@ public class PacketEntity {
         this.pid = pid;
         this.packetName = packetName;
         this.status = status;
-    }
-
-    public PacketEntity(String packetName) {
-        this(UUID.randomUUID().toString(), packetName, false);
     }
 }

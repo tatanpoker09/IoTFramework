@@ -4,7 +4,6 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.net.Socket;
-import java.util.List;
 import java.util.UUID;
 
 import tatanpoker.com.frameworklib.framework.Framework;
@@ -47,7 +46,7 @@ public abstract class Packet implements Serializable {
      * @return true if the packet was processed
      */
     private boolean isNotProcessed() {
-        final List<PacketEntity> packets = Framework.getDatabase().packetDao().getByUUID(uuid.toString());
-        return packets.size() == 0; //This means the packet was not found, therefore it was not processed.
+        final PacketEntity packet = Framework.getDatabase().packetDao().getByUUID(uuid.toString());
+        return packet == null; //This means the packet was not found, therefore it was not processed.
     }
 }
