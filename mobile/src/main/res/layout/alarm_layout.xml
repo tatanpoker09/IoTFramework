@@ -10,10 +10,22 @@
         android:id="@+id/increaseButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="128dp"
+        android:layout_marginStart="156dp"
+        android:layout_marginTop="408dp"
+        android:onClick="sendText"
+        android:text="@string/sendButtonText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/textBoxSend"
+        android:layout_width="277dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="64dp"
         android:layout_marginTop="340dp"
-        android:onClick="increaseNumber"
-        android:text="@string/increaseButtonText"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="@string/enter_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -3,6 +3,7 @@ package iotframework;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import iotframework.alarm.Alarm;
 import iotframework.alarm.AlarmStub;
@@ -74,8 +75,10 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void increaseNumber(View view){
-        camera.increaseNumber(1);
+    public void sendText(View view) {
+        TextView textView = findViewById(R.id.textBoxSend);
+        String text = textView.getText().toString();
+        camera.changeText(text);
     }
 
     public Alarm getAlarm() {

@@ -42,6 +42,7 @@ public class Camera extends NetworkComponent {
         }
     }
 
+    /*
     public void increaseNumber(Integer amount) {
         TextView textView = ((Activity) context).findViewById(R.id.cameraTriggerCount);
         String initialCameraTextValue = context.getResources().getString(R.string.cameraPrintDefault);
@@ -49,5 +50,11 @@ public class Camera extends NetworkComponent {
         Framework.getLogger().info(sCount);
         int count = Integer.parseInt(sCount) + amount;
         textView.setText(initialCameraTextValue+" "+count);
+    }*/
+
+    public void changeText(String text) {
+        TextView textView = ((Activity) context).findViewById(R.id.recievedText);
+        String initialCameraTextValue = context.getResources().getString(R.string.cameraRecievedText);
+        textView.setText(initialCameraTextValue + text);
     }
 }
