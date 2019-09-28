@@ -1,11 +1,12 @@
-package tatanpoker.com.frameworklib.caps;
+package com.example.annotationtest;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.TYPE) // on class level
-@Retention(RetentionPolicy.SOURCE) // not needed at runtime
+@Retention(RetentionPolicy.SOURCE)
+@Target(ElementType.TYPE)
 public @interface CustomPrinter {
+    String text();
 }
