@@ -52,11 +52,11 @@ public class PrinterProcessor extends AbstractProcessor {
                     .addStatement("$T.out.println($S)", System.class, text)
                     .build();
             navigatorClass.addMethod(intentMethod);
-            /**
-             * 3- Write generated class to a file
+            /*
+              3- Write generated class to a file
              */
             try {
-                JavaFile.builder("com.annotationsample", navigatorClass.build()).build().writeTo(filer);
+                JavaFile.builder("tatanpoker.com.iotframework.annotation", navigatorClass.build()).build().writeTo(filer);
             } catch (IOException e) {
                 e.printStackTrace();
             }
