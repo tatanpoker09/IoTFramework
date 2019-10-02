@@ -1,10 +1,7 @@
 package tatanpoker.com.frameworklib.events.server;
 
-import com.google.android.gms.nearby.connection.ConnectionInfo;
-
 import java.net.InetAddress;
 
-import tatanpoker.com.frameworklib.components.Device;
 import tatanpoker.com.frameworklib.events.Event;
 import tatanpoker.com.frameworklib.framework.Framework;
 

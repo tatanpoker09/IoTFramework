@@ -6,7 +6,6 @@ import android.widget.TextView;
 
 import iotframework.R;
 import iotframework.alarm.Alarm;
-import tatanpoker.com.frameworklib.components.Device;
 import tatanpoker.com.frameworklib.components.Vector3;
 import tatanpoker.com.frameworklib.events.EventInfo;
 import tatanpoker.com.frameworklib.events.EventPriority;
@@ -15,10 +14,11 @@ import tatanpoker.com.frameworklib.events.camera.CameraMovementEvent;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
+import tatanpoker.com.tree.annotations.Device;
 
 import static tatanpoker.com.frameworklib.framework.Framework.ALARM_ID;
 
-@Device(id=Framework.CAMERA_ID)
+@Device(id = Framework.CAMERA_ID, stub = true)
 public class Camera extends NetworkComponent {
     public Camera(int id, int layout, Context context) throws InvalidIDException {
         super(id, layout, context);
@@ -53,8 +53,10 @@ public class Camera extends NetworkComponent {
     }*/
 
     public void changeText(String text) {
-        TextView textView = ((Activity) context).findViewById(R.id.recievedText);
-        String initialCameraTextValue = context.getResources().getString(R.string.cameraRecievedText);
-        textView.setText(initialCameraTextValue + text);
+        ((Activity) context).runOnUiThread(() -> {
+            TextView textView = ((Activity) context).findViewById(R.id.recievedText);
+            String initialCameraTextValue = context.getResources().getString(R.string.cameraRecievedText);
+            textView.setText(initialCameraTextValue + text);
+        });
     }
 }

@@ -6,14 +6,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import iotframework.alarm.Alarm;
-import iotframework.alarm.AlarmStub;
 import iotframework.camera.Camera;
-import iotframework.camera.CameraStub;
 import tatanpoker.com.frameworklib.events.alarm.AlarmTriggerEvent;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.Tree;
 import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
+import tatanpoker.com.iotframework.annotation.AlarmStub;
+import tatanpoker.com.iotframework.annotation.CameraStub;
 
 import static tatanpoker.com.frameworklib.framework.Framework.ALARM_ID;
 import static tatanpoker.com.frameworklib.framework.Framework.CAMERA_ID;
@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
     private SocketServer socketServer;
     private Alarm alarm;
 
-    private int local_id = 0;
+    private int local_id = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Instantiate and give a different frontend to each.

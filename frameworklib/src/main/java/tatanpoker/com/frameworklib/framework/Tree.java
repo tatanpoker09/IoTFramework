@@ -9,7 +9,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import tatanpoker.com.frameworklib.components.Device;
 import tatanpoker.com.frameworklib.events.Event;
 import tatanpoker.com.frameworklib.events.EventInfo;
 import tatanpoker.com.frameworklib.events.EventTrigger;
@@ -19,6 +18,7 @@ import tatanpoker.com.frameworklib.framework.network.client.ClientConnection;
 import tatanpoker.com.frameworklib.framework.network.client.NearbyClient;
 import tatanpoker.com.frameworklib.framework.network.client.SocketClient;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
+import tatanpoker.com.tree.annotations.Device;
 
 import static tatanpoker.com.frameworklib.framework.Framework.NEARBY;
 
@@ -39,7 +39,7 @@ public class Tree {
     private NetworkComponent local;
     private SparseArray<EventTriggerInfo> events; //key = hashcode for the event object.
 
-    public static final String SERVER_IP = "192.168.1.28";
+    public static final String SERVER_IP = "192.168.1.31";
 
     private List<NetworkComponent> components;
     private ClientConnection client;
@@ -129,6 +129,8 @@ public class Tree {
     Works with kind of a dynamic programming function.
      */
     public NetworkComponent getLocal() {
+        System.out.println("Getting local.");
+        System.out.println("Components: " + components.size());
         if (local == null) {
             for (NetworkComponent component : components) {
                 if (component.getId() == id) {
@@ -153,7 +155,6 @@ public class Tree {
         Framework.getLogger().info("Registering Components");
         if(components == null)
             components = new ArrayList<>();
-
         for(Pair<Class, Integer> classIntegerPair : devices){
             Class classe = classIntegerPair.first;
             int layout = classIntegerPair.second;

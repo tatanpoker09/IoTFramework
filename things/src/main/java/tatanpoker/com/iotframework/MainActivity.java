@@ -3,8 +3,7 @@ package tatanpoker.com.iotframework;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
-
-import com.example.annotationtest.CustomPrinter;
+import android.widget.TextView;
 
 import tatanpoker.com.frameworklib.events.alarm.AlarmTriggerEvent;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
@@ -12,10 +11,9 @@ import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.Tree;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
 import tatanpoker.com.iotframework.alarm.Alarm;
-import tatanpoker.com.iotframework.alarm.AlarmStub;
-import tatanpoker.com.iotframework.annotation.PrinterImpl;
+import tatanpoker.com.iotframework.annotation.AlarmStub;
+import tatanpoker.com.iotframework.annotation.CameraStub;
 import tatanpoker.com.iotframework.camera.Camera;
-import tatanpoker.com.iotframework.camera.CameraStub;
 
 import static tatanpoker.com.frameworklib.framework.Framework.ALARM_ID;
 import static tatanpoker.com.frameworklib.framework.Framework.CAMERA_ID;
@@ -42,7 +40,6 @@ import static tatanpoker.com.frameworklib.framework.Framework.CAMERA_ID;
 /*
 CUSTOM ANNOTATION PROCESSOR.
  */
-@CustomPrinter(text = "Test Annotation Processor")
 public class MainActivity extends Activity {
     private Camera camera;
     private Server server;
@@ -78,12 +75,18 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
         Framework.getLogger().info("Finished activity setup.");
-        PrinterImpl.printText();
     }
 
-    public void increaseNumber(View view){
-        camera.increaseNumber(1);
+    public void sendText(View view) {
+        TextView textView = findViewById(R.id.textBoxSend);
+        String text = textView.getText().toString();
+        camera.changeText(text);
     }
+
+
+    /*public void increaseNumber(View view){
+        camera.increaseNumber(1);
+    }*/
 
     public Alarm getAlarm() {
         return alarm;

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.widget.TextView;
 
-import tatanpoker.com.frameworklib.components.Device;
 import tatanpoker.com.frameworklib.components.Vector3;
 import tatanpoker.com.frameworklib.events.EventInfo;
 import tatanpoker.com.frameworklib.events.EventPriority;
@@ -15,10 +14,11 @@ import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.iotframework.R;
 import tatanpoker.com.iotframework.alarm.Alarm;
+import tatanpoker.com.tree.annotations.Device;
 
 import static tatanpoker.com.frameworklib.framework.Framework.ALARM_ID;
 
-@Device(id=Framework.CAMERA_ID)
+@Device(id = Framework.CAMERA_ID, stub = true)
 public class Camera extends NetworkComponent {
     private int triggerCount;
     public Camera(int id, int layout, Context context) throws InvalidIDException {
@@ -43,16 +43,22 @@ public class Camera extends NetworkComponent {
             e.printStackTrace();
         }
     }
-
+    /*
     public void increaseNumber(final Integer amount) {
-        ((Activity)context).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                TextView textView = ((Activity) context).findViewById(R.id.cameraTriggerCount);
-                String initialCameraTextValue = context.getResources().getString(R.string.cameraPrintDefault);
-                triggerCount +=amount;
-                textView.setText(initialCameraTextValue+" "+triggerCount);
-            }
+        ((Activity)context).runOnUiThread(() -> {
+            TextView textView = ((Activity) context).findViewById(R.id.cameraTriggerCount);
+            String initialCameraTextValue = context.getResources().getString(R.string.cameraPrintDefault);
+            triggerCount +=amount;
+            textView.setText(initialCameraTextValue+" "+triggerCount);
+        });
+    }*/
+
+
+    public void changeText(String text) {
+        ((Activity) context).runOnUiThread(() -> {
+            TextView textView = ((Activity) context).findViewById(R.id.recievedText);
+            String initialCameraTextValue = context.getResources().getString(R.string.cameraRecievedText);
+            textView.setText(initialCameraTextValue + text);
         });
     }
 }

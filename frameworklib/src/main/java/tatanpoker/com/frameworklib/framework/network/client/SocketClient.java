@@ -56,9 +56,9 @@ class ConnectionRunnable implements Runnable{
             socketClient.clientThread = new ConnectionThread(socketClient.socket);
             socketClient.sendPacket(recognizePacket);
             Framework.getNetwork().getLocal().setStatus(TreeStatus.ONLINE);
+            socketClient.clientThread.start();
         } catch (IOException | InvalidIDException e) {
             e.printStackTrace();
         }
-        socketClient.clientThread.start();
     }
 }

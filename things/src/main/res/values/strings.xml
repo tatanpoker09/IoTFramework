@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">IoTFramework</string>
     <string name="cameraPrintDefault">Trigger count:</string>
-    <string name="increaseButtonText">Increase Number</string>
+    <string name="sendButtonText">Send Text</string>
+    <string name="cameraRecievedText">Received Text: </string>
+    <string name="enter_text">Enter Text:</string>
 </resources>

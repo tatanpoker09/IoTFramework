@@ -12,6 +12,7 @@ import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.TreeStatus;
 import tatanpoker.com.frameworklib.framework.network.packets.Packet;
+import tatanpoker.com.frameworklib.framework.network.server.Server;
 
 public class ConnectionThread extends Thread {
     private Socket socket;
@@ -54,7 +55,11 @@ public class ConnectionThread extends Thread {
                 Framework.getLogger().info(String.format("Disconnecting component with id %d", component.getId()));
                 component.setClientThread(null);
                 component.setStatus(TreeStatus.OFFLINE);
-                Framework.getNetwork().connect();
+                if (!(Framework.getNetwork().getLocal() instanceof Server)) {
+                    Framework.getNetwork().connect();
+                } else {
+                    Framework.getNetwork().getServer().devices -= 1;
+                }
             }
         } catch (InvalidIDException e) {
             Framework.getLogger().severe("Error disconnecting unknown component?");

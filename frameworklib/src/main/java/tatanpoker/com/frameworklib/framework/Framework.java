@@ -29,7 +29,7 @@ public class Framework {
 
     private static Logger logger;
 
-    public static final boolean NEARBY = true;
+    public static final boolean NEARBY = false;
 
     public static void startNetwork(Context context, int id) {
         if(network == null){ //Singleton.

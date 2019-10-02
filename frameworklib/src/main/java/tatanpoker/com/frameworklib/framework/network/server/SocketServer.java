@@ -9,7 +9,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Enumeration;
 
-import tatanpoker.com.frameworklib.components.Device;
 import tatanpoker.com.frameworklib.events.server.DeviceConnectedEvent;
 import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
@@ -17,6 +16,7 @@ import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.packets.Packet;
+import tatanpoker.com.tree.annotations.Device;
 
 import static tatanpoker.com.frameworklib.framework.Tree.SERVER_IP;
 
@@ -24,11 +24,11 @@ import static tatanpoker.com.frameworklib.framework.Tree.SERVER_IP;
 /*
 Based on https://examples.javacodegeeks.com/android/core/socket-core/android-socket-example/
  */
-@Device(id=0)
+@Device(id = 0, stub = false)
 public class SocketServer extends Server {
     private ServerSocket serverSocket;
     private ServerThread serverThread = null;
-    private static final boolean USE_USER_GIVEN_IP = true;
+    private static final boolean USE_USER_GIVEN_IP = false;
 
 
     public SocketServer() throws InvalidIDException {
@@ -43,10 +43,12 @@ public class SocketServer extends Server {
     public void sendPacket(Packet packet) {
         for(NetworkComponent component : Framework.getNetwork().getComponents()){
             if(!(component instanceof SocketServer)) {
-                try {
-                    component.getClientThread().sendPacket(packet);
-                } catch (DeviceOfflineException e) {
-                    e.printStackTrace();
+                if (component.getClientThread() != null) { //We make sure we're online.
+                    try {
+                        component.getClientThread().sendPacket(packet);
+                    } catch (DeviceOfflineException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

@@ -31,5 +31,6 @@ dependencies {
     implementation 'com.squareup:javapoet:1.11.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation project(path: ':frameworklib')
+    annotationProcessor project(":tree-compiler")
 }
 
