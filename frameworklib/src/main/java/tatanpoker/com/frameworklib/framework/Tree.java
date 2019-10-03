@@ -1,8 +1,11 @@
 package tatanpoker.com.frameworklib.framework;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Pair;
 import android.util.SparseArray;
+
+import androidx.annotation.NonNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -227,6 +230,73 @@ public class Tree {
         getLocal().setStatus(TreeStatus.CONNECTING);
         client.connect();
     }
+
+    public static class DevicesBuilder<T extends TreeDeviceManager> {
+        private static final String DEVICES_IMPL_SUFFIX = "_Impl";
+        private final Class<T> mDeviceManagerClass;
+        private final Context mContext;
+
+        DevicesBuilder(@NonNull Context context, @NonNull Class<T> klass) {
+            mContext = context;
+            mDeviceManagerClass = klass;
+        }
+
+        /**
+         * Creates the databases and initializes it.
+         * <p>
+         * By default, all RoomDatabases use in memory storage for TEMP tables and enables recursive
+         * triggers.
+         *
+         * @return A new database instance.
+         */
+        @SuppressLint("RestrictedApi")
+        @NonNull
+        public T build() {
+            //noinspection ConstantConditions
+            if (mContext == null) {
+                throw new IllegalArgumentException("Cannot provide null context for the database.");
+            }
+            //noinspection ConstantConditions
+            if (mDeviceManagerClass == null) {
+                throw new IllegalArgumentException("Must provide an abstract class that"
+                        + " extends TreeDeviceManager");
+            }
+
+            T deviceManager = getGeneratedImplementation(mDeviceManagerClass);
+            deviceManager.init();
+            return deviceManager;
+        }
+
+        /*
+        TODO check method.
+         */
+        @NonNull
+        static <T, C> T getGeneratedImplementation(Class<C> klass) {
+            final String fullPackage = klass.getPackage().getName();
+            String name = klass.getCanonicalName();
+            final String postPackageName = fullPackage.isEmpty()
+                    ? name
+                    : (name.substring(fullPackage.length() + 1));
+            final String implName = postPackageName.replace('.', '_') + DevicesBuilder.DEVICES_IMPL_SUFFIX;
+            //noinspection TryWithIdenticalCatches
+            try {
+
+                @SuppressWarnings("unchecked") final Class<T> aClass = (Class<T>) Class.forName(
+                        fullPackage.isEmpty() ? implName : fullPackage + "." + implName);
+                return aClass.newInstance();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("cannot find implementation for "
+                        + klass.getCanonicalName() + ". " + implName + " does not exist");
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("Cannot access the constructor"
+                        + klass.getCanonicalName());
+            } catch (InstantiationException e) {
+                throw new RuntimeException("Failed to create an instance of "
+                        + klass.getCanonicalName());
+            }
+        }
+    }
+
 }
 class EventTriggerInfo{
     private List<Method> invokes;

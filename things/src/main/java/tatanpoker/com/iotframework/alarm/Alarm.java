@@ -10,11 +10,12 @@ import tatanpoker.com.frameworklib.events.alarm.AlarmTriggerEvent;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
+import tatanpoker.com.iotframework.R;
 import tatanpoker.com.tree.annotations.Device;
 
 import static tatanpoker.com.frameworklib.framework.Framework.ALARM_ID;
 
-@Device(id = ALARM_ID, stub = true)
+@Device(id = ALARM_ID, stub = true, layout = R.layout.alarm_layout)
 public class Alarm extends NetworkComponent {
     public Alarm(int id, int layout, Context context) throws InvalidIDException {
         super(id, layout, context);

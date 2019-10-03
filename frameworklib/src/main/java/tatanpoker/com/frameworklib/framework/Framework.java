@@ -3,10 +3,10 @@ package tatanpoker.com.frameworklib.framework;
 import android.content.Context;
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
 import androidx.room.Room;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -75,26 +75,30 @@ public class Framework {
         return logger;
     }
 
+    public static <T extends TreeDeviceManager> T registerComponents(Context context, Class<T> deviceManagerClass) {
+        return getDevicesBuilder(context, deviceManagerClass).build();
+    }
+
     /*
     TODO FIX THE PAIR THING.
      */
-    public static void registerComponents(Pair<Class,Integer>... components) {
+
+
+    @NonNull
+    private static <T extends TreeDeviceManager> Tree.DevicesBuilder<T> getDevicesBuilder(
+            @NonNull Context context, @NonNull Class<T> deviceManager) {
         if (devices == null) {
             devices = new ArrayList<>();
         }
-        devices.addAll(Arrays.asList(components));
+
+        return new Tree.DevicesBuilder<>(context, deviceManager);
     }
+
 
     public static List<Pair<Class,Integer>> getComponents() {
         return devices;
     }
 
-    public static void registerComponent(Class<?> stubClass, int layout) {
-        if (devices == null) {
-            devices = new ArrayList<>();
-        }
-        devices.add(new Pair<>(stubClass, layout));
-    }
 
     public static String getServiceID() {
         return SERVICE_ID;

@@ -18,7 +18,7 @@ import tatanpoker.com.tree.annotations.Device;
 
 import static tatanpoker.com.frameworklib.framework.Framework.ALARM_ID;
 
-@Device(id = Framework.CAMERA_ID, stub = true)
+@Device(id = Framework.CAMERA_ID, stub = true, layout = R.layout.camera_layout)
 public class Camera extends NetworkComponent {
     private int triggerCount;
     public Camera(int id, int layout, Context context) throws InvalidIDException {
