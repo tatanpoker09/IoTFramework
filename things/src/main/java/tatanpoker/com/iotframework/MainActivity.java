@@ -39,35 +39,23 @@ public class MainActivity extends Activity {
     private Server server;
     private Alarm alarm;
 
-    private int local_id = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Instantiate and give a different frontend to each.
         super.onCreate(savedInstanceState);
 
-        Framework.startNetwork(this, local_id);
-        Devices deviceManager = Framework.registerComponents(this, Devices.class);
+        Framework.startNetwork(this);
+        Devices deviceManager = Framework.registerComponents(Devices.class);
         Tree network = Framework.getNetwork();
         network.registerEvents(new ServerEvents());
         Framework.networkEnable();
 
-        //This should be done internally.
-        if(local_id != 0) {// 0 = SERVER_ID.
-            setContentView(network.getLocal().getLayout());
-        } else {
-            setContentView(R.layout.server_layout);
-        }
         network.callEvent(new AlarmTriggerEvent("This is a test"));
-        /* OLD FORMAT
-        try {
-            alarm = (Alarm) network.getComponent(ALARM_ID);
-            camera = (Camera) network.getComponent(CAMERA_ID);
-        } catch (InvalidIDException e) {
-            e.printStackTrace();
-        } */
-        //New format: 
+
         alarm = deviceManager.getAlarm();
         camera = deviceManager.getCamera();
+
+
         Framework.getLogger().info("Finished activity setup.");
     }
 
@@ -76,11 +64,6 @@ public class MainActivity extends Activity {
         String text = textView.getText().toString();
         camera.changeText(text);
     }
-
-
-    /*public void increaseNumber(View view){
-        camera.increaseNumber(1);
-    }*/
 
     public Alarm getAlarm() {
         return alarm;

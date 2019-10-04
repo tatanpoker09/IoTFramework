@@ -1,8 +1,8 @@
 package tatanpoker.com.frameworklib.framework;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
-import android.util.Pair;
 import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
@@ -21,7 +21,6 @@ import tatanpoker.com.frameworklib.framework.network.client.ClientConnection;
 import tatanpoker.com.frameworklib.framework.network.client.NearbyClient;
 import tatanpoker.com.frameworklib.framework.network.client.SocketClient;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
-import tatanpoker.com.tree.annotations.Device;
 
 import static tatanpoker.com.frameworklib.framework.Framework.NEARBY;
 
@@ -44,6 +43,7 @@ public class Tree {
 
     public static final String SERVER_IP = "192.168.1.31";
 
+
     private List<NetworkComponent> components;
     private ClientConnection client;
 
@@ -52,9 +52,8 @@ public class Tree {
     private Context context;
 
 
-    Tree(Context context, int id, Server server) {
+    Tree(Context context, Server server) {
         this.context = context;
-        this.id = id;
         components = new ArrayList<>();
         this.server = server;
         components.add(server);
@@ -102,7 +101,9 @@ public class Tree {
      */
     public void onEnable(){
         instance = this;
-        registerComponents(Framework.getComponents());
+        if (!(local instanceof Server)) {
+            ((Activity) context).setContentView(local.getLayout());
+        }
         getLocal().setStatus(TreeStatus.ENABLING);
 
         for(Component component : components){
@@ -153,7 +154,7 @@ public class Tree {
         return client;
     }
 
-
+    /*
     private void registerComponents(List<Pair<Class, Integer>> devices){
         Framework.getLogger().info("Registering Components");
         if(components == null)
@@ -186,7 +187,7 @@ public class Tree {
                 Framework.getLogger().info( "Adding component: "+component.getId());
             }
         }
-    }
+    }*/
 
 
     public NetworkComponent getComponent(int id) throws InvalidIDException {
@@ -222,6 +223,10 @@ public class Tree {
         return components;
     }
 
+    void setComponents(List<NetworkComponent> components) {
+        this.components = components;
+    }
+
 
     /**
      * Connects to the server.
@@ -231,13 +236,15 @@ public class Tree {
         client.connect();
     }
 
+    public void setLocal(NetworkComponent local) {
+        this.local = local;
+    }
+
     public static class DevicesBuilder<T extends TreeDeviceManager> {
         private static final String DEVICES_IMPL_SUFFIX = "_Impl";
         private final Class<T> mDeviceManagerClass;
-        private final Context mContext;
 
-        DevicesBuilder(@NonNull Context context, @NonNull Class<T> klass) {
-            mContext = context;
+        DevicesBuilder(@NonNull Class<T> klass) {
             mDeviceManagerClass = klass;
         }
 
@@ -252,10 +259,6 @@ public class Tree {
         @SuppressLint("RestrictedApi")
         @NonNull
         public T build() {
-            //noinspection ConstantConditions
-            if (mContext == null) {
-                throw new IllegalArgumentException("Cannot provide null context for the database.");
-            }
             //noinspection ConstantConditions
             if (mDeviceManagerClass == null) {
                 throw new IllegalArgumentException("Must provide an abstract class that"

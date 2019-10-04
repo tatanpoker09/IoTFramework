@@ -1,11 +1,8 @@
-package iotframework.camera;
+package tatanpoker.com.iotframework.camera;
 
 import android.app.Activity;
-import android.content.Context;
 import android.widget.TextView;
 
-import iotframework.R;
-import iotframework.alarm.Alarm;
 import tatanpoker.com.frameworklib.components.Vector3;
 import tatanpoker.com.frameworklib.events.EventInfo;
 import tatanpoker.com.frameworklib.events.EventPriority;
@@ -14,14 +11,19 @@ import tatanpoker.com.frameworklib.events.camera.CameraMovementEvent;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
+import tatanpoker.com.iotframework.R;
+import tatanpoker.com.iotframework.alarm.Alarm;
 import tatanpoker.com.tree.annotations.Device;
 
 import static tatanpoker.com.frameworklib.framework.Framework.ALARM_ID;
 
-@Device(id = Framework.CAMERA_ID, stub = true)
+@Device(id = Framework.CAMERA_ID, layout = R.layout.camera_layout)
 public class Camera extends NetworkComponent {
-    public Camera(int id, int layout, Context context) throws InvalidIDException {
-        super(id, layout, context);
+    private int triggerCount;
+
+    public Camera(int id, int layout) throws InvalidIDException {
+        super(id, layout);
+        triggerCount = 0;
     }
 
     public void cameraTest(){
@@ -41,16 +43,16 @@ public class Camera extends NetworkComponent {
             e.printStackTrace();
         }
     }
-
     /*
-    public void increaseNumber(Integer amount) {
-        TextView textView = ((Activity) context).findViewById(R.id.cameraTriggerCount);
-        String initialCameraTextValue = context.getResources().getString(R.string.cameraPrintDefault);
-        String sCount = textView.getText().toString().replace(initialCameraTextValue, "");
-        Framework.getLogger().info(sCount);
-        int count = Integer.parseInt(sCount) + amount;
-        textView.setText(initialCameraTextValue+" "+count);
+    public void increaseNumber(final Integer amount) {
+        ((Activity)context).runOnUiThread(() -> {
+            TextView textView = ((Activity) context).findViewById(R.id.cameraTriggerCount);
+            String initialCameraTextValue = context.getResources().getString(R.string.cameraPrintDefault);
+            triggerCount +=amount;
+            textView.setText(initialCameraTextValue+" "+triggerCount);
+        });
     }*/
+
 
     public void changeText(String text) {
         ((Activity) context).runOnUiThread(() -> {

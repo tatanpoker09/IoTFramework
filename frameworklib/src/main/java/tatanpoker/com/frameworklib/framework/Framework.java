@@ -31,7 +31,7 @@ public class Framework {
 
     public static final boolean NEARBY = false;
 
-    public static void startNetwork(Context context, int id) {
+    public static void startNetwork(Context context) {
         if(network == null){ //Singleton.
             initalizeDatabase(context);
             Server server;
@@ -46,7 +46,7 @@ public class Framework {
                 e.printStackTrace();
                 return;
             }
-            network = new Tree(context, id, server);
+            network = new Tree(context, server);
         }
     }
 
@@ -56,9 +56,6 @@ public class Framework {
     }
 
     public static void networkEnable(){
-        /*
-        TODO THERE'S A BUG HERE. WHEN REGISTERING EVENTS COMPONENTS WILL NOT EXIST YET.
-         */
         for(NetworkComponent component : network.getComponents()){
             network.registerEvents(component);
         }
@@ -75,8 +72,11 @@ public class Framework {
         return logger;
     }
 
-    public static <T extends TreeDeviceManager> T registerComponents(Context context, Class<T> deviceManagerClass) {
-        return getDevicesBuilder(context, deviceManagerClass).build();
+    public static <T extends TreeDeviceManager> T registerComponents(Class<T> deviceManagerClass) {
+        T build = getDevicesBuilder(deviceManagerClass).build();
+        network.setLocal(build.local);
+        network.setComponents(build.devices);
+        return build;
     }
 
     /*
@@ -86,12 +86,12 @@ public class Framework {
 
     @NonNull
     private static <T extends TreeDeviceManager> Tree.DevicesBuilder<T> getDevicesBuilder(
-            @NonNull Context context, @NonNull Class<T> deviceManager) {
+            @NonNull Class<T> deviceManager) {
         if (devices == null) {
             devices = new ArrayList<>();
         }
 
-        return new Tree.DevicesBuilder<>(context, deviceManager);
+        return new Tree.DevicesBuilder<>(deviceManager);
     }
 
 

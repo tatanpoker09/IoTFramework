@@ -703,7 +703,7 @@
 01-01 00:00:18.294   299   299 D PackageManager: No files in app dir /vendor/app
 01-01 00:00:18.404   299   299 I PackageManager: Finished scanning system apps. Time: 1687 ms, packageCount: 58 , timePerPackage: 29 , cached: 0
 01-01 00:00:18.533   299   342 W PackageParser: Unknown element under <manifest>: uses-sdk at /data/app/tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/split_lib_resources_apk.apk Binary XML file line #7
-01-01 00:00:18.571   299   342 I PackageParser: Parse times for '/data/app/tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==': parse=160ms, update_cache=5 ms
+01-01 00:00:18.571   299   342 I PackageParser: Parse times for '/data/app/tatanpoker.com.tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==': parse=160ms, update_cache=5 ms
 01-01 00:00:18.573   299   299 D PackageManager: No files in app dir /data/app-private
 01-01 00:00:18.573   299   299 I PackageManager: Finished scanning non-system apps. Time: 169 ms, packageCount: 2 , timePerPackage: 84 , cached: 0
 01-01 00:00:18.591   299   299 I PackageManager: Time to scan packages: 1.874 seconds
@@ -3041,7 +3041,7 @@
 09-04 04:18:32.302   299   305 I zygote  : Background concurrent copying GC freed 126248(4MB) AllocSpace objects, 1(20KB) LOS objects, 42% free, 5MB/9MB, paused 164us total 156.683ms
 09-04 04:18:36.970   299   311 D WificondControl: Scan result ready event
 09-04 04:18:42.410  1015  1373 W OkHttpClient: A connection to https://www.googleapis.com/ was leaked. Did you forget to close a response body?
-09-04 04:20:59.477   176   176 E adbd    : failed to connect to socket 'localabstract:tatanpoker.com.iotframework': Connection refused
+09-04 04:20:59.477   176   176 E adbd    : failed to connect to socket 'localabstract:tatanpoker.com.tatanpoker.com.iotframework': Connection refused
 09-04 04:21:06.359   299  1239 I WifiService: getConnectionInfo uid=10010
 09-04 04:21:06.496   737  1054 W zygote  : Long monitor contention with owner netscheduler-queue-handler (1210) at void pgo.a(pgk, pee)(:com.google.android.gms@12520015@12.5.20 (030300-189423146):123) waiters=0 in boolean pgo.e() for 132ms
 09-04 04:21:06.856   737  1237 W Conscrypt: Could not set socket write timeout: java.lang.reflect.InvocationTargetException
@@ -3075,7 +3075,7 @@
 09-04 04:21:09.799  1484  1484 W app_process: Could not reserve sentinel fault page
 09-04 04:21:09.953   299   305 I zygote  : Background concurrent copying GC freed 81328(3MB) AllocSpace objects, 15(580KB) LOS objects, 42% free, 5MB/10MB, paused 178us total 176.801ms
 09-04 04:21:10.168  1484  1484 I app_process: The ClassLoaderContext is a special shared library.
-09-04 04:21:10.232   299   345 D PackageInstaller: Inherited files: [/data/app/tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/split_lib_resources_apk.apk, /data/app/tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/split_lib_slice_0_apk.apk, /data/app/tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/split_lib_slice_1_apk.apk, /data/app/tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/split_lib_slice_4_apk.apk, /data/app/tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/split_lib_slice_5_apk.apk, /data/app/tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/split_lib_slice_6_apk.apk, /data/app/tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/split_lib_slice_7_apk.apk, /data/app/tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/split_lib_slice_8_apk.apk, /data/app/tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/oat/arm/base.odex, /data/app/tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/oat/arm/base.vdex]
+09-04 04:21:10.232   299   345 D PackageInstaller: Inherited files: [/data/app/tatanpoker.com.tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/split_lib_resources_apk.apk, /data/app/tatanpoker.com.tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/split_lib_slice_0_apk.apk, /data/app/tatanpoker.com.tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/split_lib_slice_1_apk.apk, /data/app/tatanpoker.com.tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/split_lib_slice_4_apk.apk, /data/app/tatanpoker.com.tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/split_lib_slice_5_apk.apk, /data/app/tatanpoker.com.tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/split_lib_slice_6_apk.apk, /data/app/tatanpoker.com.tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/split_lib_slice_7_apk.apk, /data/app/tatanpoker.com.tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/split_lib_slice_8_apk.apk, /data/app/tatanpoker.com.tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/oat/arm/base.odex, /data/app/tatanpoker.com.tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg==/oat/arm/base.vdex]
 09-04 04:21:10.239   299   345 D PackageInstaller: Linked 10 files into /data/app/vmdl539618966.tmp
 09-04 04:21:10.265   154   154 I main    : type=1400 audit(0.0:143): avc: denied { getattr } for path="/sys/kernel/debug/tracing/trace_marker" dev="tracefs" ino=47 scontext=u:r:zygote:s0 tcontext=u:object_r:debugfs_tracing:s0 tclass=file permissive=1
 09-04 04:21:10.285  1518  1518 I main    : type=1400 audit(0.0:144): avc: denied { write } for name="trace_marker" dev="tracefs" ino=47 scontext=u:r:zygote:s0 tcontext=u:object_r:debugfs_tracing:s0 tclass=file permissive=1
@@ -3086,16 +3086,16 @@
 09-04 04:21:10.306   299   325 I ActivityManager: Start proc 1518:com.android.defcontainer/u0a4 for service com.android.defcontainer/.DefaultContainerService
 09-04 04:21:10.404  1518  1518 I zygote  : The ClassLoaderContext is a special shared library.
 09-04 04:21:10.556   299   325 W PackageParser: Unknown element under <manifest>: uses-sdk at /data/app/vmdl539618966.tmp/split_lib_resources_apk.apk Binary XML file line #7
-09-04 04:21:10.612   299   314 I ActivityManager: Force stopping tatanpoker.com.iotframework appid=10038 user=-1: installPackageLI
-09-04 04:21:10.707   299   325 I PackageManager: Package tatanpoker.com.iotframework codePath changed from /data/app/tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg== to /data/app/tatanpoker.com.iotframework-eBwuQMxLvSNf8lzhwGtVhw==; Retaining data and using new
-09-04 04:21:10.709   299   325 W PackageManager: Code path for tatanpoker.com.iotframework changing from /data/app/tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg== to /data/app/tatanpoker.com.iotframework-eBwuQMxLvSNf8lzhwGtVhw==
-09-04 04:21:10.709   299   325 W PackageManager: Resource path for tatanpoker.com.iotframework changing from /data/app/tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg== to /data/app/tatanpoker.com.iotframework-eBwuQMxLvSNf8lzhwGtVhw==
+09-04 04:21:10.612   299   314 I ActivityManager: Force stopping tatanpoker.com.tatanpoker.com.iotframework appid=10038 user=-1: installPackageLI
+09-04 04:21:10.707   299   325 I PackageManager: Package tatanpoker.com.tatanpoker.com.iotframework codePath changed from /data/app/tatanpoker.com.tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg== to /data/app/tatanpoker.com.tatanpoker.com.iotframework-eBwuQMxLvSNf8lzhwGtVhw==; Retaining data and using new
+09-04 04:21:10.709   299   325 W PackageManager: Code path for tatanpoker.com.tatanpoker.com.iotframework changing from /data/app/tatanpoker.com.tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg== to /data/app/tatanpoker.com.tatanpoker.com.iotframework-eBwuQMxLvSNf8lzhwGtVhw==
+09-04 04:21:10.709   299   325 W PackageManager: Resource path for tatanpoker.com.tatanpoker.com.iotframework changing from /data/app/tatanpoker.com.tatanpoker.com.iotframework-fU8w662sPN-NcXj7FYymqg== to /data/app/tatanpoker.com.tatanpoker.com.iotframework-eBwuQMxLvSNf8lzhwGtVhw==
 09-04 04:21:10.883   299   325 D PackageManager: Ephemeral installer not found with new action; try old one
 09-04 04:21:10.883   299   325 D PackageManager: Clear ephemeral installer activity
 09-04 04:21:11.094   299   325 I zygote  : Explicit concurrent copying GC freed 29306(1656KB) AllocSpace objects, 21(964KB) LOS objects, 42% free, 5MB/9MB, paused 171us total 208.199ms
 09-04 04:21:11.131   180   346 E         : Couldn't opendir /data/app/vmdl539618966.tmp: No such file or directory
 09-04 04:21:11.131   180   346 E installd: Failed to delete /data/app/vmdl539618966.tmp: No such file or directory
-09-04 04:21:11.134   299   325 I ActivityManager: Force stopping tatanpoker.com.iotframework appid=10038 user=0: pkg removed
+09-04 04:21:11.134   299   325 I ActivityManager: Force stopping tatanpoker.com.tatanpoker.com.iotframework appid=10038 user=0: pkg removed
 09-04 04:21:11.145   299   299 I system_server: type=1400 audit(0.0:146): avc: denied { ptrace } for scontext=u:r:system_server:s0 tcontext=u:r:system_app:s0 tclass=process permissive=1
 09-04 04:21:11.163   737  1054 E NetworkScheduler: Unrecognised action provided: android.intent.action.PACKAGE_REMOVED
 09-04 04:21:11.180   299   368 I InputReader: Reconfiguring input devices.  changes=0x00000010
@@ -3105,10 +3105,10 @@
 09-04 04:21:11.248   299   313 W VoiceInteractionManagerService: no available voice recognition services found for user 0
 09-04 04:21:11.243   299   313 W Searchables: No global search activity found
 09-04 04:21:11.283   737  1054 E NetworkScheduler: Unrecognised action provided: android.intent.action.PACKAGE_REPLACED
-09-04 04:21:11.372  1015  1554 I ChromeSync: [Sync,SyncIntentOperation] Handling the intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package:tatanpoker.com.iotframework flg=0x4000010 cmp=com.google.android.gms/.chimera.GmsIntentOperationService (has extras) }.
+09-04 04:21:11.372  1015  1554 I ChromeSync: [Sync,SyncIntentOperation] Handling the intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package:tatanpoker.com.tatanpoker.com.iotframework flg=0x4000010 cmp=com.google.android.gms/.chimera.GmsIntentOperationService (has extras) }.
 09-04 04:21:11.462  1015  1555 W PeopleContactsSync: CP2 sync disabled by gservices.
-09-04 04:21:11.484   299   310 I ActivityManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 cmp=tatanpoker.com.iotframework/.MainActivity} from uid 2000
-09-04 04:21:11.563   299   445 I ActivityManager: Start proc 1561:tatanpoker.com.iotframework/u0a38 for activity tatanpoker.com.iotframework/.MainActivity
+09-04 04:21:11.484   299   310 I ActivityManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 cmp=tatanpoker.com.tatanpoker.com.iotframework/.MainActivity} from uid 2000
+09-04 04:21:11.563   299   445 I ActivityManager: Start proc 1561:tatanpoker.com.tatanpoker.com.iotframework/u0a38 for activity tatanpoker.com.tatanpoker.com.iotframework/.MainActivity
 09-04 04:21:11.565   591   591 I Binder:299_6: type=1400 audit(0.0:147): avc: denied { ptrace } for scontext=u:r:system_server:s0 tcontext=u:r:untrusted_app:s0:c512,c768 tclass=process permissive=1
 09-04 04:21:11.583  1015  1177 I Icing   : Storage manager: low false usage 1.75MB avail 1.54GB capacity 1.63GB
 09-04 04:21:11.610  1561  1561 I zygote  : Late-enabling -Xcheck:jni
@@ -3132,14 +3132,14 @@
 09-04 04:21:13.001  1561  1561 D AndroidRuntime: Shutting down VM
 --------- beginning of crash
 09-04 04:21:13.019  1561  1561 E AndroidRuntime: FATAL EXCEPTION: main
-09-04 04:21:13.019  1561  1561 E AndroidRuntime: Process: tatanpoker.com.iotframework, PID: 1561
+09-04 04:21:13.019  1561  1561 E AndroidRuntime: Process: tatanpoker.com.tatanpoker.com.iotframework, PID: 1561
 09-04 04:21:13.019  1561  1561 E AndroidRuntime: java.lang.BootstrapMethodError: Exception from call site #2 bootstrap method
 09-04 04:21:13.019  1561  1561 E AndroidRuntime: 	at tatanpoker.com.frameworklib.framework.network.server.NearbyServer.startAdvertising(NearbyServer.java:55)
 09-04 04:21:13.019  1561  1561 E AndroidRuntime: 	at tatanpoker.com.frameworklib.framework.network.server.NearbyServer.startServer(NearbyServer.java:47)
 09-04 04:21:13.019  1561  1561 E AndroidRuntime: 	at tatanpoker.com.frameworklib.framework.network.server.Server.onEnable(Server.java:28)
 09-04 04:21:13.019  1561  1561 E AndroidRuntime: 	at tatanpoker.com.frameworklib.framework.Tree.onEnable(Tree.java:114)
 09-04 04:21:13.019  1561  1561 E AndroidRuntime: 	at tatanpoker.com.frameworklib.framework.Framework.networkEnable(Framework.java:58)
-09-04 04:21:13.019  1561  1561 E AndroidRuntime: 	at tatanpoker.com.iotframework.MainActivity.onCreate(MainActivity.java:61)
+09-04 04:21:13.019  1561  1561 E AndroidRuntime: 	at tatanpoker.com.tatanpoker.com.iotframework.MainActivity.onCreate(MainActivity.java:61)
 09-04 04:21:13.019  1561  1561 E AndroidRuntime: 	at android.app.Activity.performCreate(Activity.java:7010)
 09-04 04:21:13.019  1561  1561 E AndroidRuntime: 	at android.app.Activity.performCreate(Activity.java:7001)
 09-04 04:21:13.019  1561  1561 E AndroidRuntime: 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1214)
@@ -3156,13 +3156,13 @@
 09-04 04:21:13.019  1561  1561 E AndroidRuntime: Caused by: java.lang.NoClassDefFoundError: Invalid descriptor: ex
 09-04 04:21:13.019  1561  1561 E AndroidRuntime: 038.
 09-04 04:21:13.019  1561  1561 E AndroidRuntime: 	... 19 more
-09-04 04:21:13.040   299   445 W ActivityManager:   Force finishing activity tatanpoker.com.iotframework/.MainActivity
+09-04 04:21:13.040   299   445 W ActivityManager:   Force finishing activity tatanpoker.com.tatanpoker.com.iotframework/.MainActivity
 09-04 04:21:13.049  1561  1561 I Process : Sending signal. PID: 1561 SIG: 9
 09-04 04:21:13.050  1015  1177 I Icing   : Internal init done: storage state 0
 09-04 04:21:13.056   172   172 E lowmemorykiller: Error writing /proc/1561/oom_score_adj; errno=22
 09-04 04:21:13.095  1015  1274 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=AppsCorpus serviceId=32
 09-04 04:21:13.102  1015  1177 I Icing   : Post-init done
-09-04 04:21:13.127   299  1141 I ActivityManager: Process tatanpoker.com.iotframework (pid 1561) has died: vis  +99TOP 
+09-04 04:21:13.127   299  1141 I ActivityManager: Process tatanpoker.com.tatanpoker.com.iotframework (pid 1561) has died: vis  +99TOP
 09-04 04:21:13.128   299   316 W system_server: kill(-1561, 9) failed: No such process
 09-04 04:21:13.128   299   316 I system_server: Successfully killed process cgroup uid 10038 pid 1561 in 0ms
 09-04 04:21:13.184   173   173 D gralloc : Registering a buffer in the process that created it. This may cause memory ordering problems.

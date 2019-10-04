@@ -18,13 +18,12 @@ public abstract class NetworkComponent implements Component, EventTrigger {
     private TreeStatus treeStatus = TreeStatus.STARTING;
 
 
-    public NetworkComponent(int id, int layout, Context context) throws InvalidIDException {
+    public NetworkComponent(int id, int layout) throws InvalidIDException {
         if(id==0 && !(this instanceof Server)){
             throw new InvalidIDException("ID 0 is reserved for the SocketServer!");
         }
         this.id = id;
         this.layout = layout;
-        this.context = context;
     }
 
     @Override

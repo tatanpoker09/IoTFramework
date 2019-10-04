@@ -13,7 +13,7 @@ public abstract class Server extends NetworkComponent {
     public static final int SERVERPORT = 6666;
 
     public Server(int id, int layout) throws InvalidIDException {
-        super(id, layout, null);
+        super(id, layout);
     }
 
 

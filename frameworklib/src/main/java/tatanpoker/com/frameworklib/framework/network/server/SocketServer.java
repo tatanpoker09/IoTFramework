@@ -16,7 +16,6 @@ import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.packets.Packet;
-import tatanpoker.com.tree.annotations.Device;
 
 import static tatanpoker.com.frameworklib.framework.Tree.SERVER_IP;
 
@@ -24,7 +23,7 @@ import static tatanpoker.com.frameworklib.framework.Tree.SERVER_IP;
 /*
 Based on https://examples.javacodegeeks.com/android/core/socket-core/android-socket-example/
  */
-@Device(id = 0, stub = false)
+//@Device(id = 0, stub = false, layout = -10000) not necessary.
 public class SocketServer extends Server {
     private ServerSocket serverSocket;
     private ServerThread serverThread = null;

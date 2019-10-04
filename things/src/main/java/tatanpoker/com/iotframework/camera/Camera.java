@@ -1,7 +1,6 @@
 package tatanpoker.com.iotframework.camera;
 
 import android.app.Activity;
-import android.content.Context;
 import android.widget.TextView;
 
 import tatanpoker.com.frameworklib.components.Vector3;
@@ -18,11 +17,12 @@ import tatanpoker.com.tree.annotations.Device;
 
 import static tatanpoker.com.frameworklib.framework.Framework.ALARM_ID;
 
-@Device(id = Framework.CAMERA_ID, stub = true, layout = R.layout.camera_layout)
+@Device(id = Framework.CAMERA_ID, layout = R.layout.camera_layout)
 public class Camera extends NetworkComponent {
     private int triggerCount;
-    public Camera(int id, int layout, Context context) throws InvalidIDException {
-        super(id, layout, context);
+
+    public Camera(int id, int layout) throws InvalidIDException {
+        super(id, layout);
         triggerCount = 0;
     }
 

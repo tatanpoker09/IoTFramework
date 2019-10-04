@@ -2,14 +2,18 @@ package com.example.processortest;
 
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
+import java.lang.annotation.IncompleteAnnotationException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -28,17 +32,21 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 
 import tatanpoker.com.tree.annotations.Device;
+import tatanpoker.com.tree.annotations.DeviceManager;
+import tatanpoker.com.tree.annotations.Local;
 
 @AutoService(Processor.class)
-@SupportedAnnotationTypes("tatanpoker.com.tree.annotations.Device")
+@SupportedAnnotationTypes({"tatanpoker.com.tree.annotations.DeviceManager", "tatanpoker.com.tree.annotations.Device", "tatanpoker.com.tree.annotations.Local"})
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
-public class PrinterProcessor extends AbstractProcessor {
+public class DeviceManagerProcessor extends AbstractProcessor {
     private Filer filer;
     private Messager messager;
     private Elements elementUtils;
+    private static final String SUFFIX = "_Impl";
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
@@ -50,14 +58,89 @@ public class PrinterProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
+        Map<String, Device> devices = new HashMap<>();
         for (Element element : roundEnvironment.getElementsAnnotatedWith(Device.class)) {
             Device device = element.getAnnotation(Device.class);
-            if (device.stub()) {
-                createDeviceStub(element, roundEnvironment, device);
-            }
-
+            devices.put(element.getSimpleName().toString(), device);
+            createDeviceStub(element, roundEnvironment, device);
         }
+
+        for (Element element : roundEnvironment.getElementsAnnotatedWith(DeviceManager.class)) {
+            loadDeviceManager(element, devices);
+        }
+
         return true;
+    }
+
+
+    private void loadDeviceManager(Element element, Map<String, Device> devices) {
+
+        //This is a variable.
+        TypeName superclass = TypeName.get(element.asType());
+
+        TypeSpec.Builder navigatorClass = TypeSpec
+                .classBuilder(String.format("%s%s", element.getSimpleName().toString(), SUFFIX))
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                .superclass(superclass);
+
+        MethodSpec.Builder initMethodBuilder = MethodSpec.methodBuilder("init")
+                .addAnnotation(Override.class)
+                .addModifiers(Modifier.PUBLIC);
+        initMethodBuilder.beginControlFlow("try");
+        boolean local = false;
+
+        for (Element enclosedElement : element.getEnclosedElements()) {
+            if (enclosedElement instanceof ExecutableElement) {
+                if (enclosedElement.getSimpleName().toString().equals("<init>")) {
+                    continue;
+                }
+                TypeMirror returnTypeMirror = ((ExecutableElement) enclosedElement).getReturnType();
+                TypeName returnTypeName = TypeName.get(returnTypeMirror);
+                String fieldName = returnTypeName.toString().toLowerCase()
+                        .substring(returnTypeName.toString().lastIndexOf(".") + 1);
+
+                Device device = devices.get(returnTypeName.toString().substring(returnTypeName.toString().lastIndexOf(".") + 1));
+                if (device != null) {
+                    MethodSpec method = MethodSpec.methodBuilder(enclosedElement.getSimpleName().toString())
+                            .addAnnotation(Override.class)
+                            .returns(returnTypeName)
+                            .addModifiers(Modifier.PUBLIC)
+                            .addStatement("return $L", fieldName)
+                            .build();
+                    if (enclosedElement.getAnnotation(Local.class) != null) {
+                        if (!local) {
+                            local = true;
+                            initMethodBuilder.addStatement("$T $L = new $T($L, $L)", returnTypeName, fieldName, returnTypeName, device.id(), device.layout());
+                            initMethodBuilder.addStatement("local = $L", fieldName);
+                        } else {
+                            throw new IncompleteAnnotationException(Local.class, "There can only be one local component.");
+                        }
+                    } else {
+                        initMethodBuilder.addStatement("$TStub $L = new $TStub($L, $L)", returnTypeName, fieldName, returnTypeName, device.id(), device.layout());
+                    }
+                    initMethodBuilder.addStatement("devices.add($L)", fieldName);
+
+                    FieldSpec field = FieldSpec.builder(returnTypeName, fieldName)
+                            .addModifiers(Modifier.PRIVATE)
+                            .build();
+                    navigatorClass.addField(field);
+                    navigatorClass.addMethod(method);
+                }
+            }
+        }
+        ClassName invalidIDException = ClassName.get("tatanpoker.com.frameworklib.exceptions", "InvalidIDException");
+
+        initMethodBuilder.nextControlFlow("catch ($T e)", invalidIDException)
+                .addStatement("e.printStackTrace()").
+                endControlFlow();
+
+        MethodSpec initMethod = initMethodBuilder.build();
+        navigatorClass.addMethod(initMethod);
+        try {
+            JavaFile.builder("tatanpoker.com.iotframework.annotation", navigatorClass.build()).build().writeTo(filer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void createDeviceStub(Element element, RoundEnvironment roundEnvironment, Device device) {
@@ -73,7 +156,7 @@ public class PrinterProcessor extends AbstractProcessor {
                 .addParameter(int.class, "id")
                 .addParameter(int.class, "layout")
                 .addException(exception)
-                .addStatement("super(id, layout, null)")
+                .addStatement("super(id, layout)")
                 .build();
         navigatorClass.addMethod(constructor);
         for (ExecutableElement methodElement : getMethods(element, roundEnvironment)) {
