@@ -12,7 +12,7 @@ import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 public abstract class Packet implements Serializable {
     private UUID uuid = UUID.randomUUID(); //Everytime a packet is created, it is assigned a random uuid.
 
-    abstract JSONObject toJson();
+    public abstract JSONObject toJson();
 
     /**
      * Called whenever a packet is recieved from a socket.

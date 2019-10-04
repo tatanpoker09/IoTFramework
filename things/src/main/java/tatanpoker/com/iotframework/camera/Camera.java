@@ -19,15 +19,9 @@ import static tatanpoker.com.frameworklib.framework.Framework.ALARM_ID;
 
 @Device(id = Framework.CAMERA_ID, layout = R.layout.camera_layout)
 public class Camera extends NetworkComponent {
-    private int triggerCount;
 
     public Camera(int id, int layout) throws InvalidIDException {
         super(id, layout);
-        triggerCount = 0;
-    }
-
-    public void cameraTest(){
-        System.out.println("Camera is working locally");
     }
 
 
@@ -43,16 +37,6 @@ public class Camera extends NetworkComponent {
             e.printStackTrace();
         }
     }
-    /*
-    public void increaseNumber(final Integer amount) {
-        ((Activity)context).runOnUiThread(() -> {
-            TextView textView = ((Activity) context).findViewById(R.id.cameraTriggerCount);
-            String initialCameraTextValue = context.getResources().getString(R.string.cameraPrintDefault);
-            triggerCount +=amount;
-            textView.setText(initialCameraTextValue+" "+triggerCount);
-        });
-    }*/
-
 
     public void changeText(String text) {
         ((Activity) context).runOnUiThread(() -> {
