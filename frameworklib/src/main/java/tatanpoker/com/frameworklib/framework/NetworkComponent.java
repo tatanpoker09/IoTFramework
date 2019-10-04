@@ -12,6 +12,7 @@ public abstract class NetworkComponent implements Component, EventTrigger {
     private int id;
     private int layout;
     private ConnectionThread clientThread;
+    private String ipAddress;
 
     protected Context context;
 
@@ -68,5 +69,13 @@ public abstract class NetworkComponent implements Component, EventTrigger {
 
     public void setStatus(TreeStatus treeStatus) {
         this.treeStatus = treeStatus;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 }

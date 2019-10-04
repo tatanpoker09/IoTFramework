@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import tatanpoker.com.frameworklib.broadcasting.BroadcastingPacket;
 import tatanpoker.com.frameworklib.events.Event;
 import tatanpoker.com.frameworklib.events.EventInfo;
 import tatanpoker.com.frameworklib.events.EventTrigger;
@@ -238,6 +239,19 @@ public class Tree {
 
     public void setLocal(NetworkComponent local) {
         this.local = local;
+    }
+
+    public void componentRecieved(BroadcastingPacket broadcastingPacket) {
+        int id = broadcastingPacket.getId();
+        String ipAddress = broadcastingPacket.getInetAddress();
+        String name = broadcastingPacket.getName();
+
+        Framework.getLogger().info(String.format("Discovered component: %s with id %d and ip %s", name, id, ipAddress));
+        try {
+            getComponent(id).setIpAddress(ipAddress);
+        } catch (InvalidIDException e) {
+            e.printStackTrace();
+        }
     }
 
     public static class DevicesBuilder<T extends TreeDeviceManager> {

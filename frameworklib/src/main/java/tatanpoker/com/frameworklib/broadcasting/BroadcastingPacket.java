@@ -13,4 +13,17 @@ public class BroadcastingPacket implements Serializable {
         this.name = name;
         this.inetAddress = inetAddress;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getInetAddress() {
+        return inetAddress;
+    }
+
 }

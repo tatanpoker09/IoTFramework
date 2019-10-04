@@ -65,6 +65,7 @@ public class MainActivity extends Activity {
         camera.changeText(text);
     }
 
+
     public Alarm getAlarm() {
         return alarm;
     }
