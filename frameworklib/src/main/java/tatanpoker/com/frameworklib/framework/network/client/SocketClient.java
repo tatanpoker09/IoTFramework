@@ -50,9 +50,9 @@ class ConnectionRunnable implements Runnable{
             socketClient.socket = new Socket(serverAddr, SERVERPORT);
             Framework.getLogger().info("Successfully connected to socketServer on ip: " + SERVER_IP + ":" + SERVERPORT);
             Framework.getNetwork().getServer().setStatus(TreeStatus.ONLINE);
-            Framework.getLogger().info("Sending Recognize Packet with id: " + Framework.getNetwork().getId());
+            Framework.getLogger().info("Sending Recognize Packet with id: " + Framework.getNetwork().getLocal().getId());
 
-            Packet recognizePacket = new RecognizeDevicePacket(Framework.getNetwork().getId(), Objects.requireNonNull(Framework.getNetwork().getComponent(Framework.getNetwork().getId())).getClass().getName());
+            Packet recognizePacket = new RecognizeDevicePacket(Framework.getNetwork().getLocal().getId(), Objects.requireNonNull(Framework.getNetwork().getComponent(Framework.getNetwork().getLocal().getId())).getClass().getName());
             socketClient.clientThread = new ConnectionThread(socketClient.socket);
             socketClient.sendPacket(recognizePacket);
             Framework.getNetwork().getLocal().setStatus(TreeStatus.ONLINE);

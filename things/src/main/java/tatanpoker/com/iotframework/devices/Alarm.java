@@ -1,4 +1,4 @@
-package tatanpoker.com.iotframework.alarm;
+package tatanpoker.com.iotframework.devices;
 
 
 import tatanpoker.com.frameworklib.components.Vector3;

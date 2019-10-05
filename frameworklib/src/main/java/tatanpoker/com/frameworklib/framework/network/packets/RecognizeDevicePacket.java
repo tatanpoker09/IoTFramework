@@ -32,7 +32,7 @@ public class RecognizeDevicePacket extends Packet {
 
             component.setClientThread(clientThread);
             Framework.getNetwork().getServer().devices += 1;
-            Framework.getLogger().info(String.format("Device %s connected! (%d/%d)", component.getId(), Framework.getNetwork().getServer().devices,Framework.getComponents().size()));
+            Framework.getLogger().info(String.format("Device %s connected! (%d/%d)", component.getId(), Framework.getNetwork().getServer().devices, Framework.getNetwork().getComponents().size() - 1));
             component.setStatus(TreeStatus.ONLINE);
         } catch (InvalidIDException e) {
             e.printStackTrace();

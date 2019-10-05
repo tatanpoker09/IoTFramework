@@ -34,7 +34,6 @@ public class Tree {
     1 = camera
     2 = alert.
      */
-    private int id;
     /*
     FIX THIS MEMORY LEAK.
      */
@@ -42,7 +41,7 @@ public class Tree {
     private NetworkComponent local;
     private SparseArray<EventTriggerInfo> events; //key = hashcode for the event object.
 
-    public static final String SERVER_IP = "192.168.1.31";
+    public static final String SERVER_IP = "192.168.1.108";
 
 
     private List<NetworkComponent> components;
@@ -69,14 +68,14 @@ public class Tree {
             if(method.isAnnotationPresent(EventInfo.class)){
                 Class<?>[] types = method.getParameterTypes();
                 if(Event.class.isAssignableFrom(types[0])){
-                    if(method.getAnnotation(EventInfo.class).id()==id) {
+                    /*/if(method.getAnnotation(EventInfo.class).id()==id) { I have to redo this using CAP.
                         Framework.getLogger().info("Registering event: " + method.getName() + " with TYPE " + types[0].getName());
                         EventTriggerInfo eventTriggers = events.get(types[0].hashCode());
                         if (eventTriggers == null) {
                             events.put(types[0].hashCode(), new EventTriggerInfo(eventObserver));
                         }
                         events.get(types[0].hashCode()).addInvoke(method);
-                    }
+                    }*/
                 }
             }
         }
@@ -111,7 +110,7 @@ public class Tree {
             component.onEnable();
         }
         Framework.getLogger().info("Finished tree onenable");
-        if(id != 0) { //If we're not the socketServer. We connect to the socketServer.
+        if (!(local instanceof Server)) { //If we're not the socketServer. We connect to the socketServer.
             Framework.getLogger().info("Connecting to server...");
             if(NEARBY){
                 client = new NearbyClient(context);
@@ -125,25 +124,10 @@ public class Tree {
     public void onDisable() {
         instance = null;
     }
-
-    public int getId() {
-        return id;
-    }
-
     /*
     Works with kind of a dynamic programming function.
      */
     public NetworkComponent getLocal() {
-        System.out.println("Getting local.");
-        System.out.println("Components: " + components.size());
-        if (local == null) {
-            for (NetworkComponent component : components) {
-                if (component.getId() == id) {
-                    local = component;
-                    break;
-                }
-            }
-        }
         return local;
     }
 
@@ -254,6 +238,14 @@ public class Tree {
         }
     }
 
+    void addComponents(List<NetworkComponent> devices) {
+        this.components.addAll(devices);
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
     public static class DevicesBuilder<T extends TreeDeviceManager> {
         private static final String DEVICES_IMPL_SUFFIX = "_Impl";
         private final Class<T> mDeviceManagerClass;
@@ -303,7 +295,7 @@ public class Tree {
                 return aClass.newInstance();
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("cannot find implementation for "
-                        + klass.getCanonicalName() + ". " + implName + " does not exist");
+                        + klass.getCanonicalName() + "." + implName + " does not exist");
             } catch (IllegalAccessException e) {
                 throw new RuntimeException("Cannot access the constructor"
                         + klass.getCanonicalName());

@@ -22,7 +22,7 @@ public abstract class Server extends NetworkComponent {
         if(isLocal()) {
             startServer();
             Framework.getNetwork().getLocal().setStatus(TreeStatus.CONNECTING);
-            int componentCount = Framework.getComponents().size();
+            int componentCount = Framework.getNetwork().getComponents().size();
 
             Framework.getLogger().info(String.format("Starting Server to wait for devices to connect... (0/%s)", componentCount));
             devices = 0;

@@ -1,7 +1,5 @@
 package tatanpoker.com.frameworklib.framework;
 
-import android.content.Context;
-
 import tatanpoker.com.frameworklib.events.EventTrigger;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
@@ -13,8 +11,6 @@ public abstract class NetworkComponent implements Component, EventTrigger {
     private int layout;
     private ConnectionThread clientThread;
     private String ipAddress;
-
-    protected Context context;
 
     private TreeStatus treeStatus = TreeStatus.STARTING;
 
@@ -44,7 +40,7 @@ public abstract class NetworkComponent implements Component, EventTrigger {
 
     public boolean isLocal() {
         if(Framework.getNetwork()!=null) {
-            return Framework.getNetwork().getId() == this.id;
+            return Framework.getNetwork().getLocal() == this;
         }
         return false;
     }

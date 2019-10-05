@@ -1,6 +1,7 @@
-package tatanpoker.com.iotframework.camera;
+package tatanpoker.com.iotframework.devices;
 
 import android.app.Activity;
+import android.content.Context;
 import android.widget.TextView;
 
 import tatanpoker.com.frameworklib.components.Vector3;
@@ -12,22 +13,15 @@ import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.iotframework.R;
-import tatanpoker.com.iotframework.alarm.Alarm;
 import tatanpoker.com.tree.annotations.Device;
 
 import static tatanpoker.com.frameworklib.framework.Framework.ALARM_ID;
 
 @Device(id = Framework.CAMERA_ID, layout = R.layout.camera_layout)
 public class Camera extends NetworkComponent {
-    private int triggerCount;
 
     public Camera(int id, int layout) throws InvalidIDException {
         super(id, layout);
-        triggerCount = 0;
-    }
-
-    public void cameraTest(){
-        System.out.println("Camera is working locally");
     }
 
 
@@ -43,18 +37,9 @@ public class Camera extends NetworkComponent {
             e.printStackTrace();
         }
     }
-    /*
-    public void increaseNumber(final Integer amount) {
-        ((Activity)context).runOnUiThread(() -> {
-            TextView textView = ((Activity) context).findViewById(R.id.cameraTriggerCount);
-            String initialCameraTextValue = context.getResources().getString(R.string.cameraPrintDefault);
-            triggerCount +=amount;
-            textView.setText(initialCameraTextValue+" "+triggerCount);
-        });
-    }*/
-
 
     public void changeText(String text) {
+        Context context = Framework.getNetwork().getContext();
         ((Activity) context).runOnUiThread(() -> {
             TextView textView = ((Activity) context).findViewById(R.id.recievedText);
             String initialCameraTextValue = context.getResources().getString(R.string.cameraRecievedText);

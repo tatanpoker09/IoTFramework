@@ -62,7 +62,7 @@ public class CallMethodPacket extends Packet {
     private void process() {
         Framework.getLogger().info("Recieved CallMethodPacket!");
         //Depends if we're the "id_to", or not.
-        if(Framework.getNetwork().getId() == id_to){
+        if (Framework.getNetwork().getLocal().getId() == id_to) {
             //We've arrived!
             try {
                 NetworkComponent component = Framework.getNetwork().getComponent(id_to);

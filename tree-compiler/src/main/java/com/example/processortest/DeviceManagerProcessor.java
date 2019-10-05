@@ -86,6 +86,7 @@ public class DeviceManagerProcessor extends AbstractProcessor {
         MethodSpec.Builder initMethodBuilder = MethodSpec.methodBuilder("init")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC);
+        initMethodBuilder.addStatement("devices = new $T<>()", ArrayList.class);
         initMethodBuilder.beginControlFlow("try");
         boolean local = false;
 
@@ -110,13 +111,13 @@ public class DeviceManagerProcessor extends AbstractProcessor {
                     if (enclosedElement.getAnnotation(Local.class) != null) {
                         if (!local) {
                             local = true;
-                            initMethodBuilder.addStatement("$T $L = new $T($L, $L)", returnTypeName, fieldName, returnTypeName, device.id(), device.layout());
+                            initMethodBuilder.addStatement("$L = new $T($L, $L)", fieldName, returnTypeName, device.id(), device.layout());
                             initMethodBuilder.addStatement("local = $L", fieldName);
                         } else {
                             throw new IncompleteAnnotationException(Local.class, "There can only be one local component.");
                         }
                     } else {
-                        initMethodBuilder.addStatement("$TStub $L = new $TStub($L, $L)", returnTypeName, fieldName, returnTypeName, device.id(), device.layout());
+                        initMethodBuilder.addStatement("$L = new $TStub($L, $L)", fieldName, returnTypeName, device.id(), device.layout());
                     }
                     initMethodBuilder.addStatement("devices.add($L)", fieldName);
 
@@ -137,7 +138,7 @@ public class DeviceManagerProcessor extends AbstractProcessor {
         MethodSpec initMethod = initMethodBuilder.build();
         navigatorClass.addMethod(initMethod);
         try {
-            JavaFile.builder("tatanpoker.com.iotframework.annotation", navigatorClass.build()).build().writeTo(filer);
+            JavaFile.builder("tatanpoker.com.iotframework", navigatorClass.build()).build().writeTo(filer);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -182,7 +183,7 @@ public class DeviceManagerProcessor extends AbstractProcessor {
                         parameter.getSimpleName().toString());
                 method.addStatement("params.add($L)", parameter.getSimpleName().toString());
             }
-            method.addStatement("$T methodPacket = new $T($T.getNetwork().getId(), getId(), \"$L\",params)", callMethodPacket, callMethodPacket, framework, name.toString());
+            method.addStatement("$T methodPacket = new $T($T.getNetwork().getLocal().getId(), getId(), \"$L\",params)", callMethodPacket, callMethodPacket, framework, name.toString());
             method.addStatement("$T.getNetwork().getClient().sendPacket(methodPacket)", framework);
 
             navigatorClass.addMethod(method.build());
@@ -191,7 +192,7 @@ public class DeviceManagerProcessor extends AbstractProcessor {
               3- Write generated class to a file
              */
         try {
-            JavaFile.builder("tatanpoker.com.iotframework.annotation", navigatorClass.build()).build().writeTo(filer);
+            JavaFile.builder("tatanpoker.com.iotframework", navigatorClass.build()).build().writeTo(filer);
         } catch (IOException e) {
             e.printStackTrace();
         }

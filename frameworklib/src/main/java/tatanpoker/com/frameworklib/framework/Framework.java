@@ -74,8 +74,12 @@ public class Framework {
 
     public static <T extends TreeDeviceManager> T registerComponents(Class<T> deviceManagerClass) {
         T build = getDevicesBuilder(deviceManagerClass).build();
-        network.setLocal(build.local);
-        network.setComponents(build.devices);
+        if (build.local != null) {
+            network.setLocal(build.local);
+        } else {
+            network.setLocal(network.getServer());
+        }
+        network.addComponents(build.devices);
         return build;
     }
 

@@ -9,8 +9,8 @@ import tatanpoker.com.frameworklib.events.alarm.AlarmTriggerEvent;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.Tree;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
-import tatanpoker.com.iotframework.alarm.Alarm;
-import tatanpoker.com.iotframework.camera.Camera;
+import tatanpoker.com.iotframework.devices.Alarm;
+import tatanpoker.com.iotframework.devices.Camera;
 
 /**
  * Skeleton of an Android Things activity.
