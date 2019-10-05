@@ -44,7 +44,7 @@ public class Tree {
     private NetworkComponent local;
     private SparseArray<EventTriggerInfo> events; //key = hashcode for the event object.
 
-    public static final String SERVER_IP = "192.168.1.108";
+    public static String SERVER_IP;
 
 
     private List<NetworkComponent> components;
@@ -117,13 +117,11 @@ public class Tree {
 
         //Connecting.
         if (!(local instanceof Server)) { //If we're not the socketServer. We connect to the socketServer.
-            Framework.getLogger().info("Connecting to server...");
             if(NEARBY){
                 client = new NearbyClient(context);
             } else {
                 client = new SocketClient();
             }
-            connect();
         }
 
         if (server instanceof SocketServer) {
@@ -247,8 +245,10 @@ public class Tree {
         int id = broadcastingPacket.getId();
         String ipAddress = broadcastingPacket.getInetAddress();
         String name = broadcastingPacket.getName();
-
-        Framework.getLogger().info(String.format("Discovered component: %s with id %d and ip %s", name, id, ipAddress));
+        //We found the server. Let's connect.
+        SERVER_IP = ipAddress;
+        Framework.getLogger().info(String.format("Discovered server: %s with id %d and ip %s", name, id, ipAddress));
+        connect();
         try {
             getComponent(id).setIpAddress(ipAddress);
         } catch (InvalidIDException e) {

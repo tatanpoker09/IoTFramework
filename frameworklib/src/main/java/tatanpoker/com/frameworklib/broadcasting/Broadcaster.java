@@ -24,6 +24,7 @@ public class Broadcaster implements Runnable {
     private boolean broadcast;
     private volatile boolean active;
     private final long period = 1000;
+    private final int port = 55557;
 
     public Broadcaster(String address, boolean broadcast) {
         this.address = address;
@@ -50,7 +51,7 @@ public class Broadcaster implements Runnable {
 
                 String ip = localAddress.substring(0, localAddress.lastIndexOf(".") + 1) + "255";
 
-                DatagramPacket dgp = new DatagramPacket(serializedMessage, serializedMessage.length, InetAddress.getByName(ip), 55557);
+                DatagramPacket dgp = new DatagramPacket(serializedMessage, serializedMessage.length, InetAddress.getByName(ip), port);
 
                 // envío del paquete
                 enviador.send(dgp);
@@ -68,8 +69,10 @@ public class Broadcaster implements Runnable {
     }
 
     public void recieve() {
+
         try {
-            DatagramSocket escucha = new DatagramSocket(55557);
+            DatagramSocket escucha = new DatagramSocket(port);
+            System.out.println("Listening for servers on port: " + port);
             // Un array de bytes lo suficientemente grande para contener
             // cualquier dato que podamos recibir.
             byte[] dato = new byte[1024];
