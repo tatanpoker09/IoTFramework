@@ -5,4 +5,6 @@ public interface Component {
 
     int getLayout();
     void onEnable();
+
+    void setOnNodeConnectionListener(OnNodeConnectionListener listener);
 }

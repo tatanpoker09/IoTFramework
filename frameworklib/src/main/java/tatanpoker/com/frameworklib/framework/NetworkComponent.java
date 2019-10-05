@@ -13,6 +13,7 @@ public abstract class NetworkComponent implements Component, EventTrigger {
     private String ipAddress;
 
     private TreeStatus treeStatus = TreeStatus.STARTING;
+    private OnNodeConnectionListener connectionListener;
 
 
     public NetworkComponent(int id, int layout) throws InvalidIDException {
@@ -73,5 +74,14 @@ public abstract class NetworkComponent implements Component, EventTrigger {
 
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
+    }
+
+    @Override
+    public void setOnNodeConnectionListener(OnNodeConnectionListener listener) {
+        connectionListener = listener;
+    }
+
+    public OnNodeConnectionListener getConnectionListener() {
+        return connectionListener;
     }
 }

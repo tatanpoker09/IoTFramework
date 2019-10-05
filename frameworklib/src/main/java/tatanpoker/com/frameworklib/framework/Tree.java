@@ -293,10 +293,6 @@ public class Tree {
             deviceManager.init();
             return deviceManager;
         }
-
-        /*
-        TODO check method.
-         */
         @NonNull
         static <T, C> T getGeneratedImplementation(Class<C> klass) {
             final String fullPackage = klass.getPackage().getName();

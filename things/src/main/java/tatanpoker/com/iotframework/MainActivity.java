@@ -7,6 +7,8 @@ import android.widget.TextView;
 
 import tatanpoker.com.frameworklib.events.alarm.AlarmTriggerEvent;
 import tatanpoker.com.frameworklib.framework.Framework;
+import tatanpoker.com.frameworklib.framework.NetworkComponent;
+import tatanpoker.com.frameworklib.framework.OnNodeConnectionListener;
 import tatanpoker.com.frameworklib.framework.Tree;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
 import tatanpoker.com.iotframework.devices.Alarm;
@@ -35,6 +37,9 @@ import tatanpoker.com.iotframework.devices.Camera;
 CUSTOM ANNOTATION PROCESSOR.
  */
 public class MainActivity extends Activity {
+    public static final int ALARM_ID = 1;
+    public static final int CAMERA_ID = 2;
+
     private Camera camera;
     private Server server;
     private Alarm alarm;
@@ -55,6 +60,17 @@ public class MainActivity extends Activity {
         alarm = deviceManager.getAlarm();
         camera = deviceManager.getCamera();
 
+        alarm.setOnNodeConnectionListener(new OnNodeConnectionListener() {
+            @Override
+            public void onNodeConnected(NetworkComponent component) {
+                Framework.getLogger().info(String.format("%s connected to server!", component.getClass().getSimpleName()));
+            }
+
+            @Override
+            public void onNodeDisconnected(NetworkComponent component) {
+                Framework.getLogger().info(String.format("%s disconnected from server!", component.getClass().getSimpleName()));
+            }
+        });
 
         Framework.getLogger().info("Finished activity setup.");
     }

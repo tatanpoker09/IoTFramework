@@ -1,13 +1,10 @@
 package tatanpoker.com.frameworklib.framework;
 
 import android.content.Context;
-import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.room.Room;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
@@ -20,20 +17,16 @@ import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
  * Represents the framework, which deals with automation and encapsulation, code generation, etc.
  */
 public class Framework {
-    public static final int CAMERA_ID = 1;
-    public static final int ALARM_ID = 2;
     private static final String SERVICE_ID = "tatanpoker09.com.FrameworkIoT";
     private static Tree network; //This represents the IoT network. Singleton
     private static PacketDatabase db;
-    private static List<Pair<Class, Integer>> devices;
-
     private static Logger logger;
 
-    public static final boolean NEARBY = false;
+    static final boolean NEARBY = false;
 
     public static void startNetwork(Context context) {
         if(network == null){ //Singleton.
-            initalizeDatabase(context);
+            initializeDatabase(context);
             Server server;
             try {
                 if(NEARBY) {
@@ -50,7 +43,7 @@ public class Framework {
         }
     }
 
-    private static void initalizeDatabase(Context context) {
+    private static void initializeDatabase(Context context) {
         db = Room.databaseBuilder(context,
                 PacketDatabase.class, "PacketPersistance").build();
     }
@@ -83,24 +76,10 @@ public class Framework {
         return build;
     }
 
-    /*
-    TODO FIX THE PAIR THING.
-     */
-
-
     @NonNull
     private static <T extends TreeDeviceManager> Tree.DevicesBuilder<T> getDevicesBuilder(
             @NonNull Class<T> deviceManager) {
-        if (devices == null) {
-            devices = new ArrayList<>();
-        }
-
         return new Tree.DevicesBuilder<>(deviceManager);
-    }
-
-
-    public static List<Pair<Class,Integer>> getComponents() {
-        return devices;
     }
 
 

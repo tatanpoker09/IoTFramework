@@ -66,10 +66,9 @@ public class CallMethodPacket extends Packet {
             //We've arrived!
             try {
                 NetworkComponent component = Framework.getNetwork().getComponent(id_to);
-                /* TODO
-                //GET METHOD SIGNATURE FROM PARAMETERS MAPPING TO CLASS.
-                //THEN I NEED TO GET THE PARAMETERS (THROW NON SERIALIZABLE IF FAILED).
-                */
+                /*
+                 *   TODO USE CUSTOM ANNOTATION PROCESSOR HERE TO AVOID USING REFLECTION.
+                 */
 
                 Framework.getLogger().info("CallMethodPacket arrived, "+component.getClass().getName()+","+id_to+","+method);
                 Class[] types = new Class[parameters.size()];

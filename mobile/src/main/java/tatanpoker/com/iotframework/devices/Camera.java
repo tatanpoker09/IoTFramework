@@ -15,9 +15,10 @@ import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.iotframework.R;
 import tatanpoker.com.tree.annotations.Device;
 
-import static tatanpoker.com.frameworklib.framework.Framework.ALARM_ID;
+import static tatanpoker.com.iotframework.MainActivity.ALARM_ID;
+import static tatanpoker.com.iotframework.MainActivity.CAMERA_ID;
 
-@Device(id = Framework.CAMERA_ID, layout = R.layout.camera_layout)
+@Device(id = CAMERA_ID, layout = R.layout.camera_layout)
 public class Camera extends NetworkComponent {
 
     public Camera(int id, int layout) throws InvalidIDException {
@@ -25,7 +26,7 @@ public class Camera extends NetworkComponent {
     }
 
 
-    @EventInfo(priority = EventPriority.HIGH, id = Framework.CAMERA_ID)
+    @EventInfo(priority = EventPriority.HIGH, id = CAMERA_ID)
     public void onCameraTrigger(CameraMovementEvent event) {
         //EventType figured from the parameter object.
         Vector3 movement = event.getMovement(); //Vector3

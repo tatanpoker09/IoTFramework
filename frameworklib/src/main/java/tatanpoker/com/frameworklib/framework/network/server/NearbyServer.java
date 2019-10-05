@@ -95,7 +95,7 @@ public class NearbyServer extends Server{
         public void onConnectionResult(@NonNull String endpointId, @NonNull ConnectionResolution connectionResolution) {
             if(connectionResolution.getStatus()== Status.RESULT_SUCCESS){
                 Framework.getNetwork().callEvent(new DeviceConnectedEvent(endpointId));
-                Framework.getLogger().info(String.format("Device %s connected! (%d/%d)", endpointId, Framework.getNetwork().getServer().devices,Framework.getComponents().size()));
+                Framework.getLogger().info(String.format("Device %s connected! (%d/%d)", endpointId, Framework.getNetwork().getServer().devices, Framework.getNetwork().getComponents().size()));
             }
         }
 

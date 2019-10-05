@@ -35,6 +35,10 @@ import tatanpoker.com.iotframework.devices.Camera;
 CUSTOM ANNOTATION PROCESSOR.
  */
 public class MainActivity extends Activity {
+    public static final int ALARM_ID = 1;
+    public static final int CAMERA_ID = 2;
+
+
     private Camera camera;
     private Server server;
     private Alarm alarm;
