@@ -7,6 +7,7 @@ import java.net.Socket;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
+import tatanpoker.com.frameworklib.framework.OnNodeConnectionListener;
 import tatanpoker.com.frameworklib.framework.TreeStatus;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 
@@ -31,7 +32,9 @@ public class ComponentConnectedPacket extends Packet {
     void process(Socket socket, ConnectionThread clientThread) {
         NetworkComponent component = getComponent();
         component.setStatus(TreeStatus.ONLINE);
-        Framework.getNetwork().getLocal().getConnectionListener().onNodeConnected(component);
+        OnNodeConnectionListener nodeConnectionListener = Framework.getNetwork().getLocal().getConnectionListener();
+        if (nodeConnectionListener != null)
+            Framework.getNetwork().getLocal().getConnectionListener().onNodeConnected(component);
     }
 
     public NetworkComponent getComponent() {

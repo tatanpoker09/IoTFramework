@@ -84,4 +84,8 @@ public abstract class NetworkComponent implements Component, EventTrigger {
     public OnNodeConnectionListener getConnectionListener() {
         return connectionListener;
     }
+
+    public TreeStatus getStatus() {
+        return treeStatus;
+    }
 }

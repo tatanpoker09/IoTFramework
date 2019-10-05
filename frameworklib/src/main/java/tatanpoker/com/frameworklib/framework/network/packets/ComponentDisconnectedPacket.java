@@ -7,6 +7,7 @@ import java.net.Socket;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
+import tatanpoker.com.frameworklib.framework.OnNodeConnectionListener;
 import tatanpoker.com.frameworklib.framework.TreeStatus;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 
@@ -31,7 +32,9 @@ public class ComponentDisconnectedPacket extends Packet {
     void process(Socket socket, ConnectionThread clientThread) {
         NetworkComponent component = getComponent();
         component.setStatus(TreeStatus.OFFLINE);
-        Framework.getNetwork().getLocal().getConnectionListener().onNodeDisconnected(component);
+        OnNodeConnectionListener nodeConnectionListener = Framework.getNetwork().getLocal().getConnectionListener();
+        if (nodeConnectionListener != null)
+            nodeConnectionListener.onNodeDisconnected(component);
     }
 
     public NetworkComponent getComponent() {

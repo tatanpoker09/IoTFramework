@@ -11,6 +11,7 @@ import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.TreeStatus;
+import tatanpoker.com.frameworklib.framework.network.packets.ComponentDisconnectedPacket;
 import tatanpoker.com.frameworklib.framework.network.packets.Packet;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
 
@@ -52,6 +53,7 @@ public class ConnectionThread extends Thread {
         try {
             NetworkComponent component = Framework.getNetwork().getComponent(this);
             if(component!=null) {
+
                 Framework.getLogger().info(String.format("Disconnecting component with id %d", component.getId()));
                 component.setClientThread(null);
                 component.setStatus(TreeStatus.OFFLINE);
@@ -59,10 +61,18 @@ public class ConnectionThread extends Thread {
                     Framework.getNetwork().connect();
                 } else {
                     Framework.getNetwork().getServer().devices -= 1;
+
+                    for (NetworkComponent networkComponent : Framework.getNetwork().getComponents()) {
+                        if (networkComponent.getStatus() == TreeStatus.ONLINE) {
+                            networkComponent.getClientThread().sendPacket(new ComponentDisconnectedPacket(component.getId()));
+                        }
+                    }
                 }
             }
         } catch (InvalidIDException e) {
             Framework.getLogger().severe("Error disconnecting unknown component?");
+            e.printStackTrace();
+        } catch (DeviceOfflineException e) {
             e.printStackTrace();
         }
     }
