@@ -16,33 +16,53 @@ import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 
 
-public class Broadcaster {
-    public void broadcast(InetAddress localAddress) {
+public class Broadcaster implements Runnable {
+    private String address;
+    /**
+     * True if its a server. Then we want to broadcast its ip.
+     */
+    private boolean broadcast;
+    private volatile boolean active;
+    private final long period = 1000;
+
+    public Broadcaster(String address, boolean broadcast) {
+        this.address = address;
+        this.broadcast = broadcast;
+        this.active = false;
+    }
+
+    public void broadcast(String localAddress) {
+        this.active = true;
         try (DatagramSocket enviador = new DatagramSocket()) {
             enviador.setBroadcast(true);
             // El dato a enviar, como array de bytes.
             NetworkComponent local = Framework.getNetwork().getLocal();
+            while (active) {
+                System.out.println("Broadcasting package!");
+                BroadcastingPacket broadcastingPacket = new BroadcastingPacket(local.getId(), local.getClass().getSimpleName(), localAddress);
 
-            BroadcastingPacket broadcastingPacket = new BroadcastingPacket(local.getId(), local.getClass().getSimpleName(), localAddress.toString());
+                ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+                ObjectOutput oo = new ObjectOutputStream(bStream);
+                oo.writeObject(broadcastingPacket);
 
-            ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-            ObjectOutput oo = new ObjectOutputStream(bStream);
-            oo.writeObject(broadcastingPacket);
-            oo.close();
 
-            byte[] serializedMessage = bStream.toByteArray();
+                byte[] serializedMessage = bStream.toByteArray();
 
-            String ip = localAddress.toString().substring(0, localAddress.toString().lastIndexOf(".") + 1) + "255";
+                String ip = localAddress.substring(0, localAddress.lastIndexOf(".") + 1) + "255";
 
-            DatagramPacket dgp = new DatagramPacket(serializedMessage, serializedMessage.length, InetAddress.getByName(ip), 55557);
+                DatagramPacket dgp = new DatagramPacket(serializedMessage, serializedMessage.length, InetAddress.getByName(ip), 55557);
 
-            // envío del paquete
-            enviador.send(dgp);
+                // envío del paquete
+                enviador.send(dgp);
+                Thread.sleep(period);
+            }
         } catch (SocketException e) {
             e.printStackTrace();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -72,5 +92,14 @@ public class Broadcaster {
 
     private void parser() {
 
+    }
+
+    @Override
+    public void run() {
+        if (broadcast) {
+            broadcast(address);
+        } else {
+            recieve();
+        }
     }
 }

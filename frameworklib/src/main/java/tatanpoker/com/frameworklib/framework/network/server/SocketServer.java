@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Enumeration;
 
 import tatanpoker.com.frameworklib.events.server.DeviceConnectedEvent;
@@ -60,7 +61,8 @@ public class SocketServer extends Server {
             e.printStackTrace();
         }
     }
-    private String getLocalIpAddress() throws Exception {
+
+    public String getLocalIpAddress() throws SocketException {
         String resultIpv6 = "";
         String resultIpv4 = "";
 
@@ -95,14 +97,14 @@ public class SocketServer extends Server {
         public synchronized void run() {
             try {
                 InetAddress addr;
-                if(USE_USER_GIVEN_IP){
+                if (USE_USER_GIVEN_IP) {
                     addr = InetAddress.getByName(SERVER_IP);
                 } else {
                     addr = InetAddress.getByName(getLocalIpAddress());
                 }
-                Framework.getLogger().info(String.format("Starting server on ip: %s:%s", addr,SERVERPORT));
-                serverSocket = new ServerSocket(SERVERPORT,0,addr);
-            } catch (Exception e) {
+                Framework.getLogger().info(String.format("Starting server on ip: %s:%s", addr, SERVERPORT));
+                serverSocket = new ServerSocket(SERVERPORT, 0, addr);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
             Framework.getLogger().info("Accepting connections.");

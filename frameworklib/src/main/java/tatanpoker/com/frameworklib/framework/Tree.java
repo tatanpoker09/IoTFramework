@@ -9,9 +9,11 @@ import androidx.annotation.NonNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
+import tatanpoker.com.frameworklib.broadcasting.Broadcaster;
 import tatanpoker.com.frameworklib.broadcasting.BroadcastingPacket;
 import tatanpoker.com.frameworklib.events.Event;
 import tatanpoker.com.frameworklib.events.EventInfo;
@@ -22,6 +24,7 @@ import tatanpoker.com.frameworklib.framework.network.client.ClientConnection;
 import tatanpoker.com.frameworklib.framework.network.client.NearbyClient;
 import tatanpoker.com.frameworklib.framework.network.client.SocketClient;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
+import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
 
 import static tatanpoker.com.frameworklib.framework.Framework.NEARBY;
 
@@ -50,6 +53,7 @@ public class Tree {
     private Server server;
 
     private Context context;
+    private Broadcaster broadcaster;
 
 
     Tree(Context context, Server server) {
@@ -110,6 +114,8 @@ public class Tree {
             component.onEnable();
         }
         Framework.getLogger().info("Finished tree onenable");
+
+        //Connecting.
         if (!(local instanceof Server)) { //If we're not the socketServer. We connect to the socketServer.
             Framework.getLogger().info("Connecting to server...");
             if(NEARBY){
@@ -118,6 +124,18 @@ public class Tree {
                 client = new SocketClient();
             }
             connect();
+        }
+
+        if (server instanceof SocketServer) {
+            //Broadcasting
+            try {
+                String localIP = ((SocketServer) server).getLocalIpAddress();
+                broadcaster = new Broadcaster(localIP, local instanceof Server);
+                Thread broadcastThread = new Thread(broadcaster);
+                broadcastThread.start();
+            } catch (SocketException e) {
+                e.printStackTrace();
+            }
         }
     }
 
