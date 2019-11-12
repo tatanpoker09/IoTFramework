@@ -1,5 +1,7 @@
 package tatanpoker.com.frameworklib.framework;
 
+import java.security.PublicKey;
+
 import tatanpoker.com.frameworklib.events.EventTrigger;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
@@ -12,6 +14,7 @@ public abstract class NetworkComponent implements Component, EventTrigger {
     private ConnectionThread clientThread;
     private String ipAddress;
 
+    private PublicKey publicKey;
     private TreeStatus treeStatus = TreeStatus.STARTING;
     private OnNodeConnectionListener connectionListener;
 
@@ -22,6 +25,14 @@ public abstract class NetworkComponent implements Component, EventTrigger {
         }
         this.id = id;
         this.layout = layout;
+    }
+
+    public void setPublicKey(PublicKey publicKey){
+        this.publicKey = publicKey;
+    }
+
+    public PublicKey getPublicKey() {
+        return publicKey;
     }
 
     @Override

@@ -50,4 +50,5 @@ dependencies {
     //Custom Annotation Processor
     annotationProcessor project(':tree-compiler')
     compile project(":tree-annotations")
+    compile 'org.apache.commons:commons-lang3:3.5'
 }

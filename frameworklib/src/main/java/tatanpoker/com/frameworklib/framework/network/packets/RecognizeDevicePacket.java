@@ -3,6 +3,7 @@ package tatanpoker.com.frameworklib.framework.network.packets;
 import org.json.JSONObject;
 
 import java.net.Socket;
+import java.security.PublicKey;
 
 import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
@@ -14,10 +15,12 @@ import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 public class RecognizeDevicePacket extends Packet {
     private int id;
     private String name;
+    private PublicKey publicKey;
 
-    public RecognizeDevicePacket(int id, String name) {
+    public RecognizeDevicePacket(int id, String name, PublicKey publicKey){
         this.id = id;
         this.name = name;
+        this.publicKey = publicKey;
     }
 
     @Override
@@ -30,14 +33,14 @@ public class RecognizeDevicePacket extends Packet {
         NetworkComponent component;
         try {
             component = Framework.getNetwork().getComponent(id);
-
+            component.setPublicKey(publicKey);
             component.setClientThread(clientThread);
             Framework.getNetwork().getServer().devices += 1;
             Framework.getLogger().info(String.format("Device %s connected! (%d/%d)", component.getId(), Framework.getNetwork().getServer().devices, Framework.getNetwork().getComponents().size() - 1));
 
             for (NetworkComponent networkComponent : Framework.getNetwork().getComponents()) {
                 if (networkComponent.getStatus() == TreeStatus.ONLINE) {
-                    networkComponent.getClientThread().sendPacket(new ComponentConnectedPacket(component.getId()));
+                    networkComponent.getClientThread().sendPacket(new ComponentConnectedPacket(component.getId(), Framework.getNetwork().getPublicKey()));
                 }
             }
             component.setStatus(TreeStatus.ONLINE);

@@ -1,10 +1,20 @@
 package tatanpoker.com.frameworklib.framework.network;
 
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
@@ -14,11 +24,12 @@ import tatanpoker.com.frameworklib.framework.TreeStatus;
 import tatanpoker.com.frameworklib.framework.network.packets.ComponentDisconnectedPacket;
 import tatanpoker.com.frameworklib.framework.network.packets.Packet;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
+import tatanpoker.com.frameworklib.security.RSAUtil;
 
 public class ConnectionThread extends Thread {
     private Socket socket;
-    private ObjectInputStream objectInputStream;
-    private ObjectOutputStream objectOutputStream;
+    private DataInputStream dataInputStream;
+    private DataOutputStream dataOutputStream;
 
     public ConnectionThread(Socket socket) {
         this.socket = socket;
@@ -28,19 +39,33 @@ public class ConnectionThread extends Thread {
     public synchronized void run() {
         try {
             Framework.getLogger().info("Device ready to recieve packets.");
-            objectInputStream = new ObjectInputStream(socket.getInputStream());
+
+            dataInputStream = new DataInputStream(socket.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
         while (!Thread.currentThread().isInterrupted()) {
             try {
-                Packet packet = (Packet) objectInputStream.readObject();
-                packet.recieve(socket, this);
+                int length = dataInputStream.readInt();                    // read length of incoming message
+                if(length>0) {
+                    byte[] message = new byte[length];
+                    dataInputStream.readFully(message, 0, message.length); // read the message
+                    Packet packet = RSAUtil.decrypt(message, Framework.getNetwork().getPrivateKey());
+                    packet.recieve(socket, this);
+                }
             } catch (IOException e) {
                 Framework.getLogger().severe("Extra packet sent(?");
                 e.printStackTrace();
                 break;
-            } catch (ClassNotFoundException e) {
+            } catch (NoSuchPaddingException e) {
+                e.printStackTrace();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (InvalidKeyException e) {
+                e.printStackTrace();
+            } catch (IllegalBlockSizeException e) {
+                e.printStackTrace();
+            } catch (BadPaddingException e) {
                 e.printStackTrace();
             }
             try {
@@ -49,7 +74,7 @@ public class ConnectionThread extends Thread {
                 e.printStackTrace();
             }
         }
-
+        //Disconnect and try to reconnect.
         try {
             NetworkComponent component = Framework.getNetwork().getComponent(this);
             if(component!=null) {
@@ -79,7 +104,7 @@ public class ConnectionThread extends Thread {
 
     public void sendPacket(Packet recognizePacket) throws DeviceOfflineException {
         if (socket.isConnected()) {
-            PacketSender packetSender = new PacketSender(recognizePacket, objectOutputStream);
+            PacketSender packetSender = new PacketSender(recognizePacket);
             Thread packetThread = new Thread(packetSender);
             packetThread.start();
         } else {
@@ -90,25 +115,42 @@ public class ConnectionThread extends Thread {
     class PacketSender implements Runnable {
         private Packet packet;
 
-        PacketSender(Packet packet, ObjectOutputStream oos) {
+        PacketSender(Packet packet) {
             this.packet = packet;
         }
 
-        public synchronized void sendPacket(Packet packet) throws IOException {
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        public synchronized void sendPacket(Packet packet) throws IOException, InvalidIDException, IllegalBlockSizeException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, BadPaddingException {
             if (!socket.isClosed()) {
-                if(objectOutputStream == null){
-                    objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                if(dataOutputStream == null){
+                    dataOutputStream = new DataOutputStream(socket.getOutputStream());
                 }
+                NetworkComponent component = Framework.getNetwork().getComponent(ConnectionThread.this);
                 Framework.getLogger().info("Sending packet: "+packet.getClass().getName()+" through socket.");
-                objectOutputStream.writeObject(packet);
+                byte[] data = RSAUtil.encrypt(packet, component.getPublicKey());
+                dataOutputStream.write(data.length); //Write length
+                dataOutputStream.write(data); //Write data.
             }
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         public void run(){
             try {
                 sendPacket(packet);
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (InvalidKeyException e) {
+                e.printStackTrace();
+            } catch (NoSuchPaddingException e) {
+                e.printStackTrace();
+            } catch (BadPaddingException e) {
+                e.printStackTrace();
+            } catch (InvalidIDException e) {
+                e.printStackTrace();
+            } catch (IllegalBlockSizeException e) {
                 e.printStackTrace();
             }
         }

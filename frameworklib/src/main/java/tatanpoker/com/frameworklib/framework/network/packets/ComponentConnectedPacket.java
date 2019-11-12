@@ -3,6 +3,7 @@ package tatanpoker.com.frameworklib.framework.network.packets;
 import org.json.JSONObject;
 
 import java.net.Socket;
+import java.security.PublicKey;
 
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
@@ -13,9 +14,11 @@ import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 
 public class ComponentConnectedPacket extends Packet {
     private int id; //Component
+    private PublicKey publicKey;
 
-    public ComponentConnectedPacket(int id) {
+    public ComponentConnectedPacket(int id, PublicKey publicKey) {
         this.id = id;
+        this.publicKey = publicKey;
     }
 
     @Override
@@ -33,6 +36,7 @@ public class ComponentConnectedPacket extends Packet {
         NetworkComponent component = getComponent();
         component.setStatus(TreeStatus.ONLINE);
         OnNodeConnectionListener nodeConnectionListener = Framework.getNetwork().getLocal().getConnectionListener();
+        Framework.getNetwork().getServer().setPublicKey(publicKey);
         if (nodeConnectionListener != null)
             Framework.getNetwork().getLocal().getConnectionListener().onNodeConnected(component);
     }

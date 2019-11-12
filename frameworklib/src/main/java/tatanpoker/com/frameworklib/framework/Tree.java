@@ -10,6 +10,9 @@ import androidx.annotation.NonNull;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.SocketException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +28,7 @@ import tatanpoker.com.frameworklib.framework.network.client.NearbyClient;
 import tatanpoker.com.frameworklib.framework.network.client.SocketClient;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
 import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
+import tatanpoker.com.frameworklib.security.RSAKeyPairGenerator;
 
 import static tatanpoker.com.frameworklib.framework.Framework.NEARBY;
 
@@ -54,6 +58,8 @@ public class Tree {
 
     private Context context;
     private Broadcaster broadcaster;
+    private RSAKeyPairGenerator keyPairGenerator;
+
 
 
     Tree(Context context, Server server) {
@@ -61,6 +67,12 @@ public class Tree {
         components = new ArrayList<>();
         this.server = server;
         components.add(server);
+        this.keyPairGenerator = new RSAKeyPairGenerator();
+        try {
+            this.keyPairGenerator.generate();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -127,6 +139,7 @@ public class Tree {
         if (server instanceof SocketServer) {
             //Broadcasting
             try {
+
                 String localIP = ((SocketServer) server).getLocalIpAddress();
                 broadcaster = new Broadcaster(localIP, local instanceof Server);
                 Thread broadcastThread = new Thread(broadcaster);
@@ -207,7 +220,7 @@ public class Tree {
                 }
             }
         }
-        throw new InvalidIDException("Couldn't find a component by that id.");
+        throw new InvalidIDException("Couldn't find a component by that connection thread.");
     }
 
     private NetworkComponent getComponentById(int id){
@@ -262,6 +275,14 @@ public class Tree {
 
     public Context getContext() {
         return context;
+    }
+
+    public PublicKey getPublicKey() {
+        return keyPairGenerator.getPublicKey();
+    }
+
+    public PrivateKey getPrivateKey() {
+        return keyPairGenerator.getPrivateKey();
     }
 
     public static class DevicesBuilder<T extends TreeDeviceManager> {

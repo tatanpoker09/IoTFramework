@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import tatanpoker.com.frameworklib.events.alarm.AlarmTriggerEvent;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.OnNodeConnectionListener;
@@ -55,7 +54,6 @@ public class MainActivity extends Activity {
         network.registerEvents(new ServerEvents());
         Framework.networkEnable();
 
-        network.callEvent(new AlarmTriggerEvent("This is a test"));
 
         alarm = deviceManager.getAlarm();
         camera = deviceManager.getCamera();
