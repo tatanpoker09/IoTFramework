@@ -160,6 +160,14 @@ public class DeviceManagerProcessor extends AbstractProcessor {
                 .addStatement("super(id, layout)")
                 .build();
         navigatorClass.addMethod(constructor);
+        int id = 0;
+
+        MethodSpec.Builder callByID = MethodSpec.methodBuilder("callByID")
+                .addModifiers(Modifier.PUBLIC)
+                .returns(TypeName.VOID);
+        TypeSpec.Builder callHandler = TypeSpec.classBuilder("CallHandler")
+                .addModifiers(Modifier.PUBLIC);
+
         for (ExecutableElement methodElement : getMethods(element, roundEnvironment)) {
             if (methodElement.getSimpleName().toString().equals("<init>")) {
                 continue;
@@ -183,16 +191,20 @@ public class DeviceManagerProcessor extends AbstractProcessor {
                         parameter.getSimpleName().toString());
                 method.addStatement("params.add($L)", parameter.getSimpleName().toString());
             }
-            method.addStatement("$T methodPacket = new $T($T.getNetwork().getLocal().getId(), getId(), \"$L\",params)", callMethodPacket, callMethodPacket, framework, name.toString());
+            //TODO change name.toString() into an id which can be recognized on the other side.
+            method.addStatement("$T methodPacket = new $T($T.getNetwork().getLocal().getId(), getId(), \"$L\",params)", callMethodPacket, callMethodPacket, framework, id);
             method.addStatement("$T.getNetwork().getClient().sendPacket(methodPacket)", framework);
 
             navigatorClass.addMethod(method.build());
+            id++;
         }
+        callHandler.addMethod(callByID.build());
             /*
               3- Write generated class to a file
              */
         try {
             JavaFile.builder("tatanpoker.com.iotframework", navigatorClass.build()).build().writeTo(filer);
+            JavaFile.builder("tatanpoker.com.iotframework", callHandler.build()).build().writeTo(filer);
         } catch (IOException e) {
             e.printStackTrace();
         }
