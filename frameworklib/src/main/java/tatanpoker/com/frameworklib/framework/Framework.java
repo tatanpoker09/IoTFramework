@@ -21,6 +21,7 @@ public class Framework {
     private static Tree network; //This represents the IoT network. Singleton
     private static PacketDatabase db;
     private static Logger logger;
+    private static TreeDeviceManager deviceManager;
 
     static final boolean NEARBY = false;
 
@@ -73,6 +74,7 @@ public class Framework {
             network.setLocal(network.getServer());
         }
         network.addComponents(build.devices);
+        deviceManager = build;
         return build;
     }
 
@@ -93,5 +95,9 @@ public class Framework {
 
     public static PacketDatabase getDatabase() {
         return db;
+    }
+
+    public static TreeDeviceManager getDeviceManager() {
+        return deviceManager;
     }
 }

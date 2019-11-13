@@ -47,6 +47,7 @@ public class DeviceManagerProcessor extends AbstractProcessor {
     private Messager messager;
     private Elements elementUtils;
     private static final String SUFFIX = "_Impl";
+    private List<DeviceMethod> methodCodeBlock;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
@@ -59,6 +60,7 @@ public class DeviceManagerProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         Map<String, Device> devices = new HashMap<>();
+        methodCodeBlock = new ArrayList<>();
         for (Element element : roundEnvironment.getElementsAnnotatedWith(Device.class)) {
             Device device = element.getAnnotation(Device.class);
             devices.put(element.getSimpleName().toString(), device);
@@ -89,7 +91,14 @@ public class DeviceManagerProcessor extends AbstractProcessor {
         initMethodBuilder.addStatement("devices = new $T<>()", ArrayList.class);
         initMethodBuilder.beginControlFlow("try");
         boolean local = false;
-
+        MethodSpec.Builder callHandlerMethod = MethodSpec.methodBuilder("callByID")
+                .addParameter(int.class, "id")
+                .addParameter(Object[].class, "params")
+                .varargs(true)
+                .returns(TypeName.VOID)
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class);
+        Map<String, String> deviceMethodMap = new HashMap<>();
         for (Element enclosedElement : element.getEnclosedElements()) {
             if (enclosedElement instanceof ExecutableElement) {
                 if (enclosedElement.getSimpleName().toString().equals("<init>")) {
@@ -100,7 +109,11 @@ public class DeviceManagerProcessor extends AbstractProcessor {
                 String fieldName = returnTypeName.toString().toLowerCase()
                         .substring(returnTypeName.toString().lastIndexOf(".") + 1);
 
-                Device device = devices.get(returnTypeName.toString().substring(returnTypeName.toString().lastIndexOf(".") + 1));
+                String methodName = enclosedElement.getSimpleName().toString();
+                String deviceClassName = returnTypeName.toString().substring(returnTypeName.toString().lastIndexOf(".") + 1);
+                deviceMethodMap.put(deviceClassName, methodName);
+                Device device = devices.get(deviceClassName);
+
                 if (device != null) {
                     MethodSpec method = MethodSpec.methodBuilder(enclosedElement.getSimpleName().toString())
                             .addAnnotation(Override.class)
@@ -129,6 +142,26 @@ public class DeviceManagerProcessor extends AbstractProcessor {
                 }
             }
         }
+        int id = 0;
+        for (DeviceMethod deviceMethod : methodCodeBlock) {
+            //String methodName = deviceMethod.getDevice();
+            String methodName = deviceMethodMap.get(deviceMethod.getDevice());
+            if (id == 0) {
+                callHandlerMethod.beginControlFlow("if(id==$L)", id);
+            } else {
+                callHandlerMethod.nextControlFlow("else if(id==$L)", id);
+            }
+            StringBuilder stringBuilder = new StringBuilder();
+            int index = 0;
+            for (String parameter : deviceMethod.getParameters()) {
+                stringBuilder.append(String.format("(%s)params[%d]", parameter, index));
+                index += 1;
+            }
+            callHandlerMethod.addStatement("$L().$L($L)", methodName, deviceMethod.getMethod(), stringBuilder.toString());
+            id++;
+        }
+        callHandlerMethod.endControlFlow();
+
         ClassName invalidIDException = ClassName.get("tatanpoker.com.frameworklib.exceptions", "InvalidIDException");
 
         initMethodBuilder.nextControlFlow("catch ($T e)", invalidIDException)
@@ -136,6 +169,7 @@ public class DeviceManagerProcessor extends AbstractProcessor {
                 endControlFlow();
 
         MethodSpec initMethod = initMethodBuilder.build();
+        navigatorClass.addMethod(callHandlerMethod.build());
         navigatorClass.addMethod(initMethod);
         try {
             JavaFile.builder("tatanpoker.com.iotframework", navigatorClass.build()).build().writeTo(filer);
@@ -164,9 +198,8 @@ public class DeviceManagerProcessor extends AbstractProcessor {
 
         MethodSpec.Builder callByID = MethodSpec.methodBuilder("callByID")
                 .addModifiers(Modifier.PUBLIC)
-                .returns(TypeName.VOID);
-        TypeSpec.Builder callHandler = TypeSpec.classBuilder("CallHandler")
-                .addModifiers(Modifier.PUBLIC);
+                .returns(TypeName.VOID)
+                .addParameter(int.class, "id");
 
         for (ExecutableElement methodElement : getMethods(element, roundEnvironment)) {
             if (methodElement.getSimpleName().toString().equals("<init>")) {
@@ -174,6 +207,7 @@ public class DeviceManagerProcessor extends AbstractProcessor {
             }
             Name name = methodElement.getSimpleName();
             List<? extends VariableElement> parameters = methodElement.getParameters();
+            List<String> parameterTypes = new ArrayList<>();
             MethodSpec.Builder method = MethodSpec.methodBuilder(name.toString())
                     .addModifiers(Modifier.PUBLIC)
                     .addAnnotation(Override.class);
@@ -190,21 +224,22 @@ public class DeviceManagerProcessor extends AbstractProcessor {
                 method.addParameter(TypeName.get(parameter.asType()),
                         parameter.getSimpleName().toString());
                 method.addStatement("params.add($L)", parameter.getSimpleName().toString());
+                parameterTypes.add(TypeName.get(parameter.asType()).toString());
             }
             //TODO change name.toString() into an id which can be recognized on the other side.
-            method.addStatement("$T methodPacket = new $T($T.getNetwork().getLocal().getId(), getId(), \"$L\",params)", callMethodPacket, callMethodPacket, framework, id);
+            method.addStatement("$T methodPacket = new $T($T.getNetwork().getLocal().getId(), getId(), $L,params)", callMethodPacket, callMethodPacket, framework, id);
             method.addStatement("$T.getNetwork().getClient().sendPacket(methodPacket)", framework);
-
+            DeviceMethod deviceMethod = new DeviceMethod(deviceName.toString(), methodElement.getSimpleName().toString(), parameterTypes);
+            methodCodeBlock.add(deviceMethod);
             navigatorClass.addMethod(method.build());
-            id++;
         }
-        callHandler.addMethod(callByID.build());
+        callByID.endControlFlow();
+
             /*
               3- Write generated class to a file
              */
         try {
             JavaFile.builder("tatanpoker.com.iotframework", navigatorClass.build()).build().writeTo(filer);
-            JavaFile.builder("tatanpoker.com.iotframework", callHandler.build()).build().writeTo(filer);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -226,5 +261,29 @@ public class DeviceManagerProcessor extends AbstractProcessor {
                     }
 
         return outList;
+    }
+}
+
+class DeviceMethod {
+    private final String device;
+    private final String method;
+    private final List<String> parameters;
+
+    DeviceMethod(String device, String method, List<String> parameters) {
+        this.device = device;
+        this.method = method;
+        this.parameters = parameters;
+    }
+
+    public String getDevice() {
+        return device;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public List<String> getParameters() {
+        return parameters;
     }
 }

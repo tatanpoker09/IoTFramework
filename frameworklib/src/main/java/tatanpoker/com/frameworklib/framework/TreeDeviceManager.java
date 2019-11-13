@@ -8,4 +8,7 @@ public abstract class TreeDeviceManager {
     public NetworkComponent local;
 
     public abstract void init();
+
+    public void callByID(int id, Object... objects) {
+    }
 }

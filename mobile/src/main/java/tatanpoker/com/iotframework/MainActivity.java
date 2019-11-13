@@ -73,7 +73,6 @@ public class MainActivity extends Activity {
             }
         });
 
-
         Framework.getLogger().info("Finished activity setup.");
     }
 

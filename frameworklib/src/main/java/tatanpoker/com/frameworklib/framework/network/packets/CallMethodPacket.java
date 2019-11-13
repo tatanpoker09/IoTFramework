@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,18 +18,18 @@ import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 public class CallMethodPacket extends Packet {
     private int id_from;
     private int id_to;
-    private String method;
+    private int methodID;
 
     private List<Object> parameters;
 
-    public CallMethodPacket(int id_from, int id_to, String method){
-        this(id_from, id_to,method, new ArrayList<>());
+    public CallMethodPacket(int id_from, int id_to, int methodID) {
+        this(id_from, id_to, methodID, new ArrayList<>());
     }
 
-    public CallMethodPacket(int id_from, int id_to, String method, List<Object> parameters){
+    public CallMethodPacket(int id_from, int id_to, int methodID, List<Object> parameters) {
         this.id_from = id_from;
         this.id_to = id_to;
-        this.method = method;
+        this.methodID = methodID;
         this.parameters = parameters;
     }
 
@@ -41,7 +40,7 @@ public class CallMethodPacket extends Packet {
         try {
             jsonObject.put("id_from", id_from);
             jsonObject.put("id_to", id_to);
-            jsonObject.put("method", method);
+            jsonObject.put("method", methodID);
             jsonObject.put("parameters", parameters.toArray());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -70,14 +69,14 @@ public class CallMethodPacket extends Packet {
                  *   TODO USE CUSTOM ANNOTATION PROCESSOR HERE TO AVOID USING REFLECTION.
                  */
 
-                Framework.getLogger().info("CallMethodPacket arrived, "+component.getClass().getName()+","+id_to+","+method);
+                Framework.getLogger().info("CallMethodPacket arrived, " + component.getClass().getName() + "," + id_to + "," + methodID);
                 Class[] types = new Class[parameters.size()];
                 for (int i = 0; i < parameters.size(); i++) {
                     Object object = parameters.get(i);
                     types[i] = object.getClass();
                 }
-                component.getClass().getMethod(method, types).invoke(component,parameters.toArray());
-            } catch (InvalidIDException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                Framework.getDeviceManager().callByID(methodID, parameters);
+            } catch (InvalidIDException e) {
                 e.printStackTrace();
             }
         } else {
@@ -99,8 +98,8 @@ public class CallMethodPacket extends Packet {
         return id_to;
     }
 
-    public String getMethod() {
-        return method;
+    public int getMethodID() {
+        return methodID;
     }
 
     public List<Object> getParameters() {
@@ -110,6 +109,6 @@ public class CallMethodPacket extends Packet {
     @SuppressLint("DefaultLocale")
     @Override
     public String toString() {
-        return String.format("%d -> %d '%s': {%s}", id_from, id_to,method, parameters);
+        return String.format("%d -> %d '%s': {%s}", id_from, id_to, methodID, parameters);
     }
 }
