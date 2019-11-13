@@ -13,5 +13,4 @@ public abstract class Devices extends TreeDeviceManager {
 
     @Local
     public abstract Alarm getAlarm();
-
 }

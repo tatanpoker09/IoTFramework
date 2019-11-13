@@ -66,7 +66,6 @@ public class DeviceManagerProcessor extends AbstractProcessor {
             devices.put(element.getSimpleName().toString(), device);
             createDeviceStub(element, roundEnvironment, device);
         }
-
         for (Element element : roundEnvironment.getElementsAnnotatedWith(DeviceManager.class)) {
             loadDeviceManager(element, devices);
         }
@@ -154,10 +153,12 @@ public class DeviceManagerProcessor extends AbstractProcessor {
             StringBuilder stringBuilder = new StringBuilder();
             int index = 0;
             for (String parameter : deviceMethod.getParameters()) {
-                stringBuilder.append(String.format("(%s)params[%d]", parameter, index));
+                stringBuilder.append(String.format(",(%s)params[%d]", parameter, index));
                 index += 1;
             }
-            callHandlerMethod.addStatement("$L().$L($L)", methodName, deviceMethod.getMethod(), stringBuilder.toString());
+            String params = stringBuilder.toString();
+            params = params.length() == 0 ? params : params.substring(1); //This is just to remove a leading comma.
+            callHandlerMethod.addStatement("$L().$L($L)", methodName, deviceMethod.getMethod(), params);
             id++;
         }
         callHandlerMethod.endControlFlow();
@@ -194,13 +195,6 @@ public class DeviceManagerProcessor extends AbstractProcessor {
                 .addStatement("super(id, layout)")
                 .build();
         navigatorClass.addMethod(constructor);
-        int id = 0;
-
-        MethodSpec.Builder callByID = MethodSpec.methodBuilder("callByID")
-                .addModifiers(Modifier.PUBLIC)
-                .returns(TypeName.VOID)
-                .addParameter(int.class, "id");
-
         for (ExecutableElement methodElement : getMethods(element, roundEnvironment)) {
             if (methodElement.getSimpleName().toString().equals("<init>")) {
                 continue;
@@ -227,13 +221,12 @@ public class DeviceManagerProcessor extends AbstractProcessor {
                 parameterTypes.add(TypeName.get(parameter.asType()).toString());
             }
             //TODO change name.toString() into an id which can be recognized on the other side.
-            method.addStatement("$T methodPacket = new $T($T.getNetwork().getLocal().getId(), getId(), $L,params)", callMethodPacket, callMethodPacket, framework, id);
+            method.addStatement("$T methodPacket = new $T($T.getNetwork().getLocal().getId(), getId(), $L,params)", callMethodPacket, callMethodPacket, framework, methodCodeBlock.size());
             method.addStatement("$T.getNetwork().getClient().sendPacket(methodPacket)", framework);
             DeviceMethod deviceMethod = new DeviceMethod(deviceName.toString(), methodElement.getSimpleName().toString(), parameterTypes);
             methodCodeBlock.add(deviceMethod);
             navigatorClass.addMethod(method.build());
         }
-        callByID.endControlFlow();
 
             /*
               3- Write generated class to a file
