@@ -9,8 +9,11 @@ import java.util.UUID;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 
+import static tatanpoker.com.frameworklib.framework.network.packets.EncryptionType.AES;
+
 public abstract class Packet implements Serializable {
     private UUID uuid = UUID.randomUUID(); //Everytime a packet is created, it is assigned a random uuid.
+    private EncryptionType encryptionType = AES;
 
     public abstract JSONObject toJson();
 
@@ -20,7 +23,7 @@ public abstract class Packet implements Serializable {
      *
      * @param socket
      */
-    public void recieve(Socket socket, ConnectionThread clientThread) {
+    public final void recieve(Socket socket, ConnectionThread clientThread) {
         if (isNotProcessed()) {
             process(socket, clientThread);
             PacketEntity packetEntity = new PacketEntity(uuid.toString(), getClass().getName(), false);
@@ -28,7 +31,7 @@ public abstract class Packet implements Serializable {
         }
     }
 
-    public void recieve(String endpointId) {
+    public final void recieve(String endpointId) {
         if (isNotProcessed()) {
             process(endpointId);
             PacketEntity packetEntity = new PacketEntity(uuid.toString(), getClass().getName(), false);
@@ -48,5 +51,13 @@ public abstract class Packet implements Serializable {
     private boolean isNotProcessed() {
         final PacketEntity packet = Framework.getDatabase().packetDao().getByUUID(uuid.toString());
         return packet == null; //This means the packet was not found, therefore it was not processed.
+    }
+
+    public EncryptionType getEncryptionType() {
+        return encryptionType;
+    }
+
+    public void setEncryptionType(EncryptionType encrypt) {
+        this.encryptionType = encrypt;
     }
 }

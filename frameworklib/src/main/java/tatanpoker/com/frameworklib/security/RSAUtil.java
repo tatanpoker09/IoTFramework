@@ -73,4 +73,25 @@ public class RSAUtil {
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
             return SerializationUtils.deserialize(cipher.doFinal(data));
         }
+
+    public static byte[] keyDecrypt(PrivateKey privateKey, byte[] encryptedKey) {
+        Cipher cipher = null;
+        try {
+            cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+            cipher.init(Cipher.PRIVATE_KEY, privateKey);
+            byte[] decryptedKey = cipher.doFinal(encryptedKey);
+            return decryptedKey;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

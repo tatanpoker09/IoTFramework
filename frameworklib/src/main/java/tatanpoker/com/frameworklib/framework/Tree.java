@@ -28,6 +28,7 @@ import tatanpoker.com.frameworklib.framework.network.client.NearbyClient;
 import tatanpoker.com.frameworklib.framework.network.client.SocketClient;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
 import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
+import tatanpoker.com.frameworklib.security.AESUtil;
 import tatanpoker.com.frameworklib.security.RSAKeyPairGenerator;
 
 import static tatanpoker.com.frameworklib.framework.Framework.NEARBY;
@@ -121,7 +122,7 @@ public class Tree {
             ((Activity) context).setContentView(local.getLayout());
         }
         getLocal().setStatus(TreeStatus.ENABLING);
-
+        getLocal().setSymmetricKey(AESUtil.generateKey());
         for(Component component : components){
             component.onEnable();
         }
@@ -220,6 +221,7 @@ public class Tree {
                 }
             }
         }
+        //TODO THIS IS CALLED
         throw new InvalidIDException("Couldn't find a component by that connection thread.");
     }
 

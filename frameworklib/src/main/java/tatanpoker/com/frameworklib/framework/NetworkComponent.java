@@ -2,6 +2,8 @@ package tatanpoker.com.frameworklib.framework;
 
 import java.security.PublicKey;
 
+import javax.crypto.SecretKey;
+
 import tatanpoker.com.frameworklib.events.EventTrigger;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
@@ -15,6 +17,7 @@ public abstract class NetworkComponent implements Component, EventTrigger {
     private String ipAddress;
 
     private PublicKey publicKey;
+    private SecretKey symmetricKey;
     private TreeStatus treeStatus = TreeStatus.STARTING;
     private OnNodeConnectionListener connectionListener;
 
@@ -33,6 +36,14 @@ public abstract class NetworkComponent implements Component, EventTrigger {
 
     public PublicKey getPublicKey() {
         return publicKey;
+    }
+
+    public SecretKey getSymmetricKey() {
+        return symmetricKey;
+    }
+
+    public void setSymmetricKey(SecretKey symmetricKey) {
+        this.symmetricKey = symmetricKey;
     }
 
     @Override

@@ -21,6 +21,7 @@ public class RecognizeDevicePacket extends Packet {
         this.id = id;
         this.name = name;
         this.publicKey = publicKey;
+        setEncryptionType(EncryptionType.NONE);
     }
 
     @Override

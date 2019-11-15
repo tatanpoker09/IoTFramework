@@ -5,16 +5,20 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import org.apache.commons.lang3.SerializationUtils;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 
 import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
@@ -22,10 +26,15 @@ import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.TreeStatus;
 import tatanpoker.com.frameworklib.framework.network.packets.ComponentDisconnectedPacket;
+import tatanpoker.com.frameworklib.framework.network.packets.EncryptionType;
 import tatanpoker.com.frameworklib.framework.network.packets.Packet;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
+import tatanpoker.com.frameworklib.security.AESUtil;
 import tatanpoker.com.frameworklib.security.RSAUtil;
 
+/*
+Protocol is length, encryptiontype (ordinal), message.
+ */
 public class ConnectionThread extends Thread {
     private Socket socket;
     private DataInputStream dataInputStream;
@@ -47,10 +56,28 @@ public class ConnectionThread extends Thread {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 int length = dataInputStream.readInt();                    // read length of incoming message
+                int ordinal = dataInputStream.readInt();
+                EncryptionType encryptionType = EncryptionType.values()[ordinal];
+                System.out.println("Recieved length: " + length);
                 if(length>0) {
                     byte[] message = new byte[length];
                     dataInputStream.readFully(message, 0, message.length); // read the message
-                    Packet packet = RSAUtil.decrypt(message, Framework.getNetwork().getPrivateKey());
+                    Packet packet;
+                    switch (encryptionType) {
+                        default:
+                        case AES:
+                            SecretKey secretKey = Framework.getNetwork().getLocal().getSymmetricKey();
+                            packet = AESUtil.decrypt(secretKey.getEncoded(), message);
+                            break;
+                        case RSA:
+                            PrivateKey privateKey = Framework.getNetwork().getPrivateKey();
+                            packet = RSAUtil.decrypt(message, privateKey);
+                            break;
+                        case NONE:
+                            packet = SerializationUtils.deserialize(message);
+                            break;
+                    }
+                    assert packet != null;
                     packet.recieve(socket, this);
                 }
             } catch (IOException e) {
@@ -125,11 +152,28 @@ public class ConnectionThread extends Thread {
                 if(dataOutputStream == null){
                     dataOutputStream = new DataOutputStream(socket.getOutputStream());
                 }
+                byte[] data;
+                Framework.getLogger().info("Sending packet: " + packet.getClass().getName() + " through socket.");
                 NetworkComponent component = Framework.getNetwork().getComponent(ConnectionThread.this);
-                Framework.getLogger().info("Sending packet: "+packet.getClass().getName()+" through socket.");
-                byte[] data = RSAUtil.encrypt(packet, component.getPublicKey());
-                dataOutputStream.write(data.length); //Write length
-                dataOutputStream.write(data); //Write data.
+                switch (packet.getEncryptionType()) {
+                    case AES:
+                        data = AESUtil.encrypt(packet, component.getSymmetricKey());
+                        break;
+                    case RSA:
+                        data = RSAUtil.encrypt(packet, component.getPublicKey());
+                        break;
+                    case NONE:
+                        data = SerializationUtils.serialize(packet);
+                        break;
+                    default:
+                        data = AESUtil.encrypt(packet, component.getSymmetricKey());
+                        break;
+                }
+                assert data != null;
+                System.out.println("Sending length: " + data.length);
+                dataOutputStream.writeInt(data.length); //Write length
+                dataOutputStream.writeInt(packet.getEncryptionType().ordinal());
+                dataOutputStream.write(data); //Write data
             }
         }
 
