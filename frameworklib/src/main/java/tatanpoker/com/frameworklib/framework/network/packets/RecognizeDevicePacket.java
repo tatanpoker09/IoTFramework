@@ -44,6 +44,9 @@ public class RecognizeDevicePacket extends Packet {
                     networkComponent.getClientThread().sendPacket(new ComponentConnectedPacket(component.getId(), Framework.getNetwork().getPublicKey()));
                 }
             }
+            ConnectionResponsePacket connectionResponsePacket = new ConnectionResponsePacket(Framework.getNetwork().getLocal().getPublicKey());
+            component.getClientThread().sendPacket(connectionResponsePacket);
+
             component.setStatus(TreeStatus.ONLINE);
 
         } catch (InvalidIDException e) {

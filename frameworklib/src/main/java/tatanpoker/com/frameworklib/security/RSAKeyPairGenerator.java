@@ -16,11 +16,11 @@ public class RSAKeyPairGenerator {
     }
 
     public void generate() throws NoSuchAlgorithmException {
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
         keyGen.initialize(2048);
-            KeyPair pair = keyGen.generateKeyPair();
-            this.privateKey = pair.getPrivate();
-            this.publicKey = pair.getPublic();
+        KeyPair pair = keyGen.generateKeyPair();
+        this.privateKey = pair.getPrivate();
+        this.publicKey = pair.getPublic();
     }
     public PrivateKey getPrivateKey() {
         return privateKey;

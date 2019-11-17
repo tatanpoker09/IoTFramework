@@ -16,6 +16,8 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.crypto.SecretKey;
+
 import tatanpoker.com.frameworklib.broadcasting.Broadcaster;
 import tatanpoker.com.frameworklib.broadcasting.BroadcastingPacket;
 import tatanpoker.com.frameworklib.events.Event;
@@ -118,11 +120,15 @@ public class Tree {
      */
     public void onEnable(){
         instance = this;
+        SecretKey secretKey = AESUtil.generateKey();
         if (!(local instanceof Server)) {
             ((Activity) context).setContentView(local.getLayout());
+            getServer().setSymmetricKey(secretKey);
         }
         getLocal().setStatus(TreeStatus.ENABLING);
-        getLocal().setSymmetricKey(AESUtil.generateKey());
+        getLocal().setSymmetricKey(secretKey);
+
+        getLocal().setPublicKey(keyPairGenerator.getPublicKey());
         for(Component component : components){
             component.onEnable();
         }

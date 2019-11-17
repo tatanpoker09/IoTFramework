@@ -153,7 +153,7 @@ public class DeviceManagerProcessor extends AbstractProcessor {
             StringBuilder stringBuilder = new StringBuilder();
             int index = 0;
             for (String parameter : deviceMethod.getParameters()) {
-                stringBuilder.append(String.format(",(%s)params[%d]", parameter, index));
+                stringBuilder.append(String.format(",(%s)(params[%d])", parameter, index));
                 index += 1;
             }
             String params = stringBuilder.toString();

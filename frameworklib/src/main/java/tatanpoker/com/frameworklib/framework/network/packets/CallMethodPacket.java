@@ -75,7 +75,7 @@ public class CallMethodPacket extends Packet {
                     Object object = parameters.get(i);
                     types[i] = object.getClass();
                 }
-                Framework.getDeviceManager().callByID(methodID, parameters);
+                Framework.getDeviceManager().callByID(methodID, (Object[]) parameters.toArray(new Object[0]));
             } catch (InvalidIDException e) {
                 e.printStackTrace();
             }

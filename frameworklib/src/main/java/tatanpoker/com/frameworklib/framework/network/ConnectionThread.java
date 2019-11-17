@@ -57,8 +57,8 @@ public class ConnectionThread extends Thread {
             try {
                 int length = dataInputStream.readInt();                    // read length of incoming message
                 int ordinal = dataInputStream.readInt();
+                int id = dataInputStream.readInt();
                 EncryptionType encryptionType = EncryptionType.values()[ordinal];
-                System.out.println("Recieved length: " + length);
                 if(length>0) {
                     byte[] message = new byte[length];
                     dataInputStream.readFully(message, 0, message.length); // read the message
@@ -66,8 +66,8 @@ public class ConnectionThread extends Thread {
                     switch (encryptionType) {
                         default:
                         case AES:
-                            SecretKey secretKey = Framework.getNetwork().getLocal().getSymmetricKey();
-                            packet = AESUtil.decrypt(secretKey.getEncoded(), message);
+                            SecretKey secretKey = Framework.getNetwork().getComponent(id).getSymmetricKey();
+                            packet = AESUtil.decrypt(message, secretKey.getEncoded());
                             break;
                         case RSA:
                             PrivateKey privateKey = Framework.getNetwork().getPrivateKey();
@@ -77,7 +77,9 @@ public class ConnectionThread extends Thread {
                             packet = SerializationUtils.deserialize(message);
                             break;
                     }
+
                     assert packet != null;
+                    Framework.getLogger().info("Recieving " + packet.getClass().getSimpleName() + " through socket with " + packet.getEncryptionType());
                     packet.recieve(socket, this);
                 }
             } catch (IOException e) {
@@ -93,6 +95,8 @@ public class ConnectionThread extends Thread {
             } catch (IllegalBlockSizeException e) {
                 e.printStackTrace();
             } catch (BadPaddingException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             try {
@@ -152,27 +156,39 @@ public class ConnectionThread extends Thread {
                 if(dataOutputStream == null){
                     dataOutputStream = new DataOutputStream(socket.getOutputStream());
                 }
-                byte[] data;
+                byte[] data = null;
                 Framework.getLogger().info("Sending packet: " + packet.getClass().getName() + " through socket.");
-                NetworkComponent component = Framework.getNetwork().getComponent(ConnectionThread.this);
+
+                NetworkComponent component;
                 switch (packet.getEncryptionType()) {
                     case AES:
-                        data = AESUtil.encrypt(packet, component.getSymmetricKey());
+                        component = Framework.getNetwork().getComponent(ConnectionThread.this);
+                        try {
+                            data = AESUtil.encrypt(packet, component.getSymmetricKey().getEncoded());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case RSA:
+                        component = Framework.getNetwork().getComponent(ConnectionThread.this);
                         data = RSAUtil.encrypt(packet, component.getPublicKey());
                         break;
                     case NONE:
                         data = SerializationUtils.serialize(packet);
                         break;
                     default:
-                        data = AESUtil.encrypt(packet, component.getSymmetricKey());
+                        component = Framework.getNetwork().getComponent(ConnectionThread.this);
+                        try {
+                            data = AESUtil.encrypt(packet, component.getSymmetricKey().getEncoded());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         break;
                 }
                 assert data != null;
-                System.out.println("Sending length: " + data.length);
                 dataOutputStream.writeInt(data.length); //Write length
                 dataOutputStream.writeInt(packet.getEncryptionType().ordinal());
+                dataOutputStream.writeInt(Framework.getNetwork().getLocal().getId());
                 dataOutputStream.write(data); //Write data
             }
         }

@@ -31,7 +31,7 @@ public abstract class Server extends NetworkComponent {
         }
     }
 
-    abstract void sendPacket(Packet serverReadyPacket);
+    public abstract void sendPacket(Packet serverReadyPacket);
 
     protected abstract void startServer();
 }

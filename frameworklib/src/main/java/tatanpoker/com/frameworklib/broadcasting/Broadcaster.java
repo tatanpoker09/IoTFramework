@@ -72,7 +72,7 @@ public class Broadcaster implements Runnable {
 
         try {
             DatagramSocket escucha = new DatagramSocket(port);
-            System.out.println("Listening for servers on port: " + port);
+            Framework.getLogger().info("Listening for servers on port: " + port);
             // Un array de bytes lo suficientemente grande para contener
             // cualquier dato que podamos recibir.
             byte[] dato = new byte[1024];

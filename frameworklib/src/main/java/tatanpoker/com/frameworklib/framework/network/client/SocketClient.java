@@ -9,7 +9,6 @@ import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.TreeStatus;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
-import tatanpoker.com.frameworklib.framework.network.packets.AESSymmetricKeyPacket;
 import tatanpoker.com.frameworklib.framework.network.packets.Packet;
 import tatanpoker.com.frameworklib.framework.network.packets.RecognizeDevicePacket;
 
@@ -59,12 +58,10 @@ class ConnectionRunnable implements Runnable{
                     name,
                     Framework.getNetwork().getPublicKey());
             socketClient.clientThread = new ConnectionThread(socketClient.socket);
+            Framework.getNetwork().getServer().setClientThread(socketClient.clientThread);
             socketClient.sendPacket(recognizePacket);
             Framework.getNetwork().getLocal().setStatus(TreeStatus.ONLINE);
             socketClient.clientThread.start();
-
-            AESSymmetricKeyPacket symmetricKeyPacket = new AESSymmetricKeyPacket(id, Framework.getNetwork().getLocal().getSymmetricKey());
-            socketClient.sendPacket(symmetricKeyPacket);
         } catch (IOException | InvalidIDException e) {
             e.printStackTrace();
         }

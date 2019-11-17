@@ -5,6 +5,7 @@ import tatanpoker.com.frameworklib.events.EventInfo;
 import tatanpoker.com.frameworklib.events.EventPriority;
 import tatanpoker.com.frameworklib.events.alarm.AlarmTriggerEvent;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
+import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.iotframework.R;
 import tatanpoker.com.tree.annotations.Device;
@@ -18,7 +19,7 @@ public class Alarm extends NetworkComponent {
     }
 
     public void testAlarm(){
-        System.out.println("Alarm is working locally");
+        Framework.getLogger().info("Alarm is working locally");
     }
 
     @EventInfo(priority = EventPriority.HIGH, id = ALARM_ID)

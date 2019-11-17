@@ -27,12 +27,4 @@ public class Alarm extends NetworkComponent {
         //tv.setText(R.string.cameraPrintDefault);
         System.out.println("We got this! " + eventInfo.getText());
     }
-
-    public void test(String test, int id) {
-
-    }
-
-    public void test(String test) {
-
-    }
 }

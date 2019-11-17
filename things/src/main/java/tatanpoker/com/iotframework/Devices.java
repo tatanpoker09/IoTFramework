@@ -11,6 +11,5 @@ public abstract class Devices extends TreeDeviceManager {
 
     public abstract Camera getCamera();
 
-
     public abstract Alarm getAlarm();
 }

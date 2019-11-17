@@ -22,6 +22,7 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import tatanpoker.com.frameworklib.framework.network.packets.AESSymmetricKeyPacket;
 import tatanpoker.com.frameworklib.framework.network.packets.Packet;
 
 public class RSAUtil {
@@ -64,14 +65,20 @@ public class RSAUtil {
         public static byte[] encrypt(Serializable object, PublicKey publicKey) throws BadPaddingException, IllegalBlockSizeException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException {
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            byte[] data = SerializationUtils.serialize(object);
+            byte[] data;
+            if (object instanceof AESSymmetricKeyPacket) {
+                data = ((AESSymmetricKeyPacket) object).toBytes();
+            } else {
+                data = SerializationUtils.serialize(object);
+            }
             return cipher.doFinal(data);
         }
 
         public static Packet decrypt(byte[] data, PrivateKey privateKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
-            return SerializationUtils.deserialize(cipher.doFinal(data));
+            byte[] bytes = cipher.doFinal(data);
+            return AESSymmetricKeyPacket.fromBytes(bytes);
         }
 
     public static byte[] keyDecrypt(PrivateKey privateKey, byte[] encryptedKey) {

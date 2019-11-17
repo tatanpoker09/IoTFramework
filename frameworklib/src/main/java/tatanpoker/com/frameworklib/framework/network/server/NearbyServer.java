@@ -35,7 +35,7 @@ public class NearbyServer extends Server{
     }
 
     @Override
-    void sendPacket(Packet serverReadyPacket) {
+    public void sendPacket(Packet serverReadyPacket) {
         for(NetworkComponent component : Framework.getNetwork().getComponents()){
             if(!(component instanceof SocketServer)) {
                 nearbyConnection.sendPacket(serverReadyPacket, component.getClass().getName());
