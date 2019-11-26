@@ -1,4 +1,4 @@
-package tatanpoker.com.frameworklib.framework.network.packets;
+package tatanpoker.com.frameworklib.framework.network.packets.db;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;

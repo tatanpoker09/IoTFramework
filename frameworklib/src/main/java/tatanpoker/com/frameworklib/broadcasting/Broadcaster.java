@@ -39,7 +39,6 @@ public class Broadcaster implements Runnable {
             // El dato a enviar, como array de bytes.
             NetworkComponent local = Framework.getNetwork().getLocal();
             while (active) {
-                System.out.println("Broadcasting package!");
                 BroadcastingPacket broadcastingPacket = new BroadcastingPacket(local.getId(), local.getClass().getSimpleName(), localAddress);
 
                 ByteArrayOutputStream bStream = new ByteArrayOutputStream();

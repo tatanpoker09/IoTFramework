@@ -1,7 +1,5 @@
 package tatanpoker.com.frameworklib.framework.network.packets;
 
-import org.json.JSONObject;
-
 import java.net.Socket;
 import java.security.PublicKey;
 
@@ -11,22 +9,18 @@ import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.TreeStatus;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
+import tatanpoker.com.frameworklib.framework.network.packets.types.SimplePacket;
 
-public class RecognizeDevicePacket extends Packet {
+public class RecognizeDevicePacket extends SimplePacket {
     private int id;
     private String name;
     private PublicKey publicKey;
 
     public RecognizeDevicePacket(int id, String name, PublicKey publicKey){
+        super(EncryptionType.NONE);
         this.id = id;
         this.name = name;
         this.publicKey = publicKey;
-        setEncryptionType(EncryptionType.NONE);
-    }
-
-    @Override
-    public JSONObject toJson() {
-        return null;
     }
 
     @Override

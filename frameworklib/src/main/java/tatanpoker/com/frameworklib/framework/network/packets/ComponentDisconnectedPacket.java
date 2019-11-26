@@ -1,7 +1,5 @@
 package tatanpoker.com.frameworklib.framework.network.packets;
 
-import org.json.JSONObject;
-
 import java.net.Socket;
 
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
@@ -10,26 +8,23 @@ import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.OnNodeConnectionListener;
 import tatanpoker.com.frameworklib.framework.TreeStatus;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
+import tatanpoker.com.frameworklib.framework.network.packets.types.SimplePacket;
 
-public class ComponentDisconnectedPacket extends Packet {
+public class ComponentDisconnectedPacket extends SimplePacket {
     private int id; //Component
 
     public ComponentDisconnectedPacket(int id) {
+        super(EncryptionType.AES);
         this.id = id;
     }
 
     @Override
-    public JSONObject toJson() {
-        return null;
-    }
-
-    @Override
-    void process(String endpointId) {
+    protected void process(String endpointId) {
 
     }
 
     @Override
-    void process(Socket socket, ConnectionThread clientThread) {
+    public void process(Socket socket, ConnectionThread clientThread) {
         NetworkComponent component = getComponent();
         component.setStatus(TreeStatus.OFFLINE);
         OnNodeConnectionListener nodeConnectionListener = Framework.getNetwork().getLocal().getConnectionListener();

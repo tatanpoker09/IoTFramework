@@ -1,7 +1,5 @@
 package tatanpoker.com.frameworklib.framework.network.packets;
 
-import org.json.JSONObject;
-
 import java.net.Socket;
 import java.security.PublicKey;
 
@@ -13,22 +11,16 @@ public class ConnectionResponsePacket extends Packet {
     private PublicKey publicKey;
 
     public ConnectionResponsePacket(PublicKey publicKey) {
+        super(EncryptionType.NONE);
         this.publicKey = publicKey;
-        setEncryptionType(EncryptionType.NONE);
     }
-
     @Override
-    public JSONObject toJson() {
-        return null;
-    }
-
-    @Override
-    void process(String endpointId) {
+    protected void process(String endpointId) {
 
     }
 
     @Override
-    void process(Socket socket, ConnectionThread clientThread) {
+    public void process(Socket socket, ConnectionThread clientThread) {
         Framework.getNetwork().getServer().setPublicKey(publicKey);
         int id = Framework.getNetwork().getLocal().getId();
         AESSymmetricKeyPacket symmetricKeyPacket = new AESSymmetricKeyPacket(id, Framework.getNetwork().getLocal().getSymmetricKey());

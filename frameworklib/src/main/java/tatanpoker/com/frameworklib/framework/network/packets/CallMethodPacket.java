@@ -2,9 +2,6 @@ package tatanpoker.com.frameworklib.framework.network.packets;
 
 import android.annotation.SuppressLint;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +11,9 @@ import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
+import tatanpoker.com.frameworklib.framework.network.packets.types.SimplePacket;
 
-public class CallMethodPacket extends Packet {
+public class CallMethodPacket extends SimplePacket {
     private int id_from;
     private int id_to;
     private int methodID;
@@ -27,26 +25,13 @@ public class CallMethodPacket extends Packet {
     }
 
     public CallMethodPacket(int id_from, int id_to, int methodID, List<Object> parameters) {
+        super(EncryptionType.AES);
         this.id_from = id_from;
         this.id_to = id_to;
         this.methodID = methodID;
         this.parameters = parameters;
     }
 
-    @Deprecated
-    @Override
-    public JSONObject toJson() {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("id_from", id_from);
-            jsonObject.put("id_to", id_to);
-            jsonObject.put("method", methodID);
-            jsonObject.put("parameters", parameters.toArray());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonObject;
-    }
 
     @Override
     public void process(Socket socket, ConnectionThread clientThread) {

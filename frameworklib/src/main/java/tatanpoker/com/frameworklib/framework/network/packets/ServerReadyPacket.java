@@ -1,16 +1,15 @@
 package tatanpoker.com.frameworklib.framework.network.packets;
 
-import org.json.JSONObject;
-
 import java.net.Socket;
 
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
+import tatanpoker.com.frameworklib.framework.network.packets.types.SimplePacket;
 
-public class ServerReadyPacket extends Packet {
-    @Override
-    public JSONObject toJson() {
-        return null;
+public class ServerReadyPacket extends SimplePacket {
+
+    public ServerReadyPacket() {
+        super(EncryptionType.NONE);
     }
 
     @Override

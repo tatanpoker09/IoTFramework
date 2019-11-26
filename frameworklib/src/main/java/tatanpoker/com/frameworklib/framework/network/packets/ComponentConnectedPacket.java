@@ -1,7 +1,5 @@
 package tatanpoker.com.frameworklib.framework.network.packets;
 
-import org.json.JSONObject;
-
 import java.net.Socket;
 import java.security.PublicKey;
 
@@ -11,28 +9,25 @@ import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.OnNodeConnectionListener;
 import tatanpoker.com.frameworklib.framework.TreeStatus;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
+import tatanpoker.com.frameworklib.framework.network.packets.types.SimplePacket;
 
-public class ComponentConnectedPacket extends Packet {
+public class ComponentConnectedPacket extends SimplePacket {
     private int id; //Component
     private PublicKey publicKey;
 
     public ComponentConnectedPacket(int id, PublicKey publicKey) {
+        super(EncryptionType.AES);
         this.id = id;
         this.publicKey = publicKey;
     }
 
     @Override
-    public JSONObject toJson() {
-        return null;
-    }
-
-    @Override
-    void process(String endpointId) {
+    protected void process(String endpointId) {
 
     }
 
     @Override
-    void process(Socket socket, ConnectionThread clientThread) {
+    public void process(Socket socket, ConnectionThread clientThread) {
         NetworkComponent component = getComponent();
         component.setStatus(TreeStatus.ONLINE);
         OnNodeConnectionListener nodeConnectionListener = Framework.getNetwork().getLocal().getConnectionListener();

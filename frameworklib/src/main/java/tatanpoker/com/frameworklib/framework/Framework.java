@@ -8,7 +8,7 @@ import androidx.room.Room;
 import java.util.logging.Logger;
 
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
-import tatanpoker.com.frameworklib.framework.network.packets.PacketDatabase;
+import tatanpoker.com.frameworklib.framework.network.packets.db.PacketDatabase;
 import tatanpoker.com.frameworklib.framework.network.server.NearbyServer;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
 import tatanpoker.com.frameworklib.framework.network.server.SocketServer;

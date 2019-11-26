@@ -1,10 +1,13 @@
 package tatanpoker.com.frameworklib.framework;
 
+import java.io.File;
 import java.security.PublicKey;
+import java.util.concurrent.Semaphore;
 
 import javax.crypto.SecretKey;
 
 import tatanpoker.com.frameworklib.events.EventTrigger;
+import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
@@ -20,6 +23,7 @@ public abstract class NetworkComponent implements Component, EventTrigger {
     private SecretKey symmetricKey;
     private TreeStatus treeStatus = TreeStatus.STARTING;
     private OnNodeConnectionListener connectionListener;
+    private Semaphore semaphore;
 
 
     public NetworkComponent(int id, int layout) throws InvalidIDException {
@@ -109,5 +113,30 @@ public abstract class NetworkComponent implements Component, EventTrigger {
 
     public TreeStatus getStatus() {
         return treeStatus;
+    }
+
+
+    public File getFile(String fileName) {
+        int localID = Framework.getNetwork().getLocal().getId();
+        int id_to = id;
+        RequestFilePacket requestFilePacket = new RequestFilePacket(localID, id_to, fileName);
+        try {
+            Framework.getNetwork().getLocal().getClientThread().sendPacket(requestFilePacket);
+        } catch (DeviceOfflineException e) {
+            e.printStackTrace();
+        }
+        semaphore = new Semaphore(0);
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        return new File(fileName);
+    }
+
+    public Semaphore getSemaphore() {
+        return semaphore;
     }
 }

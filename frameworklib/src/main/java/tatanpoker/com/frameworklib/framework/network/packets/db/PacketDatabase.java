@@ -1,4 +1,4 @@
-package tatanpoker.com.frameworklib.framework.network.packets;
+package tatanpoker.com.frameworklib.framework.network.packets.db;
 
 import androidx.room.Database;
 import androidx.room.RoomDatabase;

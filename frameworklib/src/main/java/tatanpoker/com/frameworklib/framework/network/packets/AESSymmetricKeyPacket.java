@@ -2,8 +2,6 @@ package tatanpoker.com.frameworklib.framework.network.packets;
 
 import android.util.Base64;
 
-import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -17,16 +15,17 @@ import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
+import tatanpoker.com.frameworklib.framework.network.packets.types.SimplePacket;
 
 //We send this as bytes but we don't parse it as a packet to send it as an objectoutputstream.
-public class AESSymmetricKeyPacket extends Packet {
+public class AESSymmetricKeyPacket extends SimplePacket {
     private int id;
     private SecretKey symmetricKey;
 
     public AESSymmetricKeyPacket(int id, SecretKey symmetricKey) {
+        super(EncryptionType.RSA);
         this.id = id;
         this.symmetricKey = symmetricKey;
-        setEncryptionType(EncryptionType.RSA);
     }
 
     public static AESSymmetricKeyPacket fromBytes(byte[] data) {
@@ -55,17 +54,12 @@ public class AESSymmetricKeyPacket extends Packet {
     }
 
     @Override
-    public JSONObject toJson() {
-        return null;
-    }
-
-    @Override
-    void process(String endpointId) {
+    protected void process(String endpointId) {
 
     }
 
     @Override
-    void process(Socket socket, ConnectionThread clientThread) {
+    public void process(Socket socket, ConnectionThread clientThread) {
         try {
             NetworkComponent component = Framework.getNetwork().getComponent(id);
             String encodedKey = Base64.encodeToString(symmetricKey.getEncoded(), Base64.DEFAULT);

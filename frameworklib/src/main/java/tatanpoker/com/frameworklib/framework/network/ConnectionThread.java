@@ -133,9 +133,9 @@ public class ConnectionThread extends Thread {
         }
     }
 
-    public void sendPacket(Packet recognizePacket) throws DeviceOfflineException {
+    public void sendPacket(Packet packet) throws DeviceOfflineException {
         if (socket.isConnected()) {
-            PacketSender packetSender = new PacketSender(recognizePacket);
+            PacketSender packetSender = new PacketSender(packet);
             Thread packetThread = new Thread(packetSender);
             packetThread.start();
         } else {

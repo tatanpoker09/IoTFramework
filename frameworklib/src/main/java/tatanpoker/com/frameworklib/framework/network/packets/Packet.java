@@ -1,21 +1,35 @@
 package tatanpoker.com.frameworklib.framework.network.packets;
 
-import org.json.JSONObject;
-
 import java.io.Serializable;
 import java.net.Socket;
 import java.util.UUID;
 
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
-
-import static tatanpoker.com.frameworklib.framework.network.packets.EncryptionType.AES;
+import tatanpoker.com.frameworklib.framework.network.packets.db.PacketEntity;
+import tatanpoker.com.frameworklib.framework.network.packets.types.PacketType;
 
 public abstract class Packet implements Serializable {
     private UUID uuid = UUID.randomUUID(); //Everytime a packet is created, it is assigned a random uuid.
-    private EncryptionType encryptionType = AES;
+    private EncryptionType encryptionType;
+    private PacketType packetType;
 
-    public abstract JSONObject toJson();
+    public Packet(PacketType packetType, EncryptionType encryptionType) {
+        this.packetType = packetType;
+        this.encryptionType = encryptionType;
+    }
+
+    public Packet(PacketType packetType) {
+        this(packetType, EncryptionType.AES);
+    }
+
+    public Packet(EncryptionType encryptionType) {
+        this(PacketType.SIMPLE, encryptionType);
+    }
+
+    public Packet() {
+        this(PacketType.SIMPLE, EncryptionType.AES);
+    }
 
     /**
      * Called whenever a packet is recieved from a socket.
@@ -39,9 +53,9 @@ public abstract class Packet implements Serializable {
         }
     }
 
-    abstract void process(String endpointId);
+    protected abstract void process(String endpointId);
 
-    abstract void process(Socket socket, ConnectionThread clientThread);
+    public abstract void process(Socket socket, ConnectionThread clientThread);
 
     /**
      * Checks if a packet has been processed already.
