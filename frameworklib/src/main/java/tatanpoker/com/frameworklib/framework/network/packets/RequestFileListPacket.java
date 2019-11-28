@@ -6,8 +6,11 @@ import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.packets.types.SimplePacket;
 
 public class RequestFileListPacket extends SimplePacket {
-    public RequestFileListPacket(EncryptionType encryptionType) {
-        super(encryptionType);
+    private int id_from;
+    private int id_to;
+
+    public RequestFileListPacket() {
+        super(EncryptionType.AES);
     }
 
     @Override

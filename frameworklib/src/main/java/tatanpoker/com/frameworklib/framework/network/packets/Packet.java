@@ -1,5 +1,6 @@
 package tatanpoker.com.frameworklib.framework.network.packets;
 
+import java.io.DataOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
 import java.util.UUID;
@@ -74,4 +75,6 @@ public abstract class Packet implements Serializable {
     public void setEncryptionType(EncryptionType encrypt) {
         this.encryptionType = encrypt;
     }
+
+    public abstract void sendPacket(DataOutputStream dataOutputStream, ConnectionThread connectionThread);
 }

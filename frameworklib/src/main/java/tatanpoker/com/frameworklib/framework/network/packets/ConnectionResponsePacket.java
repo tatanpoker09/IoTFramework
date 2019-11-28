@@ -6,8 +6,9 @@ import java.security.PublicKey;
 import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
+import tatanpoker.com.frameworklib.framework.network.packets.types.SimplePacket;
 
-public class ConnectionResponsePacket extends Packet {
+public class ConnectionResponsePacket extends SimplePacket {
     private PublicKey publicKey;
 
     public ConnectionResponsePacket(PublicKey publicKey) {

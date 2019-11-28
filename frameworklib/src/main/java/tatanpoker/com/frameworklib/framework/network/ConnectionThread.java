@@ -151,45 +151,12 @@ public class ConnectionThread extends Thread {
         }
 
         @RequiresApi(api = Build.VERSION_CODES.O)
-        public synchronized void sendPacket(Packet packet) throws IOException, InvalidIDException, IllegalBlockSizeException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, BadPaddingException {
+        public synchronized void sendPacket(Packet packet) throws IOException {
             if (!socket.isClosed()) {
                 if(dataOutputStream == null){
                     dataOutputStream = new DataOutputStream(socket.getOutputStream());
                 }
-                byte[] data = null;
-                Framework.getLogger().info("Sending packet: " + packet.getClass().getName() + " through socket.");
-
-                NetworkComponent component;
-                switch (packet.getEncryptionType()) {
-                    case AES:
-                        component = Framework.getNetwork().getComponent(ConnectionThread.this);
-                        try {
-                            data = AESUtil.encrypt(packet, component.getSymmetricKey().getEncoded());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                    case RSA:
-                        component = Framework.getNetwork().getComponent(ConnectionThread.this);
-                        data = RSAUtil.encrypt(packet, component.getPublicKey());
-                        break;
-                    case NONE:
-                        data = SerializationUtils.serialize(packet);
-                        break;
-                    default:
-                        component = Framework.getNetwork().getComponent(ConnectionThread.this);
-                        try {
-                            data = AESUtil.encrypt(packet, component.getSymmetricKey().getEncoded());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                }
-                assert data != null;
-                dataOutputStream.writeInt(data.length); //Write length
-                dataOutputStream.writeInt(packet.getEncryptionType().ordinal());
-                dataOutputStream.writeInt(Framework.getNetwork().getLocal().getId());
-                dataOutputStream.write(data); //Write data
+                packet.sendPacket(dataOutputStream, ConnectionThread.this);
             }
         }
 
@@ -199,18 +166,6 @@ public class ConnectionThread extends Thread {
             try {
                 sendPacket(packet);
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (InvalidKeyException e) {
-                e.printStackTrace();
-            } catch (NoSuchPaddingException e) {
-                e.printStackTrace();
-            } catch (BadPaddingException e) {
-                e.printStackTrace();
-            } catch (InvalidIDException e) {
-                e.printStackTrace();
-            } catch (IllegalBlockSizeException e) {
                 e.printStackTrace();
             }
         }

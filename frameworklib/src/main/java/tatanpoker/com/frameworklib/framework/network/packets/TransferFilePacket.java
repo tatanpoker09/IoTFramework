@@ -1,5 +1,6 @@
 package tatanpoker.com.frameworklib.framework.network.packets;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
@@ -50,5 +51,10 @@ public class TransferFilePacket extends FilePacket {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void sendPacket(DataOutputStream dataOutputStream, ConnectionThread connectionThread) {
+        super.sendPacket(dataOutputStream, connectionThread);
     }
 }
