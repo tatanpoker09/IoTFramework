@@ -66,6 +66,7 @@ public class RSAUtil {
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             byte[] data;
+            //TODO this is a hack, this might be better if we can make it more generalized.
             if (object instanceof AESSymmetricKeyPacket) {
                 data = ((AESSymmetricKeyPacket) object).toBytes();
             } else {
@@ -73,6 +74,12 @@ public class RSAUtil {
             }
             return cipher.doFinal(data);
         }
+
+    public static byte[] encrypt(byte[] data, PublicKey publicKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+        return cipher.doFinal(data);
+    }
 
         public static Packet decrypt(byte[] data, PrivateKey privateKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");

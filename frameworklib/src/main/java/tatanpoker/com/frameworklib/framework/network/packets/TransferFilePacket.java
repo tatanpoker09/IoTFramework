@@ -14,13 +14,11 @@ import tatanpoker.com.frameworklib.framework.network.packets.types.FilePacket;
 public class TransferFilePacket extends FilePacket {
     private final int id_from;
     private final int id_to;
-    private final File file;
 
     public TransferFilePacket(int id_from, int id_to, File file) {
-        super(EncryptionType.AES);
+        super(EncryptionType.AES, file);
         this.id_from = id_from;
         this.id_to = id_to;
-        this.file = file;
     }
 
     @Override
