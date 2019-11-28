@@ -54,7 +54,7 @@ public class TransferFilePacket extends FilePacket {
     }
 
     @Override
-    public void sendPacket(DataOutputStream dataOutputStream, ConnectionThread connectionThread) {
+    public final void sendPacket(DataOutputStream dataOutputStream, ConnectionThread connectionThread) {
         super.sendPacket(dataOutputStream, connectionThread);
     }
 }

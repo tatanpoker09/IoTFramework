@@ -33,7 +33,7 @@ public abstract class SimplePacket extends Packet {
     @TargetApi(Build.VERSION_CODES.O)
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void sendPacket(DataOutputStream dataOutputStream, ConnectionThread connectionThread) {
+    public final void sendPacket(DataOutputStream dataOutputStream, ConnectionThread connectionThread) {
         byte[] data = null;
         Framework.getLogger().info("Sending packet: " + getClass().getName() + " through socket.");
 

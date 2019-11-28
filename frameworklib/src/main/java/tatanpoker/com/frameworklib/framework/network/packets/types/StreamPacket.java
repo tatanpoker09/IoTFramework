@@ -12,7 +12,7 @@ public abstract class StreamPacket extends Packet {
     }
 
     @Override
-    public void sendPacket(DataOutputStream dataOutputStream, ConnectionThread connectionThread) {
+    public final void sendPacket(DataOutputStream dataOutputStream, ConnectionThread connectionThread) {
 
     }
 
