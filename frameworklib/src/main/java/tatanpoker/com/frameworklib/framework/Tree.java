@@ -38,6 +38,9 @@ import static tatanpoker.com.frameworklib.framework.Framework.NEARBY;
 /**
  * This is the network.
  */
+/*
+TODO CREATE A SENDPACKET HERE THAT SORTS IF IT IS SENDING FROM SERVER OF FROM ANOTHER COMPONENT.
+ */
 public class Tree {
     /*
     0 = socketServer

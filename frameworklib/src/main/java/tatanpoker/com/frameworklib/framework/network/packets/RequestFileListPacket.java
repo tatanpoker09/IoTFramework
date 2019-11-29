@@ -5,6 +5,10 @@ import java.net.Socket;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.packets.types.SimplePacket;
 
+
+/*
+TODO FINISH THIS PACKET. CREATE PACKET SENDING A LIST WITH EVERYTHING BACK.
+ */
 public class RequestFileListPacket extends SimplePacket {
     private int id_from;
     private int id_to;

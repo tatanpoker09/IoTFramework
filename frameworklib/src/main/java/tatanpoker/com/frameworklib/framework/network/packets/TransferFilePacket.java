@@ -1,7 +1,6 @@
 package tatanpoker.com.frameworklib.framework.network.packets;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.Semaphore;
 
@@ -33,12 +32,6 @@ public class TransferFilePacket extends FilePacket {
             //File arrived!
             Semaphore semaphore = Framework.getNetwork().getLocal().getSemaphore();
             semaphore.release();
-            try {
-                boolean newFile = file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Framework.getNetwork().getLocal().getSemaphore().release();
         } else {
             try {
                 Framework.getNetwork().getComponent(id_to).getClientThread().sendPacket(this);

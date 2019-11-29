@@ -30,10 +30,11 @@ import tatanpoker.com.frameworklib.framework.network.packets.EncryptionType;
 import tatanpoker.com.frameworklib.framework.network.packets.Packet;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
 import tatanpoker.com.frameworklib.security.AESUtil;
+import tatanpoker.com.frameworklib.security.EncryptionUtils;
 import tatanpoker.com.frameworklib.security.RSAUtil;
 
 /*
-Protocol is length, encryptiontype (ordinal), message.
+Protocol is length, encryptiontype (ordinal), id its coming from, message.
  */
 public class ConnectionThread extends Thread {
     private Socket socket;
@@ -79,6 +80,7 @@ public class ConnectionThread extends Thread {
                     }
 
                     assert packet != null;
+                    packet.preprocess(dataInputStream);
                     Framework.getLogger().info("Recieving " + packet.getClass().getSimpleName() + " through socket with " + packet.getEncryptionType());
                     packet.recieve(socket, this);
                 }
@@ -155,6 +157,24 @@ public class ConnectionThread extends Thread {
             if (!socket.isClosed()) {
                 if(dataOutputStream == null){
                     dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                }
+                byte[] data;
+                Framework.getLogger().info("Sending packet: " + getClass().getName() + " through socket.");
+                NetworkComponent component;
+                try {
+                    component = Framework.getNetwork().getComponent(ConnectionThread.this);
+                } catch (InvalidIDException e) {
+                    e.printStackTrace();
+                    return;
+                }
+                data = EncryptionUtils.encrypt(component, packet, packet.getEncryptionType());
+                try {
+                    dataOutputStream.writeInt(data.length); //Write length
+                    dataOutputStream.writeInt(packet.getEncryptionType().ordinal());
+                    dataOutputStream.writeInt(Framework.getNetwork().getLocal().getId());
+                    dataOutputStream.write(data); //Write data
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
                 packet.sendPacket(dataOutputStream, ConnectionThread.this);
             }

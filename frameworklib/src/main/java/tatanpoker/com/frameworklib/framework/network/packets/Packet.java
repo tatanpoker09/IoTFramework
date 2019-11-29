@@ -1,5 +1,6 @@
 package tatanpoker.com.frameworklib.framework.network.packets;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
@@ -46,6 +47,7 @@ public abstract class Packet implements Serializable {
         }
     }
 
+
     public final void recieve(String endpointId) {
         if (isNotProcessed()) {
             process(endpointId);
@@ -77,4 +79,7 @@ public abstract class Packet implements Serializable {
     }
 
     public abstract void sendPacket(DataOutputStream dataOutputStream, ConnectionThread connectionThread);
+
+    public void preprocess(DataInputStream dataInputStream) {
+    }
 }
