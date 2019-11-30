@@ -1,5 +1,6 @@
 package tatanpoker.com.frameworklib.framework;
 
+import java.io.File;
 import java.security.PublicKey;
 import java.util.concurrent.Semaphore;
 
@@ -8,6 +9,7 @@ import javax.crypto.SecretKey;
 import tatanpoker.com.frameworklib.events.EventTrigger;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
+import tatanpoker.com.frameworklib.framework.network.packets.RequestFileListPacket;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
 
 public abstract class NetworkComponent implements Component, EventTrigger {
@@ -68,6 +70,19 @@ public abstract class NetworkComponent implements Component, EventTrigger {
             return Framework.getNetwork().getLocal() == this;
         }
         return false;
+    }
+
+    public File[] listFiles(String directory) {
+        if (isLocal()) {
+            File directoryFile = new File(directory);
+            return directoryFile.listFiles();
+        } else {
+            int localID = Framework.getNetwork().getLocal().getId();
+            int to_id = getId();
+            RequestFileListPacket fileListRequestPacket = new RequestFileListPacket(localID, to_id, directory);
+            Framework.getNetwork().sendPacket(this, fileListRequestPacket);
+            //TODO FINISH THIS WITH A SEMAPHORE AND RETURN THE FILE LIST FROM THE PACKET BACK.
+        }
     }
 
 
