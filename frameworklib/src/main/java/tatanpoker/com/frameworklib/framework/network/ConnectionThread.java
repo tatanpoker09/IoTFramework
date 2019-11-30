@@ -21,7 +21,6 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
 import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
-import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.TreeStatus;
@@ -122,7 +121,7 @@ public class ConnectionThread extends Thread {
                     Framework.getNetwork().getServer().sendPacket(new ComponentDisconnectedPacket(component.getId()));
                 }
             }
-        } catch (InvalidIDException e) {
+        } catch (DeviceOfflineException e) {
             Framework.getLogger().severe("Error disconnecting unknown component?");
             e.printStackTrace();
         }
@@ -156,7 +155,7 @@ public class ConnectionThread extends Thread {
                 NetworkComponent component;
                 try {
                     component = Framework.getNetwork().getComponent(ConnectionThread.this);
-                } catch (InvalidIDException e) {
+                } catch (DeviceOfflineException e) {
                     e.printStackTrace();
                     return;
                 }

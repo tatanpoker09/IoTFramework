@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
+import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
@@ -58,7 +58,7 @@ public abstract class FilePacket extends Packet {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (InvalidIDException e) {
+        } catch (DeviceOfflineException e) {
             e.printStackTrace();
         }
     }

@@ -23,6 +23,7 @@ public abstract class NetworkComponent implements Component, EventTrigger {
     private SecretKey symmetricKey;
     private TreeStatus treeStatus = TreeStatus.STARTING;
     private OnNodeConnectionListener connectionListener;
+    private File[] files;
     private Semaphore semaphore;
 
 
@@ -81,7 +82,12 @@ public abstract class NetworkComponent implements Component, EventTrigger {
             int to_id = getId();
             RequestFileListPacket fileListRequestPacket = new RequestFileListPacket(localID, to_id, directory);
             Framework.getNetwork().sendPacket(this, fileListRequestPacket);
-            //TODO FINISH THIS WITH A SEMAPHORE AND RETURN THE FILE LIST FROM THE PACKET BACK.
+            try {
+                semaphore.acquire();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return files;
         }
     }
 
@@ -131,5 +137,9 @@ public abstract class NetworkComponent implements Component, EventTrigger {
 
     public Semaphore getSemaphore() {
         return semaphore;
+    }
+
+    public final void setFileList(File[] files) {
+        this.files = files;
     }
 }

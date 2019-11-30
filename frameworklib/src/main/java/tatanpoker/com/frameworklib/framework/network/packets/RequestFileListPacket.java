@@ -30,7 +30,7 @@ public class RequestFileListPacket extends SimplePacket {
     public void process(Socket socket, ConnectionThread clientThread) {
         File directory = new File(fileDir);
         File[] files = directory.listFiles();
-        ListFilesPacket listFilesPacket = new ListFilesPacket(id_to, id_from, files);
+        ListFilesPacket listFilesPacket = new ListFilesPacket(id_to, files);
         try {
             Framework.getNetwork().sendPacket(id_from, listFilesPacket);
         } catch (InvalidIDException e) {
