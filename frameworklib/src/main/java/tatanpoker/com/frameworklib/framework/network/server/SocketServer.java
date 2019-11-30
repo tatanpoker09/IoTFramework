@@ -15,6 +15,7 @@ import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
+import tatanpoker.com.frameworklib.framework.TreeStatus;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.packets.Packet;
 
@@ -43,7 +44,7 @@ public class SocketServer extends Server {
     public void sendPacket(Packet packet) {
         for(NetworkComponent component : Framework.getNetwork().getComponents()){
             if(!(component instanceof SocketServer)) {
-                if (component.getClientThread() != null) { //We make sure we're online.
+                if (component.getStatus() == TreeStatus.ONLINE && component.getClientThread() != null) { //We make sure we're online.
                     try {
                         component.getClientThread().sendPacket(packet);
                     } catch (DeviceOfflineException e) {

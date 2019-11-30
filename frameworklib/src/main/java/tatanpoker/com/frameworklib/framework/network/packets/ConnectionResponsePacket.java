@@ -3,7 +3,6 @@ package tatanpoker.com.frameworklib.framework.network.packets;
 import java.net.Socket;
 import java.security.PublicKey;
 
-import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.packets.types.SimplePacket;
@@ -25,10 +24,7 @@ public class ConnectionResponsePacket extends SimplePacket {
         Framework.getNetwork().getServer().setPublicKey(publicKey);
         int id = Framework.getNetwork().getLocal().getId();
         AESSymmetricKeyPacket symmetricKeyPacket = new AESSymmetricKeyPacket(id, Framework.getNetwork().getLocal().getSymmetricKey());
-        try {
-            Framework.getNetwork().getServer().getClientThread().sendPacket(symmetricKeyPacket);
-        } catch (DeviceOfflineException e) {
-            e.printStackTrace();
-        }
+        Framework.getNetwork().sendPacket(Framework.getNetwork().getServer(), symmetricKeyPacket);
+        //Framework.getNetwork().getServer().getClientThread().sendPacket(symmetricKeyPacket); deprecated call.
     }
 }

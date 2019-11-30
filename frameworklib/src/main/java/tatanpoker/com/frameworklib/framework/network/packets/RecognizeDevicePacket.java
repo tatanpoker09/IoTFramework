@@ -3,7 +3,6 @@ package tatanpoker.com.frameworklib.framework.network.packets;
 import java.net.Socket;
 import java.security.PublicKey;
 
-import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
@@ -32,20 +31,13 @@ public class RecognizeDevicePacket extends SimplePacket {
             component.setClientThread(clientThread);
             Framework.getNetwork().getServer().devices += 1;
             Framework.getLogger().info(String.format("Device %s connected! (%d/%d)", component.getId(), Framework.getNetwork().getServer().devices, Framework.getNetwork().getComponents().size() - 1));
-
-            for (NetworkComponent networkComponent : Framework.getNetwork().getComponents()) {
-                if (networkComponent.getStatus() == TreeStatus.ONLINE) {
-                    networkComponent.getClientThread().sendPacket(new ComponentConnectedPacket(component.getId(), Framework.getNetwork().getPublicKey()));
-                }
-            }
+            Framework.getNetwork().getServer().sendPacket(new ComponentConnectedPacket(component.getId(), Framework.getNetwork().getPublicKey()));
             ConnectionResponsePacket connectionResponsePacket = new ConnectionResponsePacket(Framework.getNetwork().getLocal().getPublicKey());
-            component.getClientThread().sendPacket(connectionResponsePacket);
 
+            Framework.getNetwork().sendPacket(component, connectionResponsePacket);
             component.setStatus(TreeStatus.ONLINE);
 
         } catch (InvalidIDException e) {
-            e.printStackTrace();
-        } catch (DeviceOfflineException e) {
             e.printStackTrace();
         }
     }

@@ -4,7 +4,6 @@ import java.io.File;
 import java.net.Socket;
 import java.util.concurrent.Semaphore;
 
-import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
@@ -34,9 +33,7 @@ public class TransferFilePacket extends FilePacket {
             semaphore.release();
         } else {
             try {
-                Framework.getNetwork().getComponent(id_to).getClientThread().sendPacket(this);
-            } catch (DeviceOfflineException e) {
-                e.printStackTrace();
+                Framework.getNetwork().sendPacket(id_to, this);
             } catch (InvalidIDException e) {
                 e.printStackTrace();
             }

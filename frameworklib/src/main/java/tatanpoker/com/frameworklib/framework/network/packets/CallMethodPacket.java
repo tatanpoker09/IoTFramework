@@ -6,7 +6,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
@@ -68,8 +67,8 @@ public class CallMethodPacket extends SimplePacket {
             Framework.getLogger().info("Redirecting CallMethodPacket!");
             try {
                 NetworkComponent component = Framework.getNetwork().getComponent(id_to);
-                component.getClientThread().sendPacket(this); //Resend to component.
-            } catch (InvalidIDException | DeviceOfflineException e) {
+                Framework.getNetwork().sendPacket(component, this);//Resend to component.
+            } catch (InvalidIDException e) {
                 e.printStackTrace();
             }
         }

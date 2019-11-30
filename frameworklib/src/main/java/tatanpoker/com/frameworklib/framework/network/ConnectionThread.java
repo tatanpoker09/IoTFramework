@@ -119,18 +119,11 @@ public class ConnectionThread extends Thread {
                     Framework.getNetwork().connect();
                 } else {
                     Framework.getNetwork().getServer().devices -= 1;
-
-                    for (NetworkComponent networkComponent : Framework.getNetwork().getComponents()) {
-                        if (networkComponent.getStatus() == TreeStatus.ONLINE) {
-                            networkComponent.getClientThread().sendPacket(new ComponentDisconnectedPacket(component.getId()));
-                        }
-                    }
+                    Framework.getNetwork().getServer().sendPacket(new ComponentDisconnectedPacket(component.getId()));
                 }
             }
         } catch (InvalidIDException e) {
             Framework.getLogger().severe("Error disconnecting unknown component?");
-            e.printStackTrace();
-        } catch (DeviceOfflineException e) {
             e.printStackTrace();
         }
     }

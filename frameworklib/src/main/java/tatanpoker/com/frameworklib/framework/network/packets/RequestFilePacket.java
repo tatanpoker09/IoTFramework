@@ -3,7 +3,6 @@ package tatanpoker.com.frameworklib.framework.network.packets;
 import java.io.File;
 import java.net.Socket;
 
-import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
@@ -32,18 +31,14 @@ public class RequestFilePacket extends SimplePacket {
             if (file.exists()) {
                 TransferFilePacket transferFilePacket = new TransferFilePacket(id_to, id_from, file);
                 try {
-                    Framework.getNetwork().getComponent(id_from).getClientThread().sendPacket(transferFilePacket);
-                } catch (DeviceOfflineException e) {
-                    e.printStackTrace();
+                    Framework.getNetwork().sendPacket(id_from, transferFilePacket);
                 } catch (InvalidIDException e) {
                     e.printStackTrace();
                 }
             }
         } else {
             try {
-                Framework.getNetwork().getComponent(id_to).getClientThread().sendPacket(this);
-            } catch (DeviceOfflineException e) {
-                e.printStackTrace();
+                Framework.getNetwork().sendPacket(id_to, this);
             } catch (InvalidIDException e) {
                 e.printStackTrace();
             }

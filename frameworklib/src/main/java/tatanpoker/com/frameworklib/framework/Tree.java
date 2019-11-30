@@ -23,11 +23,13 @@ import tatanpoker.com.frameworklib.broadcasting.BroadcastingPacket;
 import tatanpoker.com.frameworklib.events.Event;
 import tatanpoker.com.frameworklib.events.EventInfo;
 import tatanpoker.com.frameworklib.events.EventTrigger;
+import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.client.ClientConnection;
 import tatanpoker.com.frameworklib.framework.network.client.NearbyClient;
 import tatanpoker.com.frameworklib.framework.network.client.SocketClient;
+import tatanpoker.com.frameworklib.framework.network.packets.Packet;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
 import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
 import tatanpoker.com.frameworklib.security.AESUtil;
@@ -37,9 +39,6 @@ import static tatanpoker.com.frameworklib.framework.Framework.NEARBY;
 
 /**
  * This is the network.
- */
-/*
-TODO CREATE A SENDPACKET HERE THAT SORTS IF IT IS SENDING FROM SERVER OF FROM ANOTHER COMPONENT.
  */
 public class Tree {
     /*
@@ -350,6 +349,23 @@ public class Tree {
                         + klass.getCanonicalName());
             }
         }
+    }
+
+    public void sendPacket(NetworkComponent reciever, Packet packet) {
+        if (getServer().isLocal()) {
+            try {
+                reciever.getClientThread().sendPacket(packet);
+            } catch (DeviceOfflineException e) {
+                e.printStackTrace();
+            }
+        } else {
+            getClient().sendPacket(packet);
+        }
+    }
+
+    public void sendPacket(int recieverID, Packet packet) throws InvalidIDException {
+        NetworkComponent component = getComponent(recieverID);
+        sendPacket(component, packet);
     }
 
 }
