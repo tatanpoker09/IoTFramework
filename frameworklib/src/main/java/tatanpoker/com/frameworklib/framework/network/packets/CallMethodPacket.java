@@ -49,10 +49,6 @@ public class CallMethodPacket extends SimplePacket {
             //We've arrived!
             try {
                 NetworkComponent component = Framework.getNetwork().getComponent(id_to);
-                /*
-                 *   TODO USE CUSTOM ANNOTATION PROCESSOR HERE TO AVOID USING REFLECTION.
-                 */
-
                 Framework.getLogger().info("CallMethodPacket arrived, " + component.getClass().getName() + "," + id_to + "," + methodID);
                 Class[] types = new Class[parameters.size()];
                 for (int i = 0; i < parameters.size(); i++) {

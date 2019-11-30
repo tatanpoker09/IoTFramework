@@ -61,7 +61,6 @@ public class EncryptionUtils {
             case AES:
             default:
                 try {
-                    //TODO TEST THIS TO SEE IF I CAN USE BYTE[] AS SERIALIZABLE OBJECT.
                     encryptedData = AESUtil.encrypt(data, component.getSymmetricKey().getEncoded());
                 } catch (Exception e) {
                     e.printStackTrace();

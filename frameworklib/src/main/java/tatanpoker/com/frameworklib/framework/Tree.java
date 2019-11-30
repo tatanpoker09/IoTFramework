@@ -221,7 +221,7 @@ public class Tree {
         throw new InvalidIDException("Couldn't find a component by that id.");
     }
 
-    public NetworkComponent getComponent(ConnectionThread thread) throws InvalidIDException {
+    public NetworkComponent getComponent(ConnectionThread thread) throws DeviceOfflineException {
         for(NetworkComponent component : components){
             if(component.getClientThread()!=null) {
                 if (component.getClientThread().equals(thread)) {
@@ -229,8 +229,7 @@ public class Tree {
                 }
             }
         }
-        //TODO THIS IS CALLED
-        throw new InvalidIDException("Couldn't find a component by that connection thread.");
+        throw new DeviceOfflineException("Couldn't find a component by that connection thread.");
     }
 
     private NetworkComponent getComponentById(int id){

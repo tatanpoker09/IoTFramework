@@ -5,6 +5,9 @@ import java.net.Socket;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.packets.types.SimplePacket;
 
+/*
+ * TODO FINISH THIS PACKET.
+ */
 public class ListFilesPacket extends SimplePacket {
     public ListFilesPacket() {
         super(EncryptionType.AES);

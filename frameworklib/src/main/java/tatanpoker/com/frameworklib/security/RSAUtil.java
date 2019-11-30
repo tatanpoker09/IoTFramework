@@ -24,6 +24,7 @@ import javax.crypto.NoSuchPaddingException;
 
 import tatanpoker.com.frameworklib.framework.network.packets.AESSymmetricKeyPacket;
 import tatanpoker.com.frameworklib.framework.network.packets.Packet;
+import tatanpoker.com.frameworklib.framework.network.packets.PacketBypass;
 
 public class RSAUtil {
         @RequiresApi(api = Build.VERSION_CODES.O)
@@ -66,9 +67,8 @@ public class RSAUtil {
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             byte[] data;
-            //TODO this is a hack, this might be better if we can make it more generalized.
-            if (object instanceof AESSymmetricKeyPacket) {
-                data = ((AESSymmetricKeyPacket) object).toBytes();
+            if (object instanceof PacketBypass) {
+                data = ((PacketBypass) object).toBytes();
             } else {
                 data = SerializationUtils.serialize(object);
             }

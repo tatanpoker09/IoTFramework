@@ -220,7 +220,7 @@ public class DeviceManagerProcessor extends AbstractProcessor {
                 method.addStatement("params.add($L)", parameter.getSimpleName().toString());
                 parameterTypes.add(TypeName.get(parameter.asType()).toString());
             }
-            //TODO change name.toString() into an id which can be recognized on the other side.
+
             method.addStatement("$T methodPacket = new $T($T.getNetwork().getLocal().getId(), getId(), $L,params)", callMethodPacket, callMethodPacket, framework, methodCodeBlock.size());
             method.addStatement("$T.getNetwork().sendPacket(this, methodPacket)", framework);
             DeviceMethod deviceMethod = new DeviceMethod(deviceName.toString(), methodElement.getSimpleName().toString(), parameterTypes);

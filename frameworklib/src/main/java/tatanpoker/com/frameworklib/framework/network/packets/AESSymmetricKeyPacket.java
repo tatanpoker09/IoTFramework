@@ -18,7 +18,7 @@ import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.packets.types.SimplePacket;
 
 //We send this as bytes but we don't parse it as a packet to send it as an objectoutputstream.
-public class AESSymmetricKeyPacket extends SimplePacket {
+public class AESSymmetricKeyPacket extends SimplePacket implements PacketBypass {
     private int id;
     private SecretKey symmetricKey;
 
@@ -34,7 +34,6 @@ public class AESSymmetricKeyPacket extends SimplePacket {
         int id = ByteBuffer.wrap(encodedID).getInt();
         SecretKey originalKey = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
         return new AESSymmetricKeyPacket(id, originalKey);
-
     }
 
 
