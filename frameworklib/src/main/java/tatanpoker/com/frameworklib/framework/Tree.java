@@ -15,6 +15,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import javax.crypto.SecretKey;
 
@@ -64,6 +65,7 @@ public class Tree {
     private Context context;
     private Broadcaster broadcaster;
     private RSAKeyPairGenerator keyPairGenerator;
+    private Semaphore semaphore;
 
 
 
@@ -278,6 +280,10 @@ public class Tree {
         }
     }
 
+    public Semaphore getSemaphore() {
+        return semaphore;
+    }
+
     void addComponents(List<NetworkComponent> devices) {
         this.components.addAll(devices);
     }
@@ -351,6 +357,10 @@ public class Tree {
     }
 
     public void sendPacket(NetworkComponent reciever, Packet packet) {
+        if (reciever.isLocal()) {
+            //TODO check if I can make this have non null values.
+            packet.process(null, null);
+        }
         if (getServer().isLocal()) {
             try {
                 reciever.getClientThread().sendPacket(packet);

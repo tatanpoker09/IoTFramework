@@ -10,6 +10,7 @@ import tatanpoker.com.frameworklib.events.EventTrigger;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.packets.RequestFileListPacket;
+import tatanpoker.com.frameworklib.framework.network.packets.RequestFilePacket;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
 
 public abstract class NetworkComponent implements Component, EventTrigger {
@@ -141,5 +142,16 @@ public abstract class NetworkComponent implements Component, EventTrigger {
 
     public final void setFileList(File[] files) {
         this.files = files;
+    }
+
+    public File transferFile(String fileName, NetworkComponent to) {
+        RequestFilePacket requestFilePacket = new RequestFilePacket(fileName, getId(), Framework.getNetwork().getLocal().getId(), to.getId());
+        Framework.getNetwork().sendPacket(to, requestFilePacket);
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return new File(fileName);
     }
 }
