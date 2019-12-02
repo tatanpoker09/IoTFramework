@@ -32,8 +32,8 @@ public class SocketServer extends Server {
     private static final boolean USE_USER_GIVEN_IP = false;
 
 
-    public SocketServer() throws InvalidIDException {
-        super(0, -10000);
+    public SocketServer(int id, int layout) throws InvalidIDException {
+        super(id, layout);
     }
 
 

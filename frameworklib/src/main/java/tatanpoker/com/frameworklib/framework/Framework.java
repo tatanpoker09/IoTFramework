@@ -7,11 +7,7 @@ import androidx.room.Room;
 
 import java.util.logging.Logger;
 
-import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.network.packets.db.PacketDatabase;
-import tatanpoker.com.frameworklib.framework.network.server.NearbyServer;
-import tatanpoker.com.frameworklib.framework.network.server.Server;
-import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
 
 /**
  * Represents the framework, which deals with automation and encapsulation, code generation, etc.
@@ -28,21 +24,10 @@ public class Framework {
     public static void startNetwork(Context context) {
         if(network == null){ //Singleton.
             initializeDatabase(context);
-            Server server;
-            try {
-                if(NEARBY) {
-                    server = new NearbyServer(context);
-                } else {
-                    server = new SocketServer();
-                }
-            } catch (InvalidIDException e) {
-                getLogger().severe("Error creating socketServer");
-                e.printStackTrace();
-                return;
-            }
-            network = new Tree(context, server);
+            network = new Tree(context);
         }
     }
+
 
     private static void initializeDatabase(Context context) {
         db = Room.databaseBuilder(context,
@@ -74,6 +59,7 @@ public class Framework {
             network.setLocal(network.getServer());
         }
         network.addComponents(build.devices);
+        network.setServer(build.server);
         deviceManager = build;
         return build;
     }

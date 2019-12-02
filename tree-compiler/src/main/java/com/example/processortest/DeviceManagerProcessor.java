@@ -48,6 +48,7 @@ public class DeviceManagerProcessor extends AbstractProcessor {
     private Elements elementUtils;
     private static final String SUFFIX = "_Impl";
     private List<DeviceMethod> methodCodeBlock;
+    private boolean server;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
@@ -113,13 +114,27 @@ public class DeviceManagerProcessor extends AbstractProcessor {
                 deviceMethodMap.put(deviceClassName, methodName);
                 Device device = devices.get(deviceClassName);
 
+                if (fieldName.contains("server")) {
+                    fieldName = "server";
+                    server = true;
+                }
                 if (device != null) {
-                    MethodSpec method = MethodSpec.methodBuilder(enclosedElement.getSimpleName().toString())
-                            .addAnnotation(Override.class)
-                            .returns(returnTypeName)
-                            .addModifiers(Modifier.PUBLIC)
-                            .addStatement("return $L", fieldName)
-                            .build();
+                    MethodSpec method;
+                    if (fieldName.equals("server")) {
+                        method = MethodSpec.methodBuilder(enclosedElement.getSimpleName().toString())
+                                .addAnnotation(Override.class)
+                                .returns(returnTypeName)
+                                .addModifiers(Modifier.PUBLIC)
+                                .addStatement("return ($T)server", returnTypeName)
+                                .build();
+                    } else {
+                        method = MethodSpec.methodBuilder(enclosedElement.getSimpleName().toString())
+                                .addAnnotation(Override.class)
+                                .returns(returnTypeName)
+                                .addModifiers(Modifier.PUBLIC)
+                                .addStatement("return $L", fieldName)
+                                .build();
+                    }
                     if (enclosedElement.getAnnotation(Local.class) != null) {
                         if (!local) {
                             local = true;
@@ -140,6 +155,16 @@ public class DeviceManagerProcessor extends AbstractProcessor {
                     navigatorClass.addMethod(method);
                 }
             }
+        }
+        if (!server) {
+            ClassName socketServer = ClassName.get(
+                    "tatanpoker.com.frameworklib.framework.network.server",
+                    "SocketServer");
+            initMethodBuilder.addStatement("server = new $T($L, $L)", socketServer, 0, -10000);
+            initMethodBuilder.addStatement("devices.add(server)");
+        }
+        if (!local) {
+            initMethodBuilder.addStatement("local = server");
         }
         int id = 0;
         for (DeviceMethod deviceMethod : methodCodeBlock) {

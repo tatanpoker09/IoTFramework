@@ -68,12 +68,9 @@ public class Tree {
     private Semaphore semaphore;
 
 
-
-    Tree(Context context, Server server) {
+    Tree(Context context) {
         this.context = context;
         components = new ArrayList<>();
-        this.server = server;
-        components.add(server);
         this.keyPairGenerator = new RSAKeyPairGenerator();
         try {
             this.keyPairGenerator.generate();
@@ -298,6 +295,10 @@ public class Tree {
 
     public PrivateKey getPrivateKey() {
         return keyPairGenerator.getPrivateKey();
+    }
+
+    public void setServer(Server server) {
+        this.server = server;
     }
 
     public static class DevicesBuilder<T extends TreeDeviceManager> {
