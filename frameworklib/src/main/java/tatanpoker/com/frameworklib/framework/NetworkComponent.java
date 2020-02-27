@@ -153,4 +153,8 @@ public abstract class NetworkComponent implements Component, EventTrigger {
         }
         return new File(fileName);
     }
+
+    public void onDevicesRegistered() {
+
+    }
 }

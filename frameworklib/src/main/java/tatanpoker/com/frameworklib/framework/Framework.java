@@ -61,6 +61,7 @@ public class Framework {
         network.addComponents(build.devices);
         network.setServer(build.server);
         deviceManager = build;
+        network.getLocal().onDevicesRegistered();
         return build;
     }
 

@@ -1,1 +1,1 @@
-include ':mobile', ':things', ':TreeFramework', ':treeframework2', ':frameworklib', ':tree-compiler', ':tree-annotations'
+include ':mobile', ':things', ':TreeFramework', ':treeframework2', ':frameworklib', ':tree-compiler', ':tree-annotations', ':app'
