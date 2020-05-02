@@ -150,24 +150,6 @@ public class ConnectionThread extends Thread {
                 if(dataOutputStream == null){
                     dataOutputStream = new DataOutputStream(socket.getOutputStream());
                 }
-                byte[] data;
-                Framework.getLogger().info("Sending packet: " + getClass().getName() + " through socket.");
-                NetworkComponent component;
-                try {
-                    component = Framework.getNetwork().getComponent(ConnectionThread.this);
-                } catch (DeviceOfflineException e) {
-                    e.printStackTrace();
-                    return;
-                }
-                data = EncryptionUtils.encrypt(component, packet, packet.getEncryptionType());
-                try {
-                    dataOutputStream.writeInt(data.length); //Write length
-                    dataOutputStream.writeInt(packet.getEncryptionType().ordinal());
-                    dataOutputStream.writeInt(Framework.getNetwork().getLocal().getId());
-                    dataOutputStream.write(data); //Write data
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 packet.sendPacket(dataOutputStream, ConnectionThread.this);
             }
         }
