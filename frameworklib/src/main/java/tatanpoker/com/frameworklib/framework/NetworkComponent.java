@@ -154,6 +154,13 @@ public abstract class NetworkComponent implements Component, EventTrigger {
         return new File(fileName);
     }
 
+
+
+    public File streamFile(String fileName, Component component) {
+
+        return new File(fileName);
+    }
+
     public void onDevicesRegistered() {
 
     }

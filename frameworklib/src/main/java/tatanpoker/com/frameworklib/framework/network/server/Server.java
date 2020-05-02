@@ -1,6 +1,9 @@
 package tatanpoker.com.frameworklib.framework.network.server;
 
+import java.io.File;
+
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
+import tatanpoker.com.frameworklib.framework.Component;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.TreeStatus;

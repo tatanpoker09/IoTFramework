@@ -27,8 +27,8 @@ public class Microphone extends NetworkComponent {
             Devices deviceManager = (Devices) Framework.getDeviceManager();
             Server server = deviceManager.getServer();
             Speaker speaker = deviceManager.getSpeaker();
-            File songFile = server.transferFile(songName, speaker);
-            speaker.play(songFile);
+            Promise songFile = server.streamFile(songName, speaker); //Return a "promise" with a special id. Then match inputstream to said ID on the other side.
+            speaker.play(Promise);
         }
     }
 

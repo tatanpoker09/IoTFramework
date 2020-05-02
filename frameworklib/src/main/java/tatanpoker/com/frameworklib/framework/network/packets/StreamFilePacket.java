@@ -39,6 +39,6 @@ public class StreamFilePacket extends StreamPacket {
 
     @Override
     public void process(Socket socket, ConnectionThread clientThread) {
-
+        //We don't even receieve this full packet tbh.
     }
 }

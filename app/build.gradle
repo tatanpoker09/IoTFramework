@@ -38,4 +38,5 @@ dependencies {
     compileOnly 'com.google.android.things:androidthings:+'
     compile project(path: ':frameworklib')
     annotationProcessor project(path: ":tree-compiler")
+    implementation files('libs\\jl1.0.1.jar')
 }
