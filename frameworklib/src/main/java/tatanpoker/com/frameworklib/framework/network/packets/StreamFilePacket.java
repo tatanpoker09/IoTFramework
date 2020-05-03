@@ -1,6 +1,7 @@
 package tatanpoker.com.frameworklib.framework.network.packets;
 
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +34,18 @@ public class StreamFilePacket extends StreamPacket {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public long getSize() {
+        AssetFileDescriptor fd = null;
+        try {
+            fd = context.getAssets().openFd(fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assert fd != null;
+        return fd.getLength();
     }
 
     @Override

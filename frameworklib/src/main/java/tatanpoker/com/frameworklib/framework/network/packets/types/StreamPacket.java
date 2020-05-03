@@ -25,12 +25,16 @@ public abstract class StreamPacket extends Packet {
     private static final int CHUNK_SIZE = 1024;
 
     private UUID uuid;
+    private int packetCount;
 
     private transient boolean streaming;
 
     public StreamPacket(EncryptionType encryptionType, UUID uuid) {
         super(PacketType.STREAM, encryptionType);
         this.uuid = uuid;
+        if (this.packetCount == 0) {
+            this.packetCount = getPacketCount();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -88,7 +92,20 @@ public abstract class StreamPacket extends Packet {
     @Override
     public void process(Socket socket, ConnectionThread clientThread) {
         //Open
-        Framework.getNetwork().getStreamingManager().addFileStream(new FileStream(uuid));
+        Framework.getNetwork().getStreamingManager().addFileStream(new FileStream(uuid, packetCount));
+    }
+
+    public long getSize(){
+        return 0;
+    }
+
+    public int getPacketCount(){
+        long packetCount = (getSize()/CHUNK_SIZE);
+        int remainder = (int) (getSize()- (CHUNK_SIZE * packetCount));
+        if(remainder!=0){
+            packetCount+=1;
+        }
+        return (int) packetCount;
     }
 }
 

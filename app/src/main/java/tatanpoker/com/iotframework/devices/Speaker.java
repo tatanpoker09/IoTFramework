@@ -11,6 +11,7 @@ import com.example.iotframework.R;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.concurrent.TimeoutException;
 
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.Decoder;
@@ -19,6 +20,7 @@ import javazoom.jl.decoder.SampleBuffer;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
+import tatanpoker.com.frameworklib.framework.network.packets.types.SubStreamPacket;
 import tatanpoker.com.frameworklib.framework.network.streaming.FileStream;
 import tatanpoker.com.tree.annotations.Device;
 
@@ -63,8 +65,8 @@ class Player implements Runnable {
         play();
     }
 
-    public void write(byte[] array){
-
+    public void write(SubStreamPacket nextPacket){
+        data = nextPacket.getData();
     }
 
     private void play() {
@@ -94,13 +96,16 @@ class Player implements Runnable {
                 int framesReaded = 0;
 
                 Header header;
-                for (; framesReaded++ <= READ_THRESHOLD && (header = bitstream.readFrame()) != null; ) {
-                    SampleBuffer sampleBuffer = (SampleBuffer) mDecoder.decodeFrame(header, bitstream);
-                    short[] buffer = sampleBuffer.getBuffer();
-                    mAudioTrack.write(buffer, 0, buffer.length);
-                    bitstream.closeFrame();
+                SubStreamPacket nextPacket;
+                while((nextPacket = fileStream.getNextPacket())!=null){
+                    write(nextPacket);
+                    for (; framesReaded++ <= READ_THRESHOLD && (header = bitstream.readFrame()) != null; ) {
+                        SampleBuffer sampleBuffer = (SampleBuffer) mDecoder.decodeFrame(header, bitstream);
+                        short[] buffer = sampleBuffer.getBuffer();
+                        mAudioTrack.write(buffer, 0, buffer.length);
+                        bitstream.closeFrame();
+                    }
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
