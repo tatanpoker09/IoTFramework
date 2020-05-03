@@ -2,11 +2,10 @@ package tatanpoker.com.iotframework.devices;
 
 import com.example.iotframework.R;
 
-import java.io.File;
-
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
+import tatanpoker.com.frameworklib.framework.network.streaming.FileStream;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
 import tatanpoker.com.iotframework.Devices;
 import tatanpoker.com.tree.annotations.Device;
@@ -23,12 +22,11 @@ public class Microphone extends NetworkComponent {
 
     public void onRecognition(String intent) {
         if (intent.startsWith("play")) {
-            String songName = intent.replace("play ", "") + ".mp3";
+            String fileName = intent.replace("play ", "") + ".mp3";
             Devices deviceManager = (Devices) Framework.getDeviceManager();
-            Server server = deviceManager.getServer();
+            CustomServer server = deviceManager.getServer();
             Speaker speaker = deviceManager.getSpeaker();
-            Promise songFile = server.streamFile(songName, speaker); //Return a "promise" with a special id. Then match inputstream to said ID on the other side.
-            speaker.play(Promise);
+            server.startFileStream(fileName, speaker); //Return a "proxy" with a special id. Then match inputstream to said ID on the other side?
         }
     }
 

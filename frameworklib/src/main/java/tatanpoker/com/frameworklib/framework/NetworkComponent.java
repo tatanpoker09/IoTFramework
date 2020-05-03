@@ -2,6 +2,7 @@ package tatanpoker.com.frameworklib.framework;
 
 import java.io.File;
 import java.security.PublicKey;
+import java.util.UUID;
 import java.util.concurrent.Semaphore;
 
 import javax.crypto.SecretKey;
@@ -9,8 +10,10 @@ import javax.crypto.SecretKey;
 import tatanpoker.com.frameworklib.events.EventTrigger;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
+import tatanpoker.com.frameworklib.framework.network.streaming.FileStream;
 import tatanpoker.com.frameworklib.framework.network.packets.RequestFileListPacket;
 import tatanpoker.com.frameworklib.framework.network.packets.RequestFilePacket;
+import tatanpoker.com.frameworklib.framework.network.packets.StreamFilePacket;
 
 public abstract class NetworkComponent implements Component, EventTrigger {
 
@@ -156,9 +159,22 @@ public abstract class NetworkComponent implements Component, EventTrigger {
 
 
 
-    public File streamFile(String fileName, Component component) {
-
-        return new File(fileName);
+    public FileStream streamFile(String fileName, int componentToID) {
+        NetworkComponent component = null;
+        try {
+            component = Framework.getNetwork().getComponent(componentToID);
+        } catch (InvalidIDException e) {
+            e.printStackTrace();
+        }
+        if(component!=null) {
+            UUID uniqueStreamID = UUID.randomUUID();
+            NetworkComponent finalComponent = component;
+            StreamFilePacket streamFilePacket = new StreamFilePacket(fileName, Framework.getNetwork().getContext(), uniqueStreamID);
+            new Thread(() -> Framework.getNetwork().sendPacket(finalComponent, streamFilePacket)).start();
+            return new FileStream(uniqueStreamID);
+        } else {
+            return null;
+        }
     }
 
     public void onDevicesRegistered() {

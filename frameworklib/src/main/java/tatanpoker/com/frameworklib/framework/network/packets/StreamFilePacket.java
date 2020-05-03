@@ -2,24 +2,27 @@ package tatanpoker.com.frameworklib.framework.network.packets;
 
 import android.content.Context;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.UUID;
 
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.packets.types.StreamPacket;
 
 public class StreamFilePacket extends StreamPacket {
-
-
     private String fileName;
     private Context context;
 
-    public StreamFilePacket(String fileName, Context context) {
-        super(EncryptionType.AES);
+    public StreamFilePacket(String fileName, Context context, UUID uniqueStreamID) {
+        super(EncryptionType.AES, uniqueStreamID);
         this.fileName = fileName;
         this.context = context;
+    }
+
+    @Override
+    protected void process(String endpointId) {
+
     }
 
     @Override
@@ -30,11 +33,6 @@ public class StreamFilePacket extends StreamPacket {
             e.printStackTrace();
         }
         return null;
-    }
-
-    @Override
-    protected void process(String endpointId) {
-
     }
 
     @Override

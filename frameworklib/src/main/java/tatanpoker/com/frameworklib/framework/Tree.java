@@ -33,6 +33,7 @@ import tatanpoker.com.frameworklib.framework.network.client.SocketClient;
 import tatanpoker.com.frameworklib.framework.network.packets.Packet;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
 import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
+import tatanpoker.com.frameworklib.framework.network.streaming.StreamingManager;
 import tatanpoker.com.frameworklib.security.AESUtil;
 import tatanpoker.com.frameworklib.security.RSAKeyPairGenerator;
 
@@ -66,6 +67,7 @@ public class Tree {
     private Broadcaster broadcaster;
     private RSAKeyPairGenerator keyPairGenerator;
     private Semaphore semaphore;
+    private StreamingManager streamingManager;
 
 
     Tree(Context context) {
@@ -121,6 +123,7 @@ public class Tree {
      */
     public void onEnable(){
         instance = this;
+        streamingManager = new StreamingManager();
         SecretKey secretKey = AESUtil.generateKey();
         if (!(local instanceof Server)) {
             ((Activity) context).setContentView(local.getLayout());
@@ -299,6 +302,10 @@ public class Tree {
 
     public void setServer(Server server) {
         this.server = server;
+    }
+
+    public StreamingManager getStreamingManager() {
+        return streamingManager;
     }
 
     public static class DevicesBuilder<T extends TreeDeviceManager> {

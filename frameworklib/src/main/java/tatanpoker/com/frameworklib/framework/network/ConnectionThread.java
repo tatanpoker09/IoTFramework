@@ -21,6 +21,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
 import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
+import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.TreeStatus;
@@ -56,8 +57,8 @@ public class ConnectionThread extends Thread {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 int length = dataInputStream.readInt();                    // read length of incoming message
-                int ordinal = dataInputStream.readInt();
-                int id = dataInputStream.readInt();
+                int ordinal = dataInputStream.readInt(); //Encryption type
+                int id = dataInputStream.readInt(); //component id from where its coming from.
                 EncryptionType encryptionType = EncryptionType.values()[ordinal];
                 if(length>0) {
                     byte[] message = new byte[length];
@@ -87,17 +88,7 @@ public class ConnectionThread extends Thread {
                 Framework.getLogger().severe("Extra packet sent(?");
                 e.printStackTrace();
                 break;
-            } catch (NoSuchPaddingException e) {
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (InvalidKeyException e) {
-                e.printStackTrace();
-            } catch (IllegalBlockSizeException e) {
-                e.printStackTrace();
-            } catch (BadPaddingException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
+            } catch (Exception e) { //This is bad but I'm lazy to change it.
                 e.printStackTrace();
             }
             try {

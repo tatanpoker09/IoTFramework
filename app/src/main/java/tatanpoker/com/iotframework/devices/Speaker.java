@@ -3,18 +3,14 @@ package tatanpoker.com.iotframework.devices;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
 import com.example.iotframework.R;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.net.Socket;
 
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.Decoder;
@@ -23,6 +19,7 @@ import javazoom.jl.decoder.SampleBuffer;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
+import tatanpoker.com.frameworklib.framework.network.streaming.FileStream;
 import tatanpoker.com.tree.annotations.Device;
 
 import static tatanpoker.com.iotframework.devices.Speaker.SPEAKER_ID;
@@ -35,9 +32,11 @@ public class Speaker extends NetworkComponent {
         super(id, layout);
     }
 
-    public void play(Promise promise) {
+    public void play(FileStream fileStream) {
+        fileStream = Framework.getNetwork().getStreamingManager().getFileStream(fileStream.getUuid());//TODO MAKE THIS LINE AUTOMATIC LATER ON WITH CUSTOM ANNOTATION PROCESSOR.
         Framework.getLogger().info("Yay this works!");
-        new Player(promise.getInputStream());
+        Player player = new Player(fileStream);
+        new Thread(player).start();
     }
 }
 
@@ -48,15 +47,24 @@ class Player implements Runnable {
     public boolean isPlaying = false;
     private Decoder mDecoder;
     private AudioTrack mAudioTrack;
+    private int bufferSize = 4096;
+    private byte[] data;
+    private FileStream fileStream;
 
-    public Player(InputStream inputStream) {
-        this.inputStream = inputStream;
+    public Player(FileStream fileStream) {
+        this.fileStream = fileStream;
+        data = new byte[bufferSize];
+        this.inputStream = new ByteArrayInputStream(data);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     public void run() {
         play();
+    }
+
+    public void write(byte[] array){
+
     }
 
     private void play() {

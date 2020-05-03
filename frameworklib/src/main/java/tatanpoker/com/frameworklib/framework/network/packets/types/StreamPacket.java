@@ -1,5 +1,6 @@
 package tatanpoker.com.frameworklib.framework.network.packets.types;
 
+import android.net.Network;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -9,6 +10,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.UUID;
 
 import tatanpoker.com.frameworklib.exceptions.DeviceOfflineException;
 import tatanpoker.com.frameworklib.framework.Framework;
@@ -16,22 +18,24 @@ import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.packets.EncryptionType;
 import tatanpoker.com.frameworklib.framework.network.packets.Packet;
+import tatanpoker.com.frameworklib.framework.network.streaming.FileStream;
 import tatanpoker.com.frameworklib.security.EncryptionUtils;
 
 public abstract class StreamPacket extends Packet {
     private static final int CHUNK_SIZE = 1024;
 
-    private InputStream inputStream;
-    private boolean streaming;
+    private UUID uuid;
 
-    public StreamPacket(EncryptionType encryptionType) {
+    private transient boolean streaming;
+
+    public StreamPacket(EncryptionType encryptionType, UUID uuid) {
         super(PacketType.STREAM, encryptionType);
+        this.uuid = uuid;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public final void sendPacket(DataOutputStream dataOutputStream, ConnectionThread connectionThread) {
-
         byte[] data;
         Framework.getLogger().info("Sending packet: " + getClass().getName() + " through socket.");
         NetworkComponent component;
@@ -54,27 +58,37 @@ public abstract class StreamPacket extends Packet {
     }
 
 
-
-    public void streamPacket(DataOutputStream dataOutputStream, ConnectionThread connectionThread){
+        //TODO MAYBE DO THIS IN ANOTHER THREAD.
+    public synchronized void streamPacket(DataOutputStream dataOutputStream, ConnectionThread connectionThread){
+        streaming = true;
+        NetworkComponent component = null;
+        try {
+            component = Framework.getNetwork().getComponent(connectionThread);
+        } catch (DeviceOfflineException e) {
+            e.printStackTrace();
+        }
         try {
             //We separate in chunks and send little by little.
             byte[] myBuffer = new byte[CHUNK_SIZE];
             int bytesRead = 0;
-            BufferedInputStream in = new BufferedInputStream(getOutputInputStream());
+            BufferedInputStream in = new BufferedInputStream(getInputStream());
             while ((bytesRead = in.read(myBuffer, 0, CHUNK_SIZE)) != -1) {
-                dataOutputStream.write(myBuffer);
+                SubStreamPacket subStreamPacket = new SubStreamPacket(uuid, myBuffer);
+                assert component != null;
+                Framework.getNetwork().sendPacket(component, subStreamPacket);
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
+        streaming = false;
     }
 
-    public abstract InputStream getOutputInputStream(); //Byte Inputstream to feed as output.
+    public abstract InputStream getInputStream();
 
     @Override
     public void process(Socket socket, ConnectionThread clientThread) {
         //Open
-        this.streaming = true;
+        Framework.getNetwork().getStreamingManager().addFileStream(new FileStream(uuid));
     }
 }
+
