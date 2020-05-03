@@ -13,7 +13,7 @@ public class SubStreamPacket extends SimplePacket{
     private byte[] partialData;
 
 
-    public SubStreamPacket(UUID streamPacketUUID, byte[] partialData) {
+    SubStreamPacket(UUID streamPacketUUID, byte[] partialData) {
         super(EncryptionType.AES);
         this.streamPacketUUID = streamPacketUUID;
         this.partialData = partialData;
@@ -29,5 +29,9 @@ public class SubStreamPacket extends SimplePacket{
     public void process(Socket socket, ConnectionThread clientThread) {
         FileStream fileStream = Framework.getNetwork().getStreamingManager().getFileStream(streamPacketUUID);
         fileStream.addSubPacket(this);
+    }
+
+    public byte[] getData() {
+        return partialData;
     }
 }

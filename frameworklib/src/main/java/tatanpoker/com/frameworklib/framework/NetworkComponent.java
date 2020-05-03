@@ -30,7 +30,7 @@ public abstract class NetworkComponent implements Component, EventTrigger {
     private Semaphore semaphore;
 
 
-    public NetworkComponent(int id, int layout) throws InvalidIDException {
+    public NetworkComponent(int id, int layout) {
         /*if(id==0 && !(this instanceof Server)){
             throw new InvalidIDException("ID 0 is reserved for the SocketServer!");
         }*/
@@ -171,7 +171,7 @@ public abstract class NetworkComponent implements Component, EventTrigger {
             NetworkComponent finalComponent = component;
             StreamFilePacket streamFilePacket = new StreamFilePacket(fileName, Framework.getNetwork().getContext(), uniqueStreamID);
             new Thread(() -> Framework.getNetwork().sendPacket(finalComponent, streamFilePacket)).start();
-            return new FileStream(uniqueStreamID);
+            return new FileStream(uniqueStreamID, streamFilePacket.getPacketCount());
         } else {
             return null;
         }

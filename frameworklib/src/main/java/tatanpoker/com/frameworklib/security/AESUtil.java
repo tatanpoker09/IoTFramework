@@ -23,21 +23,19 @@ public class AESUtil {
         }
         if (generator != null) {
             generator.init(128); // The AES key size in number of bits
-            SecretKey secKey = generator.generateKey();
-            return secKey;
+            return generator.generateKey();
         }
         return null;
     }
 
     private static final String ALGO = "AES";
 
-    public static byte[] encrypt(Serializable object, byte[] secretKey) throws Exception {
+    static byte[] encrypt(Serializable object, byte[] secretKey) throws Exception {
         byte[] data = SerializationUtils.serialize(object);
         Key key = getKey(secretKey);
         Cipher c = Cipher.getInstance(ALGO);
         c.init(Cipher.ENCRYPT_MODE, key);
-        byte[] encVal = c.doFinal(data);
-        return encVal;
+        return c.doFinal(data);
     }
 
     public static Packet decrypt(byte[] encryptedData, byte[] secretKey) throws Exception {
@@ -50,7 +48,6 @@ public class AESUtil {
     }
 
     private static Key getKey(byte[] secretKey) throws Exception {
-        Key key = new SecretKeySpec(secretKey, ALGO);
-        return key;
+        return new SecretKeySpec(secretKey, ALGO);
     }
 }

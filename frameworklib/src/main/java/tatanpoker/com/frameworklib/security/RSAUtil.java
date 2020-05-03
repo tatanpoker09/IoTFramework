@@ -89,21 +89,12 @@ public class RSAUtil {
         }
 
     public static byte[] keyDecrypt(PrivateKey privateKey, byte[] encryptedKey) {
-        Cipher cipher = null;
+        Cipher cipher;
         try {
             cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             cipher.init(Cipher.PRIVATE_KEY, privateKey);
-            byte[] decryptedKey = cipher.doFinal(encryptedKey);
-            return decryptedKey;
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
+            return cipher.doFinal(encryptedKey);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | BadPaddingException | IllegalBlockSizeException | InvalidKeyException e) {
             e.printStackTrace();
         }
         return null;
