@@ -1,9 +1,11 @@
 package tatanpoker.com.iotframework.devices;
 
+import android.app.Activity;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.os.Build;
+import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 
@@ -16,7 +18,6 @@ import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.Decoder;
 import javazoom.jl.decoder.Header;
 import javazoom.jl.decoder.SampleBuffer;
-import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.network.packets.types.SubStreamPacket;
@@ -25,17 +26,23 @@ import tatanpoker.com.tree.annotations.Device;
 
 import static tatanpoker.com.iotframework.devices.Speaker.SPEAKER_ID;
 
-@Device(id = SPEAKER_ID, layout = R.layout.microphone_layout)
+@Device(id = SPEAKER_ID, layout = R.layout.activity_speaker)
 public class Speaker extends NetworkComponent {
     static final int SPEAKER_ID = 2;
 
-    public Speaker(int id, int layout) throws InvalidIDException {
+    public Speaker(int id, int layout) {
         super(id, layout);
     }
 
     public void play(FileStream fileStream) {
         fileStream = Framework.getNetwork().getStreamingManager().getFileStream(fileStream.getUuid());//TODO MAKE THIS LINE AUTOMATIC LATER ON WITH CUSTOM ANNOTATION PROCESSOR.
         Framework.getLogger().info("Yay this works!");
+
+        Activity activity = (Activity) Framework.getNetwork().getContext();
+        activity.runOnUiThread(() -> {
+            TextView textView = activity.findViewById(R.id.textView2);
+            textView.setText("Current Situation: MY BALLS ARE NOT BEING CUT TODAY");
+        });
         Player player = new Player(fileStream);
         new Thread(player).start();
     }

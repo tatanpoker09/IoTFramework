@@ -147,11 +147,12 @@ public class DeviceManagerProcessor extends AbstractProcessor {
                         initMethodBuilder.addStatement("$L = new $TStub($L, $L)", fieldName, returnTypeName, device.id(), device.layout());
                     }
                     initMethodBuilder.addStatement("devices.add($L)", fieldName);
-
-                    FieldSpec field = FieldSpec.builder(returnTypeName, fieldName)
-                            .addModifiers(Modifier.PRIVATE)
-                            .build();
-                    navigatorClass.addField(field);
+                    if(!server) {
+                        FieldSpec field = FieldSpec.builder(returnTypeName, fieldName)
+                                .addModifiers(Modifier.PRIVATE)
+                                .build();
+                        navigatorClass.addField(field);
+                    }
                     navigatorClass.addMethod(method);
                 }
             }

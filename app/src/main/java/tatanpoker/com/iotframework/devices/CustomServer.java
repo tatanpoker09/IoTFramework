@@ -7,7 +7,7 @@ import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
 import tatanpoker.com.frameworklib.framework.network.streaming.FileStream;
 import tatanpoker.com.tree.annotations.Device;
 
-@Device(id = 0, layout = R.layout.server_layout)
+@Device(id = 0, layout = R.layout.activity_server)
 public class CustomServer extends SocketServer {
     public CustomServer(int id, int layout) throws InvalidIDException {
         super(id, layout);

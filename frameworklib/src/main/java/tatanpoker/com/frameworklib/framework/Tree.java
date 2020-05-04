@@ -172,7 +172,10 @@ public class Tree {
     }
 
     public Server getServer() {
-        return server;
+        if(server!=null)
+            return server;
+        else
+            return Framework.getDeviceManager().server;
     }
 
     public ClientConnection getClient() {

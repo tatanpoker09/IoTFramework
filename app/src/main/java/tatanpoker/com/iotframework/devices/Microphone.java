@@ -12,7 +12,7 @@ import tatanpoker.com.tree.annotations.Device;
 
 import static tatanpoker.com.iotframework.devices.Microphone.MICROPHONE_ID;
 
-@Device(id = MICROPHONE_ID, layout = R.layout.microphone_layout)
+@Device(id = MICROPHONE_ID, layout = R.layout.activity_microphone)
 public class Microphone extends NetworkComponent {
     static final int MICROPHONE_ID = 1;
 
