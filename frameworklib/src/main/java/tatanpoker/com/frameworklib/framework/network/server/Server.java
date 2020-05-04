@@ -29,8 +29,6 @@ public abstract class Server extends NetworkComponent {
 
             Framework.getLogger().info(String.format("Starting Server to wait for devices to connect... (0/%s)", componentCount));
             devices = 0;
-            ServerReadyPacket serverReadyPacket = new ServerReadyPacket();
-            sendPacket(serverReadyPacket);
         }
     }
 

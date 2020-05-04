@@ -26,5 +26,6 @@ public class ConnectionResponsePacket extends SimplePacket {
         AESSymmetricKeyPacket symmetricKeyPacket = new AESSymmetricKeyPacket(id, Framework.getNetwork().getLocal().getSymmetricKey());
         Framework.getNetwork().sendPacket(Framework.getNetwork().getServer(), symmetricKeyPacket);
         //Framework.getNetwork().getServer().getClientThread().sendPacket(symmetricKeyPacket); deprecated call.
+        Framework.getNetwork().getLocal().onServerReady();
     }
 }

@@ -25,10 +25,10 @@ public class SocketClient extends ClientConnection{
     }
 
     @Override
-    public void sendPacket(Packet packet) {
+    public void sendPacket(Packet packet, boolean urgent) {
         try {
             Framework.getLogger().info("Sending " + packet.getClass().getSimpleName() + " through socket with " + packet.getEncryptionType());
-            this.clientThread.sendPacket(packet);
+            this.clientThread.sendPacket(packet, urgent);
         } catch (DeviceOfflineException e) {
             e.printStackTrace();
         }
@@ -59,7 +59,7 @@ class ConnectionRunnable implements Runnable{
                     Framework.getNetwork().getPublicKey());
             socketClient.clientThread = new ConnectionThread(socketClient.socket);
             Framework.getNetwork().getServer().setClientThread(socketClient.clientThread);
-            socketClient.sendPacket(recognizePacket);
+            socketClient.sendPacket(recognizePacket, false);
             Framework.getNetwork().getLocal().setStatus(TreeStatus.ONLINE);
             socketClient.clientThread.start();
         } catch (IOException | InvalidIDException e) {

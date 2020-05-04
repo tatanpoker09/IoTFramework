@@ -83,7 +83,7 @@ public class NearbyClient extends ClientConnection {
     }
 
     @Override
-    public void sendPacket(Packet packet) {
+    public void sendPacket(Packet packet, boolean urgent) {
         nearbyConnection.sendPacket(packet, endpointId);
     }
 

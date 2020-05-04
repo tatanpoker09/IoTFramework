@@ -82,4 +82,8 @@ public abstract class Packet implements Serializable {
 
     public void preprocess(DataInputStream dataInputStream) {
     }
+
+    public UUID getUniqueID() {
+        return uuid;
+    }
 }

@@ -19,7 +19,7 @@ public class StreamingManager {
 
     public FileStream getFileStream(@NonNull UUID uuid){
         for(FileStream fileStream : fileStreams){
-            if(fileStream.getUuid()==uuid){
+            if(fileStream.getUuid().equals(uuid)){
                 return fileStream;
             }
         }

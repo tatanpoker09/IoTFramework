@@ -1,6 +1,7 @@
 package tatanpoker.com.frameworklib.framework.network.packets.types;
 
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.UUID;
 
 import tatanpoker.com.frameworklib.framework.Framework;
@@ -11,12 +12,17 @@ import tatanpoker.com.frameworklib.framework.network.streaming.FileStream;
 public class SubStreamPacket extends SimplePacket{
     private UUID streamPacketUUID;
     private byte[] partialData;
+    private static boolean fp = true;
 
 
     SubStreamPacket(UUID streamPacketUUID, byte[] partialData) {
         super(EncryptionType.AES);
         this.streamPacketUUID = streamPacketUUID;
         this.partialData = partialData;
+        if(fp) {
+            System.out.println(Arrays.toString(partialData));
+            fp = false;
+        }
     }
 
 

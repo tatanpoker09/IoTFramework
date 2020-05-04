@@ -3,6 +3,7 @@ package tatanpoker.com.frameworklib.framework;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.telecom.Call;
 import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
@@ -30,6 +31,7 @@ import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.client.ClientConnection;
 import tatanpoker.com.frameworklib.framework.network.client.NearbyClient;
 import tatanpoker.com.frameworklib.framework.network.client.SocketClient;
+import tatanpoker.com.frameworklib.framework.network.packets.CallMethodPacket;
 import tatanpoker.com.frameworklib.framework.network.packets.Packet;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
 import tatanpoker.com.frameworklib.framework.network.server.SocketServer;
@@ -223,7 +225,7 @@ public class Tree {
         if(component!=null) {
             return component;
         }
-        throw new InvalidIDException("Couldn't find a component by that id.");
+        throw new InvalidIDException("Couldn't find a component by id: "+id);
     }
 
     public NetworkComponent getComponent(ConnectionThread thread) throws DeviceOfflineException {
@@ -374,12 +376,12 @@ public class Tree {
         }
         if (getServer().isLocal()) {
             try {
-                reciever.getClientThread().sendPacket(packet);
+                reciever.getClientThread().sendPacket(packet, packet instanceof CallMethodPacket);
             } catch (DeviceOfflineException e) {
                 e.printStackTrace();
             }
         } else {
-            getClient().sendPacket(packet);
+            getClient().sendPacket(packet, packet instanceof CallMethodPacket);
         }
     }
 

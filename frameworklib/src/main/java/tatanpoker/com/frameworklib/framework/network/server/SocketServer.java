@@ -18,6 +18,7 @@ import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.TreeStatus;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.packets.Packet;
+import tatanpoker.com.frameworklib.framework.network.packets.ServerReadyPacket;
 
 import static tatanpoker.com.frameworklib.framework.Tree.SERVER_IP;
 
@@ -46,7 +47,7 @@ public class SocketServer extends Server {
             if(!(component instanceof SocketServer)) {
                 if (component.getStatus() == TreeStatus.ONLINE && component.getClientThread() != null) { //We make sure we're online.
                     try {
-                        component.getClientThread().sendPacket(packet);
+                        component.getClientThread().sendPacket(packet, false);
                     } catch (DeviceOfflineException e) {
                         e.printStackTrace();
                     }

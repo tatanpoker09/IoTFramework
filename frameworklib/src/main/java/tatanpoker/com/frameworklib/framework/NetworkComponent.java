@@ -168,9 +168,16 @@ public abstract class NetworkComponent implements Component, EventTrigger {
         }
         if(component!=null) {
             UUID uniqueStreamID = UUID.randomUUID();
+            System.out.println("Creating UUID: "+uniqueStreamID);
             NetworkComponent finalComponent = component;
             StreamFilePacket streamFilePacket = new StreamFilePacket(fileName, Framework.getNetwork().getContext(), uniqueStreamID);
-            new Thread(() -> Framework.getNetwork().sendPacket(finalComponent, streamFilePacket)).start();
+            Framework.getNetwork().sendPacket(finalComponent, streamFilePacket);
+            semaphore = new Semaphore(0);
+            try {
+                semaphore.acquire();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             return new FileStream(uniqueStreamID, streamFilePacket.getPacketCount());
         } else {
             return null;

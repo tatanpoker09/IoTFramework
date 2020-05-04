@@ -11,16 +11,21 @@ import androidx.annotation.RequiresApi;
 
 import com.example.iotframework.R;
 
-import java.io.ByteArrayInputStream;
+import org.apache.commons.io.IOUtils;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import javazoom.jl.decoder.Bitstream;
+import javazoom.jl.decoder.BitstreamException;
 import javazoom.jl.decoder.Decoder;
+import javazoom.jl.decoder.DecoderException;
 import javazoom.jl.decoder.Header;
 import javazoom.jl.decoder.SampleBuffer;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
-import tatanpoker.com.frameworklib.framework.network.packets.types.SubStreamPacket;
 import tatanpoker.com.frameworklib.framework.network.streaming.FileStream;
 import tatanpoker.com.tree.annotations.Device;
 
@@ -49,30 +54,31 @@ public class Speaker extends NetworkComponent {
 }
 
 
-class Player implements Runnable {
+class Player implements Runnable{
     private InputStream inputStream;
     private int frequency = 44100;
     public boolean isPlaying = false;
     private Decoder mDecoder;
     private AudioTrack mAudioTrack;
-    private int bufferSize = 4096;
-    private byte[] data;
-    private FileStream fileStream;
 
-    public Player(FileStream fileStream) {
-        this.fileStream = fileStream;
-        data = new byte[bufferSize];
-        this.inputStream = new ByteArrayInputStream(data);
+    public Player(InputStream inputStream){
+        this.inputStream = inputStream;
+        /*try {
+            this.inputStream = new URL("http://icecast.omroep.nl:80/radio1-sb-mp3")
+                    .openConnection()
+                    .getInputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
     }
-
     @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     public void run() {
-        play();
-    }
-
-    public void write(SubStreamPacket nextPacket){
-        data = nextPacket.getData();
+        try {
+            decode(0,300000);
+        } catch (IOException | DecoderException e) {
+            e.printStackTrace();
+        }
     }
 
     private void play() {
@@ -102,16 +108,14 @@ class Player implements Runnable {
                 int framesReaded = 0;
 
                 Header header;
-                SubStreamPacket nextPacket;
-                while((nextPacket = fileStream.getNextPacket())!=null){
-                    write(nextPacket);
-                    for (; framesReaded++ <= READ_THRESHOLD && (header = bitstream.readFrame()) != null; ) {
-                        SampleBuffer sampleBuffer = (SampleBuffer) mDecoder.decodeFrame(header, bitstream);
-                        short[] buffer = sampleBuffer.getBuffer();
-                        mAudioTrack.write(buffer, 0, buffer.length);
-                        bitstream.closeFrame();
-                    }
+                for(; framesReaded++ <= READ_THRESHOLD && (header = bitstream.readFrame()) != null;) {
+                    SampleBuffer sampleBuffer = (SampleBuffer) mDecoder.decodeFrame(header, bitstream);
+                    short[] buffer = sampleBuffer.getBuffer();
+                    System.out.println(buffer.length);
+                    mAudioTrack.write(buffer, 0, buffer.length);
+                    bitstream.closeFrame();
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -120,5 +124,60 @@ class Player implements Runnable {
         thread.start();
 
         mAudioTrack.play();
+    }
+
+    public byte[] decode(int startMs, int maxMs)
+            throws IOException, DecoderException {
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream(1024);
+
+        float totalMs = 0;
+        boolean seeking = true;
+        InputStream inputStream = new BufferedInputStream(this.inputStream, 8 * 1024);
+        try {
+            Bitstream bitstream = new Bitstream(inputStream);
+            Decoder decoder = new Decoder();
+
+            boolean done = false;
+            while (! done) {
+                Header frameHeader = bitstream.readFrame();
+                if (frameHeader == null) {
+                    done = true;
+                } else {
+                    totalMs += frameHeader.ms_per_frame();
+
+                    if (totalMs >= startMs) {
+                        seeking = false;
+                    }
+
+                    if (! seeking) {
+                        SampleBuffer output = (SampleBuffer) decoder.decodeFrame(frameHeader, bitstream);
+
+                        if (output.getSampleFrequency() != 44100
+                                || output.getChannelCount() != 2) {
+                            throw new DecoderException("mono or non-44100 MP3 not supported", null);
+                        }
+
+                        short[] pcm = output.getBuffer();
+                        for (short s : pcm) {
+                            outStream.write(s & 0xff);
+                            outStream.write((s >> 8 ) & 0xff);
+                        }
+                    }
+
+                    if (totalMs >= (startMs + maxMs)) {
+                        done = true;
+                    }
+                }
+                bitstream.closeFrame();
+            }
+
+            return outStream.toByteArray();
+        } catch (BitstreamException e) {
+            throw new IOException("Bitstream error: " + e);
+        } catch (DecoderException e) {
+            throw new DecoderException("Decoder error", e);
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+        }
     }
 }

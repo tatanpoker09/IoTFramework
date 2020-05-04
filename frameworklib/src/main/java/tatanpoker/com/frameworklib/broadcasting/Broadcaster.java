@@ -56,13 +56,7 @@ public class Broadcaster implements Runnable {
                 enviador.send(dgp);
                 Thread.sleep(period);
             }
-        } catch (SocketException e) {
-            e.printStackTrace();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -75,19 +69,15 @@ public class Broadcaster implements Runnable {
             // Un array de bytes lo suficientemente grande para contener
             // cualquier dato que podamos recibir.
             byte[] dato = new byte[1024];
-
             DatagramPacket dgp = new DatagramPacket(dato, dato.length);
             escucha.receive(dgp);
             byte[] datos = dgp.getData();
             ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(datos));
             BroadcastingPacket broadcastingPacket = (BroadcastingPacket) iStream.readObject();
+            System.out.println("Received data: "+broadcastingPacket.getInetAddress());
             Framework.getNetwork().componentRecieved(broadcastingPacket);
             iStream.close();
-        } catch (SocketException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

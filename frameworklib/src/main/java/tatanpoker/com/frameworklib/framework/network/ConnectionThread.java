@@ -14,6 +14,8 @@ import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -28,6 +30,7 @@ import tatanpoker.com.frameworklib.framework.TreeStatus;
 import tatanpoker.com.frameworklib.framework.network.packets.ComponentDisconnectedPacket;
 import tatanpoker.com.frameworklib.framework.network.packets.EncryptionType;
 import tatanpoker.com.frameworklib.framework.network.packets.Packet;
+import tatanpoker.com.frameworklib.framework.network.packets.ServerReadyPacket;
 import tatanpoker.com.frameworklib.framework.network.server.Server;
 import tatanpoker.com.frameworklib.security.AESUtil;
 import tatanpoker.com.frameworklib.security.EncryptionUtils;
@@ -40,6 +43,7 @@ public class ConnectionThread extends Thread {
     private Socket socket;
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
+    private PacketSender packetSender;
 
     public ConnectionThread(Socket socket) {
         this.socket = socket;
@@ -49,7 +53,6 @@ public class ConnectionThread extends Thread {
     public synchronized void run() {
         try {
             Framework.getLogger().info("Device ready to recieve packets.");
-
             dataInputStream = new DataInputStream(socket.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
@@ -118,21 +121,35 @@ public class ConnectionThread extends Thread {
         }
     }
 
-    public void sendPacket(Packet packet) throws DeviceOfflineException {
+    public void sendPacket(Packet packet, boolean urgent) throws DeviceOfflineException {
         if (socket.isConnected()) {
-            PacketSender packetSender = new PacketSender(packet);
-            Thread packetThread = new Thread(packetSender);
-            packetThread.start();
+            if(packetSender==null) {
+                packetSender = new PacketSender();
+                new Thread(packetSender).start();
+            }
+            if(urgent) {
+                packetSender.addUrgentPacket(packet);
+            } else {
+                packetSender.addPacket(packet);
+            }
         } else {
             throw new DeviceOfflineException(socket.getInetAddress().toString());
         }
     }
 
     class PacketSender implements Runnable {
-        private Packet packet;
+        private List<Packet> packets;
 
-        PacketSender(Packet packet) {
-            this.packet = packet;
+        PacketSender() {
+            this.packets = new ArrayList<>();
+        }
+
+        public void addPacket(Packet packet){
+            this.packets.add(packet);
+        }
+
+        public void addUrgentPacket(Packet packet){
+            this.packets.add(0, packet);
         }
 
         @RequiresApi(api = Build.VERSION_CODES.O)
@@ -141,6 +158,7 @@ public class ConnectionThread extends Thread {
                 if(dataOutputStream == null){
                     dataOutputStream = new DataOutputStream(socket.getOutputStream());
                 }
+                System.out.println("Sending packet: "+packet.getUniqueID());
                 packet.sendPacket(dataOutputStream, ConnectionThread.this);
             }
         }
@@ -148,10 +166,21 @@ public class ConnectionThread extends Thread {
         @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         public void run(){
-            try {
-                sendPacket(packet);
-            } catch (IOException e) {
-                e.printStackTrace();
+            while(!Thread.currentThread().isInterrupted()) {
+                if(packets.size()>0) {
+                    Packet packet = packets.get(0);
+                    packets.remove(0);
+                    try {
+                        sendPacket(packet);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

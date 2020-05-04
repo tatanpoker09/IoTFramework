@@ -12,8 +12,8 @@ public abstract class Devices extends TreeDeviceManager {
 
     public abstract Microphone getMicrophone();
 
-    @Local
     public abstract Speaker getSpeaker();
 
+    @Local
     public abstract CustomServer getServer();
 }

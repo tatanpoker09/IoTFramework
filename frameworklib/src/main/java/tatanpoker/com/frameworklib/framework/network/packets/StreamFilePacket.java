@@ -5,20 +5,22 @@ import android.content.res.AssetFileDescriptor;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Socket;
 import java.util.UUID;
 
-import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.packets.types.StreamPacket;
 
 public class StreamFilePacket extends StreamPacket {
     private String fileName;
-    private Context context;
+    private transient Context context;
 
     public StreamFilePacket(String fileName, Context context, UUID uniqueStreamID) {
         super(EncryptionType.AES, uniqueStreamID);
         this.fileName = fileName;
         this.context = context;
+
+        if (this.packetCount == 0) {
+            this.packetCount = getPacketCount();
+        }
     }
 
     @Override
@@ -46,10 +48,5 @@ public class StreamFilePacket extends StreamPacket {
         }
         assert fd != null;
         return fd.getLength();
-    }
-
-    @Override
-    public void process(Socket socket, ConnectionThread clientThread) {
-        //We don't even receieve this full packet tbh.
     }
 }

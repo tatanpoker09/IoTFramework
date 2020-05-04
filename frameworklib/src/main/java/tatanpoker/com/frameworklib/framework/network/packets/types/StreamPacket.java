@@ -1,6 +1,5 @@
 package tatanpoker.com.frameworklib.framework.network.packets.types;
 
-import android.net.Network;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -18,23 +17,21 @@ import tatanpoker.com.frameworklib.framework.NetworkComponent;
 import tatanpoker.com.frameworklib.framework.network.ConnectionThread;
 import tatanpoker.com.frameworklib.framework.network.packets.EncryptionType;
 import tatanpoker.com.frameworklib.framework.network.packets.Packet;
+import tatanpoker.com.frameworklib.framework.network.packets.StreamReadyPacket;
 import tatanpoker.com.frameworklib.framework.network.streaming.FileStream;
 import tatanpoker.com.frameworklib.security.EncryptionUtils;
 
 public abstract class StreamPacket extends Packet {
-    private static final int CHUNK_SIZE = 1024;
+    private static final int CHUNK_SIZE = 4096;
 
-    private UUID uuid;
-    private int packetCount;
+    private UUID streamPacketUUID;
+    protected int packetCount;
 
     private transient boolean streaming;
 
     public StreamPacket(EncryptionType encryptionType, UUID uuid) {
         super(PacketType.STREAM, encryptionType);
-        this.uuid = uuid;
-        if (this.packetCount == 0) {
-            this.packetCount = getPacketCount();
-        }
+        this.streamPacketUUID = uuid;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -77,7 +74,7 @@ public abstract class StreamPacket extends Packet {
             int bytesRead = 0;
             BufferedInputStream in = new BufferedInputStream(getInputStream());
             while ((bytesRead = in.read(myBuffer, 0, CHUNK_SIZE)) != -1) {
-                SubStreamPacket subStreamPacket = new SubStreamPacket(uuid, myBuffer);
+                SubStreamPacket subStreamPacket = new SubStreamPacket(streamPacketUUID, myBuffer);
                 assert component != null;
                 Framework.getNetwork().sendPacket(component, subStreamPacket);
             }
@@ -92,7 +89,13 @@ public abstract class StreamPacket extends Packet {
     @Override
     public void process(Socket socket, ConnectionThread clientThread) {
         //Open
-        Framework.getNetwork().getStreamingManager().addFileStream(new FileStream(uuid, packetCount));
+        Framework.getNetwork().getStreamingManager().addFileStream(new FileStream(streamPacketUUID, packetCount));
+        try {
+            NetworkComponent component = Framework.getNetwork().getComponent(clientThread);
+            Framework.getNetwork().sendPacket(component, new StreamReadyPacket());
+        } catch (DeviceOfflineException e) {
+            e.printStackTrace();
+        }
     }
 
     public long getSize(){
@@ -105,6 +108,7 @@ public abstract class StreamPacket extends Packet {
         if(remainder!=0){
             packetCount+=1;
         }
+        System.out.println("Packet count to send: "+packetCount);
         return (int) packetCount;
     }
 }
