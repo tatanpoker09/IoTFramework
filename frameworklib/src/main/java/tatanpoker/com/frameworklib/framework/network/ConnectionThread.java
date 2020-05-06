@@ -84,7 +84,7 @@ public class ConnectionThread extends Thread {
 
                     assert packet != null;
                     packet.preprocess(dataInputStream);
-                    Framework.getLogger().info("Recieving " + packet.getClass().getSimpleName() + " through socket with " + packet.getEncryptionType());
+                    //Framework.getLogger().info("Recieving " + packet.getClass().getSimpleName() + " through socket with " + packet.getEncryptionType());
                     packet.recieve(socket, this);
                 }
             } catch (IOException e) {

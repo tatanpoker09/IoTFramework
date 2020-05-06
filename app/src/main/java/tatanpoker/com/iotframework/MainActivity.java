@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import tatanpoker.com.frameworklib.framework.Framework;
+import tatanpoker.com.iotframework.devices.CustomServer;
 import tatanpoker.com.iotframework.devices.Microphone;
 
 public class MainActivity extends Activity {
@@ -31,6 +32,7 @@ public class MainActivity extends Activity {
         Framework.startNetwork(this);
         deviceManager = Framework.registerComponents(Devices.class);
         Framework.networkEnable();
+        // Framework.getNetwork().registerEvents(Framework.getDeviceManager().server);
     }
 
     @Override

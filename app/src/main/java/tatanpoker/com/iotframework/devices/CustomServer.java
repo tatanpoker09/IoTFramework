@@ -2,6 +2,10 @@ package tatanpoker.com.iotframework.devices;
 
 import com.example.iotframework.R;
 
+import tatanpoker.com.frameworklib.events.EventInfo;
+import tatanpoker.com.frameworklib.events.EventPriority;
+import tatanpoker.com.frameworklib.events.EventTrigger;
+import tatanpoker.com.frameworklib.events.server.DeviceConnectedEvent;
 import tatanpoker.com.frameworklib.exceptions.InvalidIDException;
 import tatanpoker.com.frameworklib.framework.Framework;
 import tatanpoker.com.frameworklib.framework.NetworkComponent;
@@ -26,4 +30,5 @@ public class CustomServer extends SocketServer {
         FileStream fileStream = streamFile(fileName,speaker.getId());
         speaker.play(fileStream);
     }
+
 }

@@ -92,14 +92,14 @@ public class Tree {
             if(method.isAnnotationPresent(EventInfo.class)){
                 Class<?>[] types = method.getParameterTypes();
                 if(Event.class.isAssignableFrom(types[0])){
-                    /*/if(method.getAnnotation(EventInfo.class).id()==id) { I have to redo this using CAP.
+                    if(method.getAnnotation(EventInfo.class).id()==getLocal().getId()) {
                         Framework.getLogger().info("Registering event: " + method.getName() + " with TYPE " + types[0].getName());
                         EventTriggerInfo eventTriggers = events.get(types[0].hashCode());
                         if (eventTriggers == null) {
                             events.put(types[0].hashCode(), new EventTriggerInfo(eventObserver));
                         }
                         events.get(types[0].hashCode()).addInvoke(method);
-                    }*/
+                    }
                 }
             }
         }

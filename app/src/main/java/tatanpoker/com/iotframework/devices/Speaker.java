@@ -17,6 +17,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Logger;
 
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.BitstreamException;
@@ -75,10 +76,11 @@ class Player implements Runnable{
     @Override
     public void run() {
         try {
-            decode(0,300000);
-        } catch (IOException | DecoderException e) {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        play();
     }
 
     private void play() {
@@ -107,14 +109,22 @@ class Player implements Runnable{
                 final int READ_THRESHOLD = 2147483647;
                 int framesReaded = 0;
 
+                Logger logger = Logger.getLogger("Speaker");
+                logger.info("Starting to play!");
                 Header header;
-                for(; framesReaded++ <= READ_THRESHOLD && (header = bitstream.readFrame()) != null;) {
+                for(; framesReaded++ <= READ_THRESHOLD;) {
+                    header = bitstream.readFrame();
+                    if(header==null){
+                        logger.info("Header is null.");
+                        break;
+                    }
+                    logger.info("Writing data");
                     SampleBuffer sampleBuffer = (SampleBuffer) mDecoder.decodeFrame(header, bitstream);
                     short[] buffer = sampleBuffer.getBuffer();
-                    System.out.println(buffer.length);
                     mAudioTrack.write(buffer, 0, buffer.length);
                     bitstream.closeFrame();
                 }
+                logger.info("Song ending!");
 
             } catch (Exception e) {
                 e.printStackTrace();

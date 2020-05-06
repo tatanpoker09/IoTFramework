@@ -73,8 +73,9 @@ public abstract class StreamPacket extends Packet {
             byte[] myBuffer = new byte[CHUNK_SIZE];
             int bytesRead = 0;
             BufferedInputStream in = new BufferedInputStream(getInputStream());
+            int i = 0;
             while ((bytesRead = in.read(myBuffer, 0, CHUNK_SIZE)) != -1) {
-                SubStreamPacket subStreamPacket = new SubStreamPacket(streamPacketUUID, myBuffer);
+                SubStreamPacket subStreamPacket = new SubStreamPacket(streamPacketUUID, myBuffer, i++);
                 assert component != null;
                 Framework.getNetwork().sendPacket(component, subStreamPacket);
             }
